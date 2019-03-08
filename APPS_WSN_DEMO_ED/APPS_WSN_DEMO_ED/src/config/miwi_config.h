@@ -150,15 +150,14 @@
 // ENABLE_SLEEP will enable the device to go to sleep and wake up 
 // from the sleep
 /*********************************************************************/
-//#define ENABLE_SLEEP
-
+#define ENABLE_SLEEP
 
 /*********************************************************************/
 // ENABLE_ED_SCAN will enable the device to do an energy detection scan
 // to find out the channel with least noise and operate on that channel
 /*********************************************************************/
-//#define ENABLE_ED_SCAN
 
+#define ENABLE_ED_SCAN
 
 /*********************************************************************/
 // ENABLE_ACTIVE_SCAN will enable the device to do an active scan to 
@@ -166,13 +165,11 @@
 /*********************************************************************/
 //#define ENABLE_ACTIVE_SCAN
 
-
 /*********************************************************************/
 // ENABLE_SECURITY will enable the device to encrypt and decrypt
 // information transferred
 /*********************************************************************/
 //#define ENABLE_SECURITY
-
 
 /*********************************************************************/
 // ENABLE_INDIRECT_MESSAGE will enable the device to store the packets

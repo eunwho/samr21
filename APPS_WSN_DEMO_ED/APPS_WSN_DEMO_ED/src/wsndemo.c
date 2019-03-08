@@ -263,9 +263,12 @@ static void appSendData(void)
     uint16_t dstAddr = 0; /* PAN Coordinator Address */
 #endif
 
-	appMsg.sensors.battery     = rand() & 0xffff;
-	appMsg.sensors.temperature = rand() & 0x7f;
-	appMsg.sensors.light       = rand() & 0xff;
+//	appMsg.sensors.battery     = rand() & 0xffff;
+//	appMsg.sensors.temperature = rand() & 0x7f;
+//	appMsg.sensors.light       = rand() & 0xff;
+	appMsg.sensors.battery     = 11;
+	appMsg.sensors.temperature = 22;
+	appMsg.sensors.light       = 33;
 
 	/* Get Short address */
 	MiApp_Get(SHORT_ADDRESS, (uint8_t *)&shortAddressLocal);
