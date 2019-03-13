@@ -76,7 +76,10 @@ void system_board_init(void);
 
 /** \name LED0 definitions
  *  @{ */
-#define LED0_PIN                  PIN_PA19
+//#define LED0_PIN                  PIN_PA19
+#define LED0_PIN                  PIN_PA27	// yellow by jsk 2019.03.11
+#define LED1_PIN                  PIN_PA28	// green by jsk 2019.03.11 
+
 #define LED0_ACTIVE               false
 #define LED0_INACTIVE             !LED0_ACTIVE
 #define LED0 LED0_PIN
@@ -122,6 +125,7 @@ void system_board_init(void);
 /** @} */
 
 /** Number of on-board LEDs */
+//#define LED_COUNT                 1	// by jsk
 #define LED_COUNT                 1
 
 

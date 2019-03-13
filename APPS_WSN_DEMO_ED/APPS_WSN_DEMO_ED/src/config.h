@@ -41,7 +41,7 @@
 #include  "miwi_config_mesh.h"
 /*****************************************************************************
 *****************************************************************************/
-#define APP_SENDING_INTERVAL    10000
+#define APP_SENDING_INTERVAL    1000
 
 #define APP_SENDING_INTERVAL_IN_SIMULATION 60000
 
@@ -69,7 +69,8 @@
 #define APP_ROUTER      1
 #define APP_ENDDEVICE   0
 #else
-#define APP_CAPTION     "End Device"
+//#define APP_CAPTION     "End Device"
+#define APP_CAPTION     "ED001"
 #define APP_NODE_TYPE   2
 #define APP_COORDINATOR 0
 #define APP_ROUTER      0

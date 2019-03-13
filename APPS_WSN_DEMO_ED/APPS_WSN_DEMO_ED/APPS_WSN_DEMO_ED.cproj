@@ -32,12 +32,15 @@
       <framework-data>
         <options>
           <option id="common.boards" value="Add" config="" content-id="Atmel.ASF" />
-          <option id="common.utils" value="Add" config="" content-id="Atmel.ASF" />
+          <option id="common.services.basic.sleepmgr" value="Add" config="" content-id="Atmel.ASF" />
+          <option id="sam0.drivers.adc" value="Add" config="polled" content-id="Atmel.ASF" />
           <option id="sam0.drivers.port" value="Add" config="" content-id="Atmel.ASF" />
+          <option id="sam0.drivers.rtc" value="Add" config="calendar_callback" content-id="Atmel.ASF" />
           <option id="sam0.drivers.sercom.i2c.master" value="Add" config="polled" content-id="Atmel.ASF" />
-          <option id="sam0.utils.cmsis.samr21.source.template" value="Add" config="" content-id="Atmel.ASF" />
           <option id="thirdparty.wireless.addons.sio2host" value="Add" config="uart" content-id="Atmel.ASF" />
           <option id="thirdparty.wireless.miwi" value="Add" config="" content-id="Atmel.ASF" />
+          <option id="common.utils" value="Add" config="" content-id="Atmel.ASF" />
+          <option id="sam0.utils.cmsis.samr21.source.template" value="Add" config="" content-id="Atmel.ASF" />
           <option id="thirdparty.wireless.miwi.apps.wsn_demo" value="Add" config="" content-id="Atmel.ASF" />
         </options>
         <configurations>
@@ -49,6 +52,9 @@
           <configuration key="config.sam0.drivers.sercom.spi" value="polled" default="polled" content-id="Atmel.ASF" />
           <configuration key="config.thirdparty.wireless.miwi.source" value="miwi_mesh" default="miwi_mesh" content-id="Atmel.ASF" />
           <configuration key="config.thirdparty.wireless.miwi.source.mimac.phy.ext" value="at86rf233" default="at86rf233" content-id="Atmel.ASF" />
+          <configuration key="config.common2.services.delay" value="systick" default="systick" content-id="Atmel.ASF" />
+          <configuration key="config.sam0.drivers.extint" value="callback" default="callback" content-id="Atmel.ASF" />
+          <configuration key="config.sam0.drivers.tc" value="callback" default="callback" content-id="Atmel.ASF" />
         </configurations>
         <files>
           <file path="src/ASF/common2/services/delay/delay.h" framework="" version="" source="common2/services/delay/delay.h" changed="False" content-id="Atmel.ASF" />
@@ -264,6 +270,18 @@
           <file path="src/ASF/thirdparty/wireless/services/sal/inc/sal_types.h" framework="" version="" source="thirdparty/wireless/services/sal/inc/sal_types.h" changed="False" content-id="Atmel.ASF" />
           <file path="src/ASF/thirdparty/wireless/services/trx_access/trx_access.c" framework="" version="" source="thirdparty/wireless/services/trx_access/trx_access.c" changed="False" content-id="Atmel.ASF" />
           <file path="src/ASF/thirdparty/wireless/services/trx_access/trx_access.h" framework="" version="" source="thirdparty/wireless/services/trx_access/trx_access.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/adc/adc.h" framework="" version="3.40.0" source="sam0\drivers\adc\adc.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/adc/adc_sam_d_r_h/adc.c" framework="" version="3.40.0" source="sam0\drivers\adc\adc_sam_d_r_h\adc.c" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/adc/adc_sam_d_r_h/adc_feature.h" framework="" version="3.40.0" source="sam0\drivers\adc\adc_sam_d_r_h\adc_feature.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/common/services/sleepmgr/samd/sleepmgr.c" framework="" version="3.40.0" source="common\services\sleepmgr\samd\sleepmgr.c" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/common/services/sleepmgr/sleepmgr.h" framework="" version="3.40.0" source="common\services\sleepmgr\sleepmgr.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/common/services/sleepmgr/samd/sleepmgr.h" framework="" version="3.40.0" source="common\services\sleepmgr\samd\sleepmgr.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/Config/conf_sleepmgr.h" framework="" version="3.40.0" source="common\services\sleepmgr\samd\module_config\conf_sleepmgr.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/rtc/rtc_tamper.h" framework="" version="3.40.0" source="sam0\drivers\rtc\rtc_tamper.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/rtc/rtc_calendar.h" framework="" version="3.40.0" source="sam0\drivers\rtc\rtc_calendar.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/rtc/rtc_calendar_interrupt.h" framework="" version="3.40.0" source="sam0\drivers\rtc\rtc_calendar_interrupt.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/rtc/rtc_sam_d_r_h/rtc_calendar.c" framework="" version="3.40.0" source="sam0\drivers\rtc\rtc_sam_d_r_h\rtc_calendar.c" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/rtc/rtc_sam_d_r_h/rtc_calendar_interrupt.c" framework="" version="3.40.0" source="sam0\drivers\rtc\rtc_sam_d_r_h\rtc_calendar_interrupt.c" changed="False" content-id="Atmel.ASF" />
         </files>
         <documentation help="http://asf.atmel.com/docs/3.40.0/thirdparty.wireless.miwi.apps.wsn_demo.ed_sec.samr21_xplained_pro/html/index.html" />
         <offline-documentation help="" />
@@ -318,6 +336,8 @@
       <Value>USART_CALLBACK_MODE=true</Value>
       <Value>PHY_AT86RF233</Value>
       <Value>SPI_CALLBACK_MODE=false</Value>
+      <Value>ADC_CALLBACK_MODE=false</Value>
+      <Value>RTC_CALENDAR_ASYNC=true</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.directories.IncludePaths>
@@ -369,6 +389,11 @@
       <Value>../src/ASF/thirdparty/wireless/services/sal/inc</Value>
       <Value>../src/ASF/thirdparty/wireless/miwi/apps/wsn_demo/ed_sec/samr21_xplained_pro</Value>
       <Value>../src/config</Value>
+      <Value>../src/ASF/sam0/drivers/adc</Value>
+      <Value>../src/ASF/sam0/drivers/adc/adc_sam_d_r_h</Value>
+      <Value>../src/ASF/common/services/sleepmgr</Value>
+      <Value>../src/ASF/sam0/drivers/rtc</Value>
+      <Value>../src/ASF/sam0/drivers/rtc/rtc_sam_d_r_h</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize most (-O3)</armgcc.compiler.optimization.level>
@@ -443,9 +468,14 @@
       <Value>../src/ASF/thirdparty/wireless/services/sal/inc</Value>
       <Value>../src/ASF/thirdparty/wireless/miwi/apps/wsn_demo/ed_sec/samr21_xplained_pro</Value>
       <Value>../src/config</Value>
+      <Value>../src/ASF/sam0/drivers/adc</Value>
+      <Value>../src/ASF/sam0/drivers/adc/adc_sam_d_r_h</Value>
+      <Value>../src/ASF/common/services/sleepmgr</Value>
+      <Value>../src/ASF/sam0/drivers/rtc</Value>
+      <Value>../src/ASF/sam0/drivers/rtc/rtc_sam_d_r_h</Value>
     </ListValues>
   </armgcc.assembler.general.IncludePaths>
-  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=SAMR21_XPLAINED_PRO -DENDDEVICE -DEXTINT_CALLBACK_MODE=true -DI2C_MASTER_CALLBACK_MODE=false -DMESH_SECURITY -DMIWI_MESH_TOPOLOGY_SIMULATION_MODE -DPHY_AT86RF233 -DPROTOCOL_MESH -DSAL_TYPE=AT86RF2xx -DSPI_CALLBACK_MODE=false -DSTB_ON_SAL -DSYSTICK_MODE -DTC_ASYNC=true -DUSART_CALLBACK_MODE=true -D__SAMR21G18A__</armgcc.preprocessingassembler.general.AssemblerFlags>
+  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=SAMR21_XPLAINED_PRO -DENDDEVICE -DEXTINT_CALLBACK_MODE=true -DI2C_MASTER_CALLBACK_MODE=false -DMESH_SECURITY -DMIWI_MESH_TOPOLOGY_SIMULATION_MODE -DPHY_AT86RF233 -DPROTOCOL_MESH -DSAL_TYPE=AT86RF2xx -DSPI_CALLBACK_MODE=false -DSTB_ON_SAL -DSYSTICK_MODE -DTC_ASYNC=true -DUSART_CALLBACK_MODE=true -D__SAMR21G18A__ -DADC_CALLBACK_MODE=false -DRTC_CALENDAR_ASYNC=true</armgcc.preprocessingassembler.general.AssemblerFlags>
   <armgcc.preprocessingassembler.general.IncludePaths>
     <ListValues>
       <Value>../src/ASF/sam0/drivers/sercom/i2c</Value>
@@ -495,6 +525,11 @@
       <Value>../src/ASF/thirdparty/wireless/services/sal/inc</Value>
       <Value>../src/ASF/thirdparty/wireless/miwi/apps/wsn_demo/ed_sec/samr21_xplained_pro</Value>
       <Value>../src/config</Value>
+      <Value>../src/ASF/sam0/drivers/adc</Value>
+      <Value>../src/ASF/sam0/drivers/adc/adc_sam_d_r_h</Value>
+      <Value>../src/ASF/common/services/sleepmgr</Value>
+      <Value>../src/ASF/sam0/drivers/rtc</Value>
+      <Value>../src/ASF/sam0/drivers/rtc/rtc_sam_d_r_h</Value>
     </ListValues>
   </armgcc.preprocessingassembler.general.IncludePaths>
 </ArmGcc>
@@ -527,6 +562,8 @@
       <Value>USART_CALLBACK_MODE=true</Value>
       <Value>PHY_AT86RF233</Value>
       <Value>SPI_CALLBACK_MODE=false</Value>
+      <Value>ADC_CALLBACK_MODE=false</Value>
+      <Value>RTC_CALENDAR_ASYNC=true</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.directories.IncludePaths>
@@ -578,6 +615,11 @@
       <Value>../src/ASF/thirdparty/wireless/services/sal/inc</Value>
       <Value>../src/ASF/thirdparty/wireless/miwi/apps/wsn_demo/ed_sec/samr21_xplained_pro</Value>
       <Value>../src/config</Value>
+      <Value>../src/ASF/sam0/drivers/adc</Value>
+      <Value>../src/ASF/sam0/drivers/adc/adc_sam_d_r_h</Value>
+      <Value>../src/ASF/common/services/sleepmgr</Value>
+      <Value>../src/ASF/sam0/drivers/rtc</Value>
+      <Value>../src/ASF/sam0/drivers/rtc/rtc_sam_d_r_h</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize (-O1)</armgcc.compiler.optimization.level>
@@ -653,10 +695,15 @@
       <Value>../src/ASF/thirdparty/wireless/services/sal/inc</Value>
       <Value>../src/ASF/thirdparty/wireless/miwi/apps/wsn_demo/ed_sec/samr21_xplained_pro</Value>
       <Value>../src/config</Value>
+      <Value>../src/ASF/sam0/drivers/adc</Value>
+      <Value>../src/ASF/sam0/drivers/adc/adc_sam_d_r_h</Value>
+      <Value>../src/ASF/common/services/sleepmgr</Value>
+      <Value>../src/ASF/sam0/drivers/rtc</Value>
+      <Value>../src/ASF/sam0/drivers/rtc/rtc_sam_d_r_h</Value>
     </ListValues>
   </armgcc.assembler.general.IncludePaths>
   <armgcc.assembler.debugging.DebugLevel>Default (-g)</armgcc.assembler.debugging.DebugLevel>
-  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=SAMR21_XPLAINED_PRO -DENDDEVICE -DEXTINT_CALLBACK_MODE=true -DI2C_MASTER_CALLBACK_MODE=false -DMESH_SECURITY -DMIWI_MESH_TOPOLOGY_SIMULATION_MODE -DPHY_AT86RF233 -DPROTOCOL_MESH -DSAL_TYPE=AT86RF2xx -DSPI_CALLBACK_MODE=false -DSTB_ON_SAL -DSYSTICK_MODE -DTC_ASYNC=true -DUSART_CALLBACK_MODE=true -D__SAMR21G18A__</armgcc.preprocessingassembler.general.AssemblerFlags>
+  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=SAMR21_XPLAINED_PRO -DENDDEVICE -DEXTINT_CALLBACK_MODE=true -DI2C_MASTER_CALLBACK_MODE=false -DMESH_SECURITY -DMIWI_MESH_TOPOLOGY_SIMULATION_MODE -DPHY_AT86RF233 -DPROTOCOL_MESH -DSAL_TYPE=AT86RF2xx -DSPI_CALLBACK_MODE=false -DSTB_ON_SAL -DSYSTICK_MODE -DTC_ASYNC=true -DUSART_CALLBACK_MODE=true -D__SAMR21G18A__ -DADC_CALLBACK_MODE=false -DRTC_CALENDAR_ASYNC=true</armgcc.preprocessingassembler.general.AssemblerFlags>
   <armgcc.preprocessingassembler.general.IncludePaths>
     <ListValues>
       <Value>../src/ASF/sam0/drivers/sercom/i2c</Value>
@@ -706,6 +753,11 @@
       <Value>../src/ASF/thirdparty/wireless/services/sal/inc</Value>
       <Value>../src/ASF/thirdparty/wireless/miwi/apps/wsn_demo/ed_sec/samr21_xplained_pro</Value>
       <Value>../src/config</Value>
+      <Value>../src/ASF/sam0/drivers/adc</Value>
+      <Value>../src/ASF/sam0/drivers/adc/adc_sam_d_r_h</Value>
+      <Value>../src/ASF/common/services/sleepmgr</Value>
+      <Value>../src/ASF/sam0/drivers/rtc</Value>
+      <Value>../src/ASF/sam0/drivers/rtc/rtc_sam_d_r_h</Value>
     </ListValues>
   </armgcc.preprocessingassembler.general.IncludePaths>
   <armgcc.preprocessingassembler.debugging.DebugLevel>Default (-Wa,-g)</armgcc.preprocessingassembler.debugging.DebugLevel>
@@ -724,16 +776,22 @@
     <Folder Include="src\ASF\common\services\" />
     <Folder Include="src\ASF\common\services\serial\" />
     <Folder Include="src\ASF\common\services\serial\sam0_usart\" />
+    <Folder Include="src\ASF\common\services\sleepmgr\" />
+    <Folder Include="src\ASF\common\services\sleepmgr\samd\" />
     <Folder Include="src\ASF\common\utils\" />
     <Folder Include="src\ASF\common\utils\interrupt\" />
     <Folder Include="src\ASF\sam0\" />
     <Folder Include="src\ASF\sam0\boards\" />
     <Folder Include="src\ASF\sam0\boards\samr21_xplained_pro\" />
     <Folder Include="src\ASF\sam0\drivers\" />
+    <Folder Include="src\ASF\sam0\drivers\adc\" />
+    <Folder Include="src\ASF\sam0\drivers\adc\adc_sam_d_r_h\" />
     <Folder Include="src\ASF\sam0\drivers\extint\" />
     <Folder Include="src\ASF\sam0\drivers\extint\extint_sam_d_r_h\" />
     <Folder Include="src\ASF\sam0\drivers\port\" />
     <Folder Include="src\ASF\sam0\drivers\port\quick_start\" />
+    <Folder Include="src\ASF\sam0\drivers\rtc\" />
+    <Folder Include="src\ASF\sam0\drivers\rtc\rtc_sam_d_r_h\" />
     <Folder Include="src\ASF\sam0\drivers\sercom\" />
     <Folder Include="src\ASF\sam0\drivers\sercom\i2c\" />
     <Folder Include="src\ASF\sam0\drivers\sercom\i2c\i2c_sam0\" />
@@ -1275,6 +1333,15 @@
     <None Include="src\ASF\common2\services\delay\sam0\systick_counter.h">
       <SubType>compile</SubType>
     </None>
+    <Compile Include="src\ASF\common\services\sleepmgr\samd\sleepmgr.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <None Include="src\ASF\common\services\sleepmgr\sleepmgr.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\common\services\sleepmgr\samd\sleepmgr.h">
+      <SubType>compile</SubType>
+    </None>
     <Compile Include="src\ASF\common\utils\interrupt\interrupt_sam_nvic.c">
       <SubType>compile</SubType>
     </Compile>
@@ -1290,6 +1357,15 @@
     <Compile Include="src\ASF\sam0\boards\samr21_xplained_pro\board_init.c">
       <SubType>compile</SubType>
     </Compile>
+    <None Include="src\ASF\sam0\drivers\adc\adc.h">
+      <SubType>compile</SubType>
+    </None>
+    <Compile Include="src\ASF\sam0\drivers\adc\adc_sam_d_r_h\adc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <None Include="src\ASF\sam0\drivers\adc\adc_sam_d_r_h\adc_feature.h">
+      <SubType>compile</SubType>
+    </None>
     <Compile Include="src\ASF\sam0\drivers\extint\extint_callback.c">
       <SubType>compile</SubType>
     </Compile>
@@ -1297,6 +1373,21 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\ASF\sam0\drivers\port\port.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <None Include="src\ASF\sam0\drivers\rtc\rtc_tamper.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\sam0\drivers\rtc\rtc_calendar.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\sam0\drivers\rtc\rtc_calendar_interrupt.h">
+      <SubType>compile</SubType>
+    </None>
+    <Compile Include="src\ASF\sam0\drivers\rtc\rtc_sam_d_r_h\rtc_calendar.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\sam0\drivers\rtc\rtc_sam_d_r_h\rtc_calendar_interrupt.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\ASF\sam0\drivers\sercom\i2c\i2c_sam0\i2c_master.c">
@@ -1446,6 +1537,9 @@
     <Compile Include="src\commands.c">
       <SubType>compile</SubType>
     </Compile>
+    <None Include="src\config\conf_sleepmgr.h">
+      <SubType>compile</SubType>
+    </None>
     <Compile Include="src\main.c">
       <SubType>compile</SubType>
     </Compile>

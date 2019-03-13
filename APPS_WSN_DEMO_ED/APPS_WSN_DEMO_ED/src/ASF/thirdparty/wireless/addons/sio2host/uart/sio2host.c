@@ -78,7 +78,7 @@ static uint8_t serial_rx_count;
 
 void sio2host_init(void)
 {
-#if SAMD || SAMR21 || SAML21 || SAMR30
+
 	struct usart_config host_uart_config;
 	/* Configure USART for unit test output */
 	usart_get_config_defaults(&host_uart_config);
@@ -94,9 +94,7 @@ void sio2host_init(void)
 	/* Enable transceivers */
 	usart_enable_transceiver(&host_uart_module, USART_TRANSCEIVER_TX);
 	usart_enable_transceiver(&host_uart_module, USART_TRANSCEIVER_RX);
-#else
-	stdio_serial_init(USART_HOST, &usart_serial_options);
-#endif
+
 	USART_HOST_RX_ISR_ENABLE();
 }
 

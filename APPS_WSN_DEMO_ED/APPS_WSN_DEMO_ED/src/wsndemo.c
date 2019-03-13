@@ -1,37 +1,5 @@
 /**
 * \file  wsndemo.c
-*
-* \brief WSNDemo application implementation
-*
-* Copyright (c) 2018 Microchip Technology Inc. and its subsidiaries. 
-*
-* \asf_license_start
-*
-* \page License
-*
-* Subject to your compliance with these terms, you may use Microchip
-* software and any derivatives exclusively with Microchip products. 
-* It is your responsibility to comply with third party license terms applicable 
-* to your use of third party software (including open source software) that 
-* may accompany Microchip software.
-*
-* THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS".  NO WARRANTIES, 
-* WHETHER EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE, 
-* INCLUDING ANY IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, 
-* AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT WILL MICROCHIP BE 
-* LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE, INCIDENTAL OR CONSEQUENTIAL 
-* LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND WHATSOEVER RELATED TO THE 
-* SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS BEEN ADVISED OF THE 
-* POSSIBILITY OR THE DAMAGES ARE FORESEEABLE.  TO THE FULLEST EXTENT 
-* ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN ANY WAY 
-* RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY, 
-* THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
-*
-* \asf_license_stop
-*
-*/
-/*
-* Support and FAQ: visit <a href="https://www.microchip.com/support/">Microchip Support</a>
 */
 
 #include <stdlib.h>
@@ -47,14 +15,8 @@
 #include "sio2host.h"
 #endif
 
-#if SAMD || SAMR21 || SAML21 || SAMR30
 #include "system.h"
-#else
-#include "sysclk.h"
-#if (LED_COUNT > 0)
-#include "led.h"
-#endif
-#endif
+//#include "led.h"
 
 #include "asf.h"
 #include "wsndemo.h"
@@ -195,8 +157,11 @@ static void appDataInd(RECEIVED_MESH_MESSAGE *ind)
 
 /*****************************************************************************
 *****************************************************************************/
+volatile static AppState_t appStateTemp;
 static void appDataSendingTimerHandler(SYS_Timer_t *timer)
 {
+	LED_Toggle(LED_NETWORK); //by jsk
+
 	if (APP_STATE_WAIT_SEND_TIMER == appState) {
 		appState = APP_STATE_SEND;
 	} else {
@@ -212,9 +177,7 @@ static void appDataSendingTimerHandler(SYS_Timer_t *timer)
 *****************************************************************************/
 static void appNetworkStatusTimerHandler(SYS_Timer_t *timer)
 {
-#if (LED_COUNT > 0)
-	LED_Toggle(LED_NETWORK);
-#endif
+//	LED_Toggle(LED_NETWORK);
 	(void)timer;
 }
 #endif
@@ -224,23 +187,13 @@ static void appNetworkStatusTimerHandler(SYS_Timer_t *timer)
 #if defined(COORDINATOR) || defined (ENDDEVICE)
 static void appDataConf(uint8_t msgConfHandle, miwi_status_t status, uint8_t* msgPointer)
 {
-#if (LED_COUNT > 0)
-	LED_Off(LED_DATA);
-#endif
-
 	if (SUCCESS == status) {
 		if (!appNetworkStatus) {
-#if (LED_COUNT > 0)
-			LED_On(LED_NETWORK);
-#endif
 			SYS_TimerStop(&appNetworkStatusTimer);
 			appNetworkStatus = true;
 		}
 	} else {
 		if (appNetworkStatus) {
-#if (LED_COUNT > 0)
-			LED_Off(LED_NETWORK);
-#endif
 			SYS_TimerStart(&appNetworkStatusTimer);
 			appNetworkStatus = false;
 		}
@@ -274,6 +227,7 @@ static void appSendData(void)
 	MiApp_Get(SHORT_ADDRESS, (uint8_t *)&shortAddressLocal);
         appMsg.shortAddr = shortAddressLocal;
 	appMsg.extAddr   = appMsg.shortAddr;
+
 #ifndef PAN_COORDINATOR
     /* Get Next Hop Short address to reach PAN Coordinator*/
 	appMsg.nextHopAddr = MiApp_MeshGetNextHopAddr(PAN_COORDINATOR_SHORT_ADDRESS);
@@ -285,26 +239,9 @@ static void appSendData(void)
 	/* Get current working PanId */
 	MiApp_Get(PANID, (uint8_t *)&shortAddressPanId);
         appMsg.panId = shortAddressPanId;
-#if defined(PAN_COORDINATOR)
-	sprintf(&(appMsg.caption.text[APP_CAPTION_SIZE - SHORT_ADDRESS_CAPTION_SIZE]), "-0x%04X", shortAddressLocal);
-	appUartSendMessage((uint8_t *)&appMsg, sizeof(appMsg));
-	SYS_TimerStart(&appDataSendingTimer);
-	appState = APP_STATE_WAIT_SEND_TIMER;
-#else
-#if (LED_COUNT > 0)
-	LED_On(LED_DATA);
-#endif
 
 	appMsg.caption.type         = 32;
-#if defined(COORDINATOR)
-	if (shortAddressLocal & RXON_ENDEVICE_ADDRESS_MASK)
-	{
-		appMsg.caption.size         = APP_CAPTION_ED_SIZE;
-	    memcpy(appMsg.caption.text, APP_CAPTION_ED, APP_CAPTION_ED_SIZE);
-		sprintf(&(appMsg.caption.text[APP_CAPTION_ED_SIZE - SHORT_ADDRESS_CAPTION_SIZE]), "-0x%04X", shortAddressLocal);
-	}
-	else
-#endif
+
 	{
 	    appMsg.caption.size         = APP_CAPTION_SIZE;
 	    memcpy(appMsg.caption.text, APP_CAPTION, APP_CAPTION_SIZE);
@@ -320,7 +257,6 @@ static void appSendData(void)
 	{
 		appState = APP_STATE_SENDING_DONE;
 	}
-#endif
 }
 
 /*************************************************************************//**
@@ -358,16 +294,22 @@ static void appInit(void)
 	appNetworkStatusTimer.handler = appNetworkStatusTimerHandler;
 	SYS_TimerStart(&appNetworkStatusTimer);
 #else
-#if (LED_COUNT > 0)
-	LED_On(LED_NETWORK);
-#endif
 #endif
 
 	APP_CommandsInit();
+/*
+	appCmdIdentifyDurationTimer.mode = SYS_TIMER_INTERVAL_MODE;
+	appCmdIdentifyDurationTimer.handler = appCmdIdentifyDurationTimerHandler;
+
+	appCmdIdentifyPeriodTimer.mode = SYS_TIMER_PERIODIC_MODE;
+	appCmdIdentifyPeriodTimer.handler = appCmdIdentifyPeriodTimerHandler;
+*/
 	MiApp_SubscribeDataIndicationCallback(appDataInd);
+
 #ifndef PAN_COORDINATOR
 	MiApp_SubscribeLinkFailureCallback(appLinkFailureCallback);
 #endif
+
 #if defined(PAN_COORDINATOR)
     appState = APP_STATE_START_NETWORK;
 #else
@@ -382,96 +324,24 @@ static void APP_TaskHandler(void)
 	switch(appState)
 	{
 		case APP_STATE_INITIAL:
-		{
 			appInit();
-		}
-		break;
-		
-	#if defined(PAN_COORDINATOR)
-		case APP_STATE_START_NETWORK:
-		{
-			MiApp_StartConnection(START_CONN_DIRECT, APP_SCAN_DURATION, CHANNEL_MAP, Connection_Confirm);
-			appState = APP_STATE_SEND;
-		}
-		break;
-	#else
+			break;	
 		case APP_STATE_CONNECT_NETWORK:
-		{
 			MiApp_SearchConnection(APP_SCAN_DURATION, CHANNEL_MAP, searchConfim);
 			appState = APP_STATE_CONNECTING_NETWORK;
-		}
-		break;
-	#endif
-
+			break;
 		case APP_STATE_SEND:
-		{
 			appSendData();
-		}
-		break;
-
+			break;
 		case APP_STATE_SENDING_DONE:
-		{
 			SYS_TimerStart(&appDataSendingTimer);
 			appState = APP_STATE_WAIT_SEND_TIMER;
-		}
-		break;
-		
+			break;		
 		default:break;
 	}
-
-#if defined(PAN_COORDINATOR)
-	uint16_t bytes;
-	if((bytes = sio2host_rx(rx_data, APP_RX_BUF_SIZE)) > 0)
-	{
-		UartBytesReceived(bytes, (uint8_t *)&rx_data);
-	}
-#if defined(MIWI_MESH_TOPOLOGY_SIMULATION_MODE)
-
-	/* This section of code tries to simulate and restore the topology
-	*  for testing purposes. When the SW0 is pressed for less than 3secs,
-	*  the PAN coordinator sends out a application data to all the coordinators
-	*  to set its route entry respectively to generate a line topology.	
-	*  After testing when this button is pressed for more than 3secs, it sends
-	*  out a topology reset command, which will bring back the network back to
-	*  mesh state.
-	*/
-
-	/* Read the button level */
-	if (port_pin_get_input_level(BUTTON_0_PIN) == BUTTON_0_ACTIVE)
-	{
-		uint8_t commandId;
-		uint16_t dstAddr = MESH_BROADCAST_TO_COORDINATORS;
-		uint8_t count = 0;
-		
-		/* Wait for button debounce time */
-		delay_ms(50);
-		/* Check whether button is in default state */
-		while(port_pin_get_input_level(BUTTON_0_PIN) == BUTTON_0_ACTIVE)
-		{
-			delay_ms(500);
-			count += 1;
-		}
-		if (count > 5)
-		{
-			commandId = APP_COMMAND_ID_TOPOLOGY_SIMULATION_RESET;
-			MiApp_SendData(2, (uint8_t *)&dstAddr, 1, &commandId, 1, false, appBroadcastDataConf);
-		}
-		else
-		{
-			commandId = APP_COMMAND_ID_SIMULATE_LINE_TOPOLOGY;
-			MiApp_SendData(2, (uint8_t *)&dstAddr, 1, &commandId, 2, false, appBroadcastDataConf);
-		}
-	}
-#endif
-#endif
 }
 
-/*****************************************************************************
-*****************************************************************************/
-
-/**
- * Init function of the WSNDemo application
- */
+// Init function of the WSNDemo application
 void wsndemo_init(void)
 {
 	MiApp_ProtocolInit(&defaultParamsRomOrRam, &defaultParamsRamOnly);
@@ -540,18 +410,9 @@ void wsndemo_task(void)
 	APP_TaskHandler();
 }
 
-#ifndef PAN_COORDINATOR
 void appLinkFailureCallback(void)
 {
 	/* On link failure initiate search to establish connection */
 	appState = APP_STATE_CONNECT_NETWORK;
 	SYS_TimerStop(&appDataSendingTimer);
 }
-#endif
-
-#if defined(PAN_COORDINATOR) && defined(MIWI_MESH_TOPOLOGY_SIMULATION_MODE)
-static void appBroadcastDataConf(uint8_t msgConfHandle, miwi_status_t status, uint8_t* msgPointer)
-{
-		
-}
-#endif

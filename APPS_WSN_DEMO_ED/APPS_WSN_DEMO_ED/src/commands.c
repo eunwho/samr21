@@ -1,40 +1,6 @@
-/**
-* \file  commands.c
-*
-* \brief WSNDemo command handler implementation
-*
-* Copyright (c) 2018 Microchip Technology Inc. and its subsidiaries. 
-*
-* \asf_license_start
-*
-* \page License
-*
-* Subject to your compliance with these terms, you may use Microchip
-* software and any derivatives exclusively with Microchip products. 
-* It is your responsibility to comply with third party license terms applicable 
-* to your use of third party software (including open source software) that 
-* may accompany Microchip software.
-*
-* THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS".  NO WARRANTIES, 
-* WHETHER EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE, 
-* INCLUDING ANY IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, 
-* AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT WILL MICROCHIP BE 
-* LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE, INCIDENTAL OR CONSEQUENTIAL 
-* LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND WHATSOEVER RELATED TO THE 
-* SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS BEEN ADVISED OF THE 
-* POSSIBILITY OR THE DAMAGES ARE FORESEEABLE.  TO THE FULLEST EXTENT 
-* ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN ANY WAY 
-* RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY, 
-* THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
-*
-* \asf_license_stop
-*
-*/
-/*
-* Support and FAQ: visit <a href="https://www.microchip.com/support/">Microchip Support</a>
-*/
+//
+//	file  commands.c
 
-/*- Includes ---------------------------------------------------------------*/
 #include <stdlib.h>
 #include <string.h>
 #include "asf.h"
@@ -43,10 +9,11 @@
 #include "sysTimer.h"
 #include "commands.h"
 #include "wsndemo.h"
+
 #if !(SAMD || SAMR21||SAML21||SAMR30)
-#if (LED_COUNT > 0)
-#include "led.h"
-#endif
+	#if (LED_COUNT > 0)
+		#include "led.h"
+	#endif
 #endif
 
 /*- Definitions ------------------------------------------------------------*/
@@ -124,14 +91,12 @@ void APP_CommandsByteReceived(uint8_t byte)
 {
 	switch (appCmdUartState) {
 	case APP_CMD_UART_STATE_IDLE:
-	{
 		if (0x10 == byte) {
 			appCmdUartPtr = 0;
 			appCmdUartCsum = byte;
 			appCmdUartState = APP_CMD_UART_STATE_SYNC;
 		}
-	}
-	break;
+		break;
 
 	case APP_CMD_UART_STATE_SYNC:
 	{
@@ -285,10 +250,11 @@ static bool appCmdHandle(uint8_t *data, uint8_t size)
 		appCmdIdentifyPeriodTimer.handler
 			= appCmdIdentifyPeriodTimerHandler;
 		SYS_TimerStart(&appCmdIdentifyPeriodTimer);
+/*
 #if (LED_COUNT > 0)
 		LED_On(LED_IDENTIFY);
 #endif
-		return true;
+*/		return true;
 	}
 #if defined(COORDINATOR) && defined(MIWI_MESH_TOPOLOGY_SIMULATION_MODE)
 

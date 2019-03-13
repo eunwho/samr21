@@ -4,15 +4,23 @@
 
 src\ASF\common2\services\delay\sam0\systick_counter.c
 
+src\ASF\common\services\sleepmgr\samd\sleepmgr.c
+
 src\ASF\common\utils\interrupt\interrupt_sam_nvic.c
 
 src\ASF\sam0\boards\samr21_xplained_pro\board_init.c
+
+src\ASF\sam0\drivers\adc\adc_sam_d_r_h\adc.c
 
 src\ASF\sam0\drivers\extint\extint_callback.c
 
 src\ASF\sam0\drivers\extint\extint_sam_d_r_h\extint.c
 
 src\ASF\sam0\drivers\port\port.c
+
+src\ASF\sam0\drivers\rtc\rtc_sam_d_r_h\rtc_calendar.c
+
+src\ASF\sam0\drivers\rtc\rtc_sam_d_r_h\rtc_calendar_interrupt.c
 
 src\ASF\sam0\drivers\sercom\i2c\i2c_sam0\i2c_master.c
 
