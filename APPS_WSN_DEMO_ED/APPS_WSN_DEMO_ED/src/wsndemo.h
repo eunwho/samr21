@@ -49,7 +49,9 @@ void wsndemo_task(void);
 
 #if LED_COUNT > 2
 #define LED_NETWORK       LED0_GPIO
-#define LED_DATA          LED1_GPIO
+//#define LED_DATA          LED1_GPIO
+#define LED_DATA          PIN_PA28		// by jsk
+
 #define LED_BLINK         LED2_GPIO
 #define LED_IDENTIFY      LED0_GPIO
 #elif LED_COUNT == 2

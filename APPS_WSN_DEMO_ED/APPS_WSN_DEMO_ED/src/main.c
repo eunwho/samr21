@@ -19,15 +19,16 @@ struct rtc_calendar_alarm_time alarm;
 int temp1;
 
 void rtc_match_callback(void){
-	// port_pin_toggle_output_level(LED_0_PIN);
-
-	LED_Toggle(LED_NETWORK); //by jsk
-//	LED_On(PIN_PA28);
-//	LED_Toggle(PIN_PA28); //by jsk
-
-	alarm.mask = RTC_CALENDAR_ALARM_MASK_SEC;
 	
-	alarm.time.second += 1;
+	// port_pin_toggle_output_level(LED_0_PIN);
+//	LED_Toggle(LED_NETWORK); //by jsk
+
+	if (APP_STATE_WAIT_SEND_TIMER == appState) {
+		appState = APP_STATE_SEND;
+	}
+	
+	alarm.mask = RTC_CALENDAR_ALARM_MASK_SEC;	
+	alarm.time.second += 10;
 	alarm.time.second = alarm.time.second % 60;
 	rtc_calendar_set_alarm(&rtc_instance, &alarm, RTC_CALENDAR_ALARM_0);
 }
@@ -107,12 +108,11 @@ int main ( void )
 	rtc_time.minute	= 0;
 	rtc_time.second	= 0;
 
-/*
 	configure_rtc_calendar();
 	configure_rtc_callbacks();
 	rtc_calendar_set_time(&rtc_instance, &rtc_time);
 	system_set_sleepmode(SYSTEM_SLEEPMODE_STANDBY);
-*/
+
 	sio2host_init();
 	wsndemo_init();
 	configure_adc();

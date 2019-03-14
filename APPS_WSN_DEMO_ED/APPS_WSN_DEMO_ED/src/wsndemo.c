@@ -1,7 +1,6 @@
 /**
 * \file  wsndemo.c
 */
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -11,102 +10,43 @@
 #include "commands.h"
 #include "miwi_api.h"
 
-#if defined(PAN_COORDINATOR)
-#include "sio2host.h"
-#endif
-
 #include "system.h"
 #include "asf.h"
 #include "wsndemo.h"
 
-
-#if defined(COORDINATOR) || defined (ENDDEVICE)
 static SYS_Timer_t appNetworkStatusTimer;
 static bool appNetworkStatus;
-#endif
-
-#if defined(PAN_COORDINATOR)
-static uint8_t rx_data[APP_RX_BUF_SIZE];
-#endif
 
 static AppMessage_t appMsg;
 SYS_Timer_t appDataSendingTimer;
-#ifndef PAN_COORDINATOR
+
 static uint8_t wsnmsghandle;
-#endif
 
 void UartBytesReceived(uint16_t bytes, uint8_t *byte );
 static void Connection_Confirm(miwi_status_t status);
-#ifndef PAN_COORDINATOR
+
 void searchConfim(uint8_t foundScanResults, void* ScanResults);
 void appLinkFailureCallback(void);
-#else
-#if defined(MIWI_MESH_TOPOLOGY_SIMULATION_MODE)
-static void appBroadcastDataConf(uint8_t msgConfHandle, miwi_status_t status, uint8_t* msgPointer);
-#endif
-#endif
-/*- Implementations --------------------------------------------------------*/
 
-#if defined(PAN_COORDINATOR)
 
-/*****************************************************************************
-*****************************************************************************/
-void UartBytesReceived(uint16_t bytes, uint8_t *byte )
-{
-	for (uint16_t i = 0; i < bytes; i++) {
-		APP_CommandsByteReceived(byte[i]);
-	}
-}
-
-static void appUartSendMessage(uint8_t *data, uint8_t size)
-{
-	uint8_t cs = 0;
-
-	sio2host_putchar(0x10);
-	sio2host_putchar(0x02);
-
-	for (uint8_t i = 0; i < size; i++) {
-		if (data[i] == 0x10) {
-			sio2host_putchar(0x10);
-			cs += 0x10;
-		}
-
-		sio2host_putchar(data[i]);
-		cs += data[i];
-	}
-
-	sio2host_putchar(0x10);
-	sio2host_putchar(0x03);
-	cs += 0x10 + 0x02 + 0x10 + 0x03;
-
-	sio2host_putchar(cs);
-}
-
-#endif
-
-/*****************************************************************************
-*****************************************************************************/
 static void appDataInd(RECEIVED_MESH_MESSAGE *ind)
 {
 	AppMessage_t *msg = (AppMessage_t *)ind->payload;
-#if (LED_COUNT > 0)
+
 	LED_Toggle(LED_DATA);
-#endif
+
 	msg->lqi = ind->packetLQI;
 	msg->rssi = ind->packetRSSI;
-#if defined(PAN_COORDINATOR)
-	appUartSendMessage(ind->payload, ind->payloadSize);
-#else
+
     appCmdDataInd(ind);
-#endif
+
 }
 
 /*****************************************************************************
 *****************************************************************************/
-volatile static AppState_t appStateTemp;
 static void appDataSendingTimerHandler(SYS_Timer_t *timer)
 {
-	LED_Toggle(LED_NETWORK); //by jsk
+//	LED_Toggle(LED_NETWORK);	//by jsk
 
 	if (APP_STATE_WAIT_SEND_TIMER == appState) {
 		appState = APP_STATE_SEND;
@@ -114,22 +54,13 @@ static void appDataSendingTimerHandler(SYS_Timer_t *timer)
 		SYS_TimerStart(&appDataSendingTimer);
 	}
 	(void)timer;
-
 }
 
-#if defined(COORDINATOR) || defined (ENDDEVICE)
-
-/*****************************************************************************
-*****************************************************************************/
 static void appNetworkStatusTimerHandler(SYS_Timer_t *timer)
 {
 	(void)timer;
 }
-#endif
 
-/*****************************************************************************
-*****************************************************************************/
-#if defined(COORDINATOR) || defined (ENDDEVICE)
 static void appDataConf(uint8_t msgConfHandle, miwi_status_t status, uint8_t* msgPointer)
 {
 	if (SUCCESS == status) {
@@ -139,7 +70,7 @@ static void appDataConf(uint8_t msgConfHandle, miwi_status_t status, uint8_t* ms
 		}
 	} else {
 		if (appNetworkStatus) {
-			SYS_TimerStart(&appNetworkStatusTimer);
+			SYS_TimerStart(&appNetworkStatusTimer); 
 			appNetworkStatus = false;
 		}
 	}
@@ -149,10 +80,6 @@ static void appDataConf(uint8_t msgConfHandle, miwi_status_t status, uint8_t* ms
 	}
 }
 
-#endif
-
-/*****************************************************************************
-*****************************************************************************/
 static void appSendData(void)
 {
     uint16_t shortAddressLocal = 0xFFFF;
@@ -225,38 +152,18 @@ static void appInit(void)
 	appDataSendingTimer.mode = SYS_TIMER_INTERVAL_MODE;
 	appDataSendingTimer.handler = appDataSendingTimerHandler;
 
-#if defined(COORDINATOR) || defined (ENDDEVICE)
 	appNetworkStatus = false;
 	appNetworkStatusTimer.interval = APP_NWKSTATUS_INTERVAL;
 	appNetworkStatusTimer.mode = SYS_TIMER_PERIODIC_MODE;
 	appNetworkStatusTimer.handler = appNetworkStatusTimerHandler;
 	SYS_TimerStart(&appNetworkStatusTimer);
-#else
-#endif
 
 	APP_CommandsInit();
-/*
-	appCmdIdentifyDurationTimer.mode = SYS_TIMER_INTERVAL_MODE;
-	appCmdIdentifyDurationTimer.handler = appCmdIdentifyDurationTimerHandler;
-
-	appCmdIdentifyPeriodTimer.mode = SYS_TIMER_PERIODIC_MODE;
-	appCmdIdentifyPeriodTimer.handler = appCmdIdentifyPeriodTimerHandler;
-*/
 	MiApp_SubscribeDataIndicationCallback(appDataInd);
 
-#ifndef PAN_COORDINATOR
-	MiApp_SubscribeLinkFailureCallback(appLinkFailureCallback);
-#endif
-
-#if defined(PAN_COORDINATOR)
-    appState = APP_STATE_START_NETWORK;
-#else
 	appState = APP_STATE_CONNECT_NETWORK;
-#endif
 }
 
-/*************************************************************************//**
-*****************************************************************************/
 static void APP_TaskHandler(void)
 {
 	switch(appState)
@@ -270,19 +177,13 @@ static void APP_TaskHandler(void)
 			break;
 
 		case APP_STATE_SEND:
-			//LED_Toggle(PIN_PA27);
-			// LED_Toggle(PIN_PA28);
-			// delay_ms(200);
 			appSendData();
-			// system_sleep();
 			break;
 		case APP_STATE_SENDING_DONE:
-			LED_Toggle(PIN_PA28);
-			delay_ms(200);
-			SYS_TimerStart(&appDataSendingTimer);
 			appState = APP_STATE_WAIT_SEND_TIMER;
+			system_sleep();
+			SYS_TimerStart(&appDataSendingTimer);
 			break;		
-
 		default:break;
 	}
 }
@@ -291,16 +192,8 @@ static void APP_TaskHandler(void)
 void wsndemo_init(void)
 {
 	MiApp_ProtocolInit(&defaultParamsRomOrRam, &defaultParamsRamOnly);
-
-#if defined(PAN_COORDINATOR)
-	sio2host_init();
-#endif
 }
 
-#ifndef PAN_COORDINATOR
-/**
- * Search confirmation
- */
 void searchConfim(uint8_t foundScanResults, void* ScanResults)
 {
 	searchConf_t* searchConfRes = (searchConf_t *)ScanResults;
@@ -325,7 +218,6 @@ void searchConfim(uint8_t foundScanResults, void* ScanResults)
 		appState = APP_STATE_CONNECT_NETWORK;
 	}
 }
-#endif
 
 /**
  * Connection confirmation
@@ -338,11 +230,7 @@ static void Connection_Confirm(miwi_status_t status)
 	}
 	else
 	{
-#if defined(PAN_COORDINATOR)
-		appState = APP_STATE_START_NETWORK;
-#else
         appState = APP_STATE_CONNECT_NETWORK;
-#endif
 	}
 }
 
