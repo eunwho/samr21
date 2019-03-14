@@ -15,9 +15,16 @@ void config_led(void);
 
 struct rtc_module rtc_instance;
 struct rtc_calendar_alarm_time alarm;
+// extern void appSendData();
+int temp1;
 
 void rtc_match_callback(void){
-	port_pin_toggle_output_level(LED_0_PIN);
+	// port_pin_toggle_output_level(LED_0_PIN);
+
+	LED_Toggle(LED_NETWORK); //by jsk
+//	LED_On(PIN_PA28);
+//	LED_Toggle(PIN_PA28); //by jsk
+
 	alarm.mask = RTC_CALENDAR_ALARM_MASK_SEC;
 	
 	alarm.time.second += 1;
@@ -71,6 +78,11 @@ void config_led(void){
 	pin_config.direction  = PORT_PIN_DIR_OUTPUT;
 	port_pin_set_config(LED_0_PIN, &pin_config);
 	port_pin_set_output_level(LED_0_PIN, false);
+
+	port_get_config_defaults( &pin_config);
+	pin_config.direction  = PORT_PIN_DIR_OUTPUT;
+	port_pin_set_config(PIN_PA28, &pin_config);
+	port_pin_set_output_level(PIN_PA28, false);
 }
 
 uint16_t adcResult;
@@ -86,9 +98,8 @@ int main ( void )
 	cpu_irq_enable();
 
 	config_led();
-/*
-	rtc_calendar_get_time_defaults(&rtc_time);
 
+	rtc_calendar_get_time_defaults(&rtc_time);
 	rtc_time.year	= 2019;
 	rtc_time.month	= 3;
 	rtc_time.day	= 11;
@@ -96,14 +107,17 @@ int main ( void )
 	rtc_time.minute	= 0;
 	rtc_time.second	= 0;
 
+/*
 	configure_rtc_calendar();
 	configure_rtc_callbacks();
 	rtc_calendar_set_time(&rtc_instance, &rtc_time);
+	system_set_sleepmode(SYSTEM_SLEEPMODE_STANDBY);
 */
 	sio2host_init();
 	wsndemo_init();
 	configure_adc();
-	
+
+		
     while(1)
 	{
 /*

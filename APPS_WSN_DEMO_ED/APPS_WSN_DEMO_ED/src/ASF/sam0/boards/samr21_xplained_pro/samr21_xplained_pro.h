@@ -486,7 +486,7 @@ void system_board_init(void);
  *
  * \note The pins of the specified LEDs are set to GPIO output mode.
  */
-#define LED_Off(led_gpio)     port_pin_set_output_level(led_gpio,true)
+#define LED_Off(led_gpio)     port_pin_set_output_level(led_gpio,false)
 
 /**
  * \brief Turns on the specified LEDs.
@@ -495,7 +495,7 @@ void system_board_init(void);
  *
  * \note The pins of the specified LEDs are set to GPIO output mode.
  */
-#define LED_On(led_gpio)      port_pin_set_output_level(led_gpio,false)
+#define LED_On(led_gpio)      port_pin_set_output_level(led_gpio,true)
 
 /**
  * \brief Toggles the specified LEDs.

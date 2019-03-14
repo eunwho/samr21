@@ -79,6 +79,59 @@ void wsndemo_task(void);
 #define LED_BLINK_INACTIVE_LEVEL  LED0_INACTIVE_LEVEL
 #endif
 
+#define APP_SCAN_DURATION 10
+// #define APP_CAPTION_SIZE  (sizeof(APP_CAPTION) - 1 + SHORT_ADDRESS_CAPTION_SIZE)
+#define APP_CAPTION_SIZE  10	// by jsk
+
+
+/*- Types ------------------------------------------------------------------*/
+COMPILER_PACK_SET(1)
+typedef struct  AppMessage_t {
+	uint8_t commandId;
+	uint8_t nodeType;
+	uint64_t extAddr;
+	uint16_t shortAddr;
+	uint32_t softVersion;
+	uint32_t channelMask;
+	uint16_t panId;
+	uint8_t workingChannel;
+	uint16_t nextHopAddr;
+	uint8_t lqi;
+	int8_t rssi;
+
+	struct {
+		uint8_t type;
+		uint8_t size;
+		int32_t battery;
+		int32_t temperature;
+		int32_t light;
+	} sensors;
+
+	struct {
+		uint8_t type;
+		uint8_t size;
+		char text[APP_CAPTION_SIZE];
+	} caption;
+} AppMessage_t;
+
+typedef enum AppState_t {
+	APP_STATE_INITIAL,
+	APP_STATE_START_NETWORK,
+	APP_STATE_CONNECT_NETWORK,
+	APP_STATE_CONNECTING_NETWORK,
+	APP_STATE_IN_NETWORK,
+	APP_STATE_SEND,
+	APP_STATE_WAIT_CONF,
+	APP_STATE_SENDING_DONE,
+	APP_STATE_WAIT_SEND_TIMER,
+	APP_STATE_WAIT_COMMAND_TIMER,
+	APP_STATE_PREPARE_TO_SLEEP,
+	APP_STATE_SLEEP,
+	APP_STATE_WAKEUP,
+} AppState_t;
+COMPILER_PACK_RESET()
+/*- Variables --------------------------------------------------------------*/
+static AppState_t appState = APP_STATE_INITIAL;
 extern SYS_Timer_t appDataSendingTimer;
 
 #endif /* WSNDEMO_H */

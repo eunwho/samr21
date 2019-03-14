@@ -16,63 +16,9 @@
 #endif
 
 #include "system.h"
-//#include "led.h"
-
 #include "asf.h"
 #include "wsndemo.h"
-/*****************************************************************************
-*****************************************************************************/
-#define APP_SCAN_DURATION 10
-#define APP_CAPTION_SIZE  (sizeof(APP_CAPTION) - 1 + SHORT_ADDRESS_CAPTION_SIZE)
 
-/*- Types ------------------------------------------------------------------*/
-COMPILER_PACK_SET(1)
-typedef struct  AppMessage_t {
-	uint8_t commandId;
-	uint8_t nodeType;
-	uint64_t extAddr;
-	uint16_t shortAddr;
-	uint32_t softVersion;
-	uint32_t channelMask;
-	uint16_t panId;
-	uint8_t workingChannel;
-	uint16_t nextHopAddr;
-	uint8_t lqi;
-	int8_t rssi;
-
-	struct {
-		uint8_t type;
-		uint8_t size;
-		int32_t battery;
-		int32_t temperature;
-		int32_t light;
-	} sensors;
-
-	struct {
-		uint8_t type;
-		uint8_t size;
-		char text[APP_CAPTION_SIZE];
-	} caption;
-} AppMessage_t;
-
-typedef enum AppState_t {
-	APP_STATE_INITIAL,
-	APP_STATE_START_NETWORK,
-	APP_STATE_CONNECT_NETWORK,
-	APP_STATE_CONNECTING_NETWORK,
-	APP_STATE_IN_NETWORK,
-	APP_STATE_SEND,
-	APP_STATE_WAIT_CONF,
-	APP_STATE_SENDING_DONE,
-	APP_STATE_WAIT_SEND_TIMER,
-	APP_STATE_WAIT_COMMAND_TIMER,
-	APP_STATE_PREPARE_TO_SLEEP,
-	APP_STATE_SLEEP,
-	APP_STATE_WAKEUP,
-} AppState_t;
-COMPILER_PACK_RESET()
-/*- Variables --------------------------------------------------------------*/
-static AppState_t appState = APP_STATE_INITIAL;
 
 #if defined(COORDINATOR) || defined (ENDDEVICE)
 static SYS_Timer_t appNetworkStatusTimer;
@@ -167,8 +113,8 @@ static void appDataSendingTimerHandler(SYS_Timer_t *timer)
 	} else {
 		SYS_TimerStart(&appDataSendingTimer);
 	}
-
 	(void)timer;
+
 }
 
 #if defined(COORDINATOR) || defined (ENDDEVICE)
@@ -177,7 +123,6 @@ static void appDataSendingTimerHandler(SYS_Timer_t *timer)
 *****************************************************************************/
 static void appNetworkStatusTimerHandler(SYS_Timer_t *timer)
 {
-//	LED_Toggle(LED_NETWORK);
 	(void)timer;
 }
 #endif
@@ -212,9 +157,8 @@ static void appSendData(void)
 {
     uint16_t shortAddressLocal = 0xFFFF;
     uint16_t shortAddressPanId = 0xFFFF;
-#ifndef PAN_COORDINATOR
+
     uint16_t dstAddr = 0; /* PAN Coordinator Address */
-#endif
 
 //	appMsg.sensors.battery     = rand() & 0xffff;
 //	appMsg.sensors.temperature = rand() & 0x7f;
@@ -228,10 +172,8 @@ static void appSendData(void)
         appMsg.shortAddr = shortAddressLocal;
 	appMsg.extAddr   = appMsg.shortAddr;
 
-#ifndef PAN_COORDINATOR
     /* Get Next Hop Short address to reach PAN Coordinator*/
 	appMsg.nextHopAddr = MiApp_MeshGetNextHopAddr(PAN_COORDINATOR_SHORT_ADDRESS);
-#endif
 
 	/* Get current working channel */
 	MiApp_Get(CHANNEL, (uint8_t *)&appMsg.workingChannel);
@@ -242,19 +184,15 @@ static void appSendData(void)
 
 	appMsg.caption.type         = 32;
 
-	{
-	    appMsg.caption.size         = APP_CAPTION_SIZE;
-	    memcpy(appMsg.caption.text, APP_CAPTION, APP_CAPTION_SIZE);
-		sprintf(&(appMsg.caption.text[APP_CAPTION_SIZE - SHORT_ADDRESS_CAPTION_SIZE]), "-0x%04X", shortAddressLocal);
-	}
+    appMsg.caption.size         = APP_CAPTION_SIZE;
+    memcpy(appMsg.caption.text, APP_CAPTION, APP_CAPTION_SIZE);
+	sprintf(&(appMsg.caption.text[APP_CAPTION_SIZE - SHORT_ADDRESS_CAPTION_SIZE]), "-0x%04X", shortAddressLocal);
 
 	if (MiApp_SendData(2, (uint8_t *)&dstAddr, sizeof(appMsg), (uint8_t *)&appMsg, wsnmsghandle, true, appDataConf))
 	{
 		++wsnmsghandle;
 		appState = APP_STATE_WAIT_CONF;
-	}
-	else
-	{
+	} else {
 		appState = APP_STATE_SENDING_DONE;
 	}
 }
@@ -330,13 +268,21 @@ static void APP_TaskHandler(void)
 			MiApp_SearchConnection(APP_SCAN_DURATION, CHANNEL_MAP, searchConfim);
 			appState = APP_STATE_CONNECTING_NETWORK;
 			break;
+
 		case APP_STATE_SEND:
+			//LED_Toggle(PIN_PA27);
+			// LED_Toggle(PIN_PA28);
+			// delay_ms(200);
 			appSendData();
+			// system_sleep();
 			break;
 		case APP_STATE_SENDING_DONE:
+			LED_Toggle(PIN_PA28);
+			delay_ms(200);
 			SYS_TimerStart(&appDataSendingTimer);
 			appState = APP_STATE_WAIT_SEND_TIMER;
 			break;		
+
 		default:break;
 	}
 }
@@ -408,6 +354,11 @@ void wsndemo_task(void)
 {
 	MeshTasks();
 	APP_TaskHandler();
+/*
+	appSendData();
+	LED_Off(PIN_PA28);
+	if(	appState == APP_STATE_SENDING_DONE )	system_sleep();	
+*/
 }
 
 void appLinkFailureCallback(void)
