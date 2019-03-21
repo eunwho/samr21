@@ -75,7 +75,7 @@
 #endif
 
 /************************** PROTOTYPES **********************************/
-void ReadMacAddress(void);
+void readMacAddress(void);
 
 /*********************************************************************
 * Function:         void main(void)
@@ -127,7 +127,7 @@ int main ( void )
 	sio2host_init();
 	
 	/* Read the MAC address from either flash or EDBG */
-//	ReadMacAddress();
+	readMacAddress();
 
     /* Initialize the demo */
 	wsndemo_init();
@@ -139,36 +139,13 @@ int main ( void )
 
 }
 
-/*********************************************************************
-* Function:         void ReadMacAddress()
-*
-* PreCondition:     none
-*
-* Input:		    none
-*
-* Output:		    Reads MAC Address from MAC Address EEPROM
-*
-* Side Effects:	    none
-*
-* Overview:		    Uses the MAC Address from the EEPROM for addressing
-*
-* Note:			    
-**********************************************************************/
-void ReadMacAddress(void)
-{
-#if BOARD == SAMR21ZLL_EK
-   uint8_t i = 0, j = 0;
-   for (i = 0; i < 8; i += 2, j++)
-   {
-     myLongAddress[i] = (NVM_UID_ADDRESS[j] & 0xFF);
-	 myLongAddress[i + 1] = (NVM_UID_ADDRESS[j] >> 8);
-   }
-#elif ((BOARD == SAMR30_XPLAINED_PRO) || (BOARD == SAMR21_XPLAINED_PRO))
-   uint8_t* peui64 = edbg_eui_read_eui64();
-	for(uint8_t k=0; k<MY_ADDRESS_LENGTH; k++)
-   {
-		myLongAddress[k] = peui64[MY_ADDRESS_LENGTH-k-1];
-   }
-#endif
+void readMacAddress(void){
+	myLongAddress[0] = 16;
+	myLongAddress[1] = 53;
+	myLongAddress[2] = 0;
+	myLongAddress[3] = 32;
+	myLongAddress[4] = 89;
+	myLongAddress[5] = 37;
+	myLongAddress[6] = 128;
+	myLongAddress[7] = 127;
 }
-

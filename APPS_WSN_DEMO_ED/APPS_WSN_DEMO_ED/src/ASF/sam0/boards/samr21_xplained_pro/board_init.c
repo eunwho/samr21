@@ -46,9 +46,6 @@ void board_init(void);
 #  pragma weak board_init=system_board_init
 #endif
 
-
-
-
 void system_board_init(void)
 {
 //	struct port_config pin_conf;

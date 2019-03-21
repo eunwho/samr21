@@ -50,31 +50,14 @@
 #define APP_RX_BUF_SIZE         20
 
 #define PAN_COORDINATOR_SHORT_ADDRESS   0x0000
-
-/* To display the short address like -0x1234 */
 #define SHORT_ADDRESS_CAPTION_SIZE     7
 
-#if defined(PAN_COORDINATOR)
-#define APP_CAPTION     "PAN Coordinator"
-#define APP_NODE_TYPE   0
-#define APP_COORDINATOR 1
-#define APP_ROUTER      0
-#define APP_ENDDEVICE   0
-#elif defined(COORDINATOR)
-#define APP_CAPTION     "Coordinator"
-#define APP_CAPTION_ED_SIZE  (sizeof(APP_CAPTION_ED) - 1 + SHORT_ADDRESS_CAPTION_SIZE)
-#define APP_CAPTION_ED  "End Device"
-#define APP_NODE_TYPE   1
-#define APP_COORDINATOR 0
-#define APP_ROUTER      1
-#define APP_ENDDEVICE   0
-#else
 //#define APP_CAPTION     "End Device"
-#define APP_CAPTION     "ED001"
+#define MAC_ADDR		33
+#define APP_CAPTION     "SUN"
 #define APP_NODE_TYPE   2
 #define APP_COORDINATOR 0
 #define APP_ROUTER      0
 #define APP_ENDDEVICE   1
-#endif
 
 #endif /* _CONFIG_H_ */

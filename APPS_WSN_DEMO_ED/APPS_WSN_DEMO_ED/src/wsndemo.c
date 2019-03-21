@@ -14,7 +14,61 @@
 #include "asf.h"
 #include "wsndemo.h"
 
+#define APP_SCAN_DURATION 10
+// #define APP_CAPTION_SIZE  (sizeof(APP_CAPTION) - 1 + SHORT_ADDRESS_CAPTION_SIZE)
+#define APP_CAPTION_SIZE  15// by jsk
+
+/*- Types ------------------------------------------------------------------*/
+COMPILER_PACK_SET(1)
+typedef struct  AppMessage_t {
+	uint8_t commandId;
+	uint8_t nodeType;
+	uint64_t extAddr;
+	uint16_t shortAddr;
+	uint32_t softVersion;
+	uint32_t channelMask;
+	uint16_t panId;
+	uint8_t workingChannel;
+	uint16_t nextHopAddr;
+	uint8_t lqi;
+	int8_t rssi;
+
+	struct {
+		uint8_t type;
+		uint8_t size;
+		int32_t battery;
+		int32_t temperature;
+		int32_t light;
+	} sensors;
+
+	struct {
+		uint8_t type;
+		uint8_t size;
+		char text[APP_CAPTION_SIZE];
+	} caption;
+} AppMessage_t;
+
+typedef enum AppState_t {
+	APP_STATE_INITIAL,
+	APP_STATE_START_NETWORK,
+	APP_STATE_CONNECT_NETWORK,
+	APP_STATE_CONNECTING_NETWORK,
+	APP_STATE_IN_NETWORK,
+	APP_STATE_SEND,
+	APP_STATE_WAIT_CONF,
+	APP_STATE_SENDING_DONE,
+	APP_STATE_WAIT_SEND_TIMER,
+	APP_STATE_WAIT_COMMAND_TIMER,
+	APP_STATE_PREPARE_TO_SLEEP,
+	APP_STATE_SLEEP,
+	APP_STATE_WAKEUP,
+} AppState_t;
+COMPILER_PACK_RESET()
+
+/*- Variables --------------------------------------------------------------*/
+static AppState_t appState = APP_STATE_INITIAL;
 static SYS_Timer_t appNetworkStatusTimer;
+
 static bool appNetworkStatus;
 
 static AppMessage_t appMsg;
@@ -28,48 +82,46 @@ static void Connection_Confirm(miwi_status_t status);
 void searchConfim(uint8_t foundScanResults, void* ScanResults);
 void appLinkFailureCallback(void);
 
-
-static void appDataInd(RECEIVED_MESH_MESSAGE *ind)
-{
+static void appDataInd(RECEIVED_MESH_MESSAGE *ind){
 	AppMessage_t *msg = (AppMessage_t *)ind->payload;
-
 	LED_Toggle(LED_DATA);
-
-	msg->lqi = ind->packetLQI;
-	msg->rssi = ind->packetRSSI;
-
+	msg->lqi = ind->packetLQI;	msg->rssi = ind->packetRSSI;
     appCmdDataInd(ind);
-
 }
 
-/*****************************************************************************
-*****************************************************************************/
-static void appDataSendingTimerHandler(SYS_Timer_t *timer)
-{
-//	LED_Toggle(LED_NETWORK);	//by jsk
-
-	if (APP_STATE_WAIT_SEND_TIMER == appState) {
-		appState = APP_STATE_SEND;
-	} else {
-		SYS_TimerStart(&appDataSendingTimer);
-	}
+static void appDataSendingTimerHandler(SYS_Timer_t *timer){
+	if (APP_STATE_WAIT_SEND_TIMER == appState) appState = APP_STATE_SEND;
+	else	SYS_TimerStart(&appDataSendingTimer);
 	(void)timer;
 }
 
 static void appNetworkStatusTimerHandler(SYS_Timer_t *timer)
 {
+#if (LED_COUNT > 0 )
+	LED_Toggle(LED_NETWORK);
+#endif
 	(void)timer;
 }
 
 static void appDataConf(uint8_t msgConfHandle, miwi_status_t status, uint8_t* msgPointer)
 {
+#if (LED_COUNT > 0 )
+	LED_Off(LED_DATA);
+#endif
+	
 	if (SUCCESS == status) {
 		if (!appNetworkStatus) {
+#if (LED_COUNT > 0 )
+			LED_On(LED_NETWORK);
+#endif
 			SYS_TimerStop(&appNetworkStatusTimer);
 			appNetworkStatus = true;
 		}
 	} else {
 		if (appNetworkStatus) {
+#if (LED_COUNT > 0 )
+			LED_Off(LED_NETWORK);
+#endif
 			SYS_TimerStart(&appNetworkStatusTimer); 
 			appNetworkStatus = false;
 		}
@@ -80,6 +132,9 @@ static void appDataConf(uint8_t msgConfHandle, miwi_status_t status, uint8_t* ms
 	}
 }
 
+extern struct adc_module adc_instance;
+extern uint16_t adcResult;
+
 static void appSendData(void)
 {
     uint16_t shortAddressLocal = 0xFFFF;
@@ -87,33 +142,48 @@ static void appSendData(void)
 
     uint16_t dstAddr = 0; /* PAN Coordinator Address */
 
-//	appMsg.sensors.battery     = rand() & 0xffff;
-//	appMsg.sensors.temperature = rand() & 0x7f;
-//	appMsg.sensors.light       = rand() & 0xff;
-	appMsg.sensors.battery     = 11;
-	appMsg.sensors.temperature = 22;
-	appMsg.sensors.light       = 33;
+	//adc_set_positive_input(&adc_instance,ADC_POSITIVE_INPUT_PIN6);
+	adc_start_conversion(&adc_instance);
+	delay_us(100);
+	adc_read(&adc_instance,&adcResult);
+	appMsg.sensors.light       = adcResult;
 
+	adc_set_positive_input(&adc_instance,ADC_POSITIVE_INPUT_TEMP);
+	delay_us(10);
+	adc_start_conversion(&adc_instance);
+	delay_us(10);
+	adc_read(&adc_instance,&adcResult);
+	appMsg.sensors.temperature = adcResult;
+
+	adc_set_positive_input(&adc_instance,ADC_POSITIVE_INPUT_SCALEDIOVCC);
+	adc_start_conversion(&adc_instance);
+	delay_us(10);
+	adc_read(&adc_instance,&adcResult);
+	appMsg.sensors.battery     = adcResult;
+	
 	/* Get Short address */
 	MiApp_Get(SHORT_ADDRESS, (uint8_t *)&shortAddressLocal);
-        appMsg.shortAddr = shortAddressLocal;
+	//	shortAddressLocal = ADDR_LOCAL;
+		appMsg.shortAddr = shortAddressLocal;
 	appMsg.extAddr   = appMsg.shortAddr;
-
     /* Get Next Hop Short address to reach PAN Coordinator*/
 	appMsg.nextHopAddr = MiApp_MeshGetNextHopAddr(PAN_COORDINATOR_SHORT_ADDRESS);
-
 	/* Get current working channel */
 	MiApp_Get(CHANNEL, (uint8_t *)&appMsg.workingChannel);
-
 	/* Get current working PanId */
 	MiApp_Get(PANID, (uint8_t *)&shortAddressPanId);
         appMsg.panId = shortAddressPanId;
+#if (LED_COUNT > 0 )
+	LED_On(LED_DATA);
+#endif
 
 	appMsg.caption.type         = 32;
 
     appMsg.caption.size         = APP_CAPTION_SIZE;
     memcpy(appMsg.caption.text, APP_CAPTION, APP_CAPTION_SIZE);
-	sprintf(&(appMsg.caption.text[APP_CAPTION_SIZE - SHORT_ADDRESS_CAPTION_SIZE]), "-0x%04X", shortAddressLocal);
+//	sprintf(&(appMsg.caption.text[APP_CAPTION_SIZE - SHORT_ADDRESS_CAPTION_SIZE]), "-0x%04X", shortAddressLocal);
+//	sprintf(&(appMsg.caption.text[APP_CAPTION_SIZE]),"-0x%04X", shortAddressLocal);
+	sprintf(appMsg.caption.text, "SUN%03d -0x%04x", MAC_ADDR, shortAddressLocal);
 
 	if (MiApp_SendData(2, (uint8_t *)&dstAddr, sizeof(appMsg), (uint8_t *)&appMsg, wsnmsghandle, true, appDataConf))
 	{
@@ -157,6 +227,10 @@ static void appInit(void)
 	appNetworkStatusTimer.mode = SYS_TIMER_PERIODIC_MODE;
 	appNetworkStatusTimer.handler = appNetworkStatusTimerHandler;
 	SYS_TimerStart(&appNetworkStatusTimer);
+
+#if (LED_COUNT > 0 )
+	LED_On(LED_NETWORK);
+#endif
 
 	APP_CommandsInit();
 	MiApp_SubscribeDataIndicationCallback(appDataInd);
@@ -224,14 +298,8 @@ void searchConfim(uint8_t foundScanResults, void* ScanResults)
  */
 static void Connection_Confirm(miwi_status_t status)
 {
-	if (SUCCESS == status)
-	{
-        appState = APP_STATE_SEND;
-	}
-	else
-	{
-        appState = APP_STATE_CONNECT_NETWORK;
-	}
+	if (SUCCESS == status) appState = APP_STATE_SEND;
+	else        appState = APP_STATE_CONNECT_NETWORK;
 }
 
 /**
@@ -242,11 +310,6 @@ void wsndemo_task(void)
 {
 	MeshTasks();
 	APP_TaskHandler();
-/*
-	appSendData();
-	LED_Off(PIN_PA28);
-	if(	appState == APP_STATE_SENDING_DONE )	system_sleep();	
-*/
 }
 
 void appLinkFailureCallback(void)

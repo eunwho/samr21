@@ -1,34 +1,36 @@
 /**
 * \file  main.c
 */
-
-/************************ HEADERS ****************************************/
 #include "asf.h"
 #include "sio2host.h"
 #include "wsndemo.h"
 #include "miwi_api.h"
+#include "config.h"
 
 void rtc_match_callback(void);
 void configure_rtc_callbacks(void);
 void configure_rtc_calendar(void);
 void config_led(void);
+void readMacAddress(void);
 
 struct rtc_module rtc_instance;
 struct rtc_calendar_alarm_time alarm;
+//extern AppState_t appState;
 // extern void appSendData();
+
 int temp1;
 
 void rtc_match_callback(void){
 	
 	// port_pin_toggle_output_level(LED_0_PIN);
 //	LED_Toggle(LED_NETWORK); //by jsk
-
+/*
 	if (APP_STATE_WAIT_SEND_TIMER == appState) {
 		appState = APP_STATE_SEND;
 	}
-	
+*/
 	alarm.mask = RTC_CALENDAR_ALARM_MASK_SEC;	
-	alarm.time.second += 10;
+	alarm.time.second += 1;
 	alarm.time.second = alarm.time.second % 60;
 	rtc_calendar_set_alarm(&rtc_instance, &alarm, RTC_CALENDAR_ALARM_0);
 }
@@ -57,7 +59,7 @@ void configure_rtc_calendar(void){
 }
 
 void configure_adc(void);
-void ReadMacAddress(void);
+//void ReadMacAddress(void);
 
 struct adc_module adc_instance;
 
@@ -67,9 +69,7 @@ void configure_adc(void)
 	
 	adc_get_config_defaults(&config_adc);
 	adc_init(&adc_instance, ADC, &config_adc);
-//	adc_set_positive_input(&adc_instance,ADC_POSITIVE_INPUT_PIN6);
-	adc_set_positive_input(&adc_instance,ADC_POSITIVE_INPUT_PIN7);
-//	adc_set_pin_scan_mode (&adc_instance,ADC_POSITIVE_INPUT_PIN6,2);
+	adc_set_positive_input(&adc_instance,ADC_POSITIVE_INPUT_PIN6);
 	adc_enable(&adc_instance);	
 }
 
@@ -86,8 +86,20 @@ void config_led(void){
 	port_pin_set_output_level(PIN_PA28, false);
 }
 
+
 uint16_t adcResult;
 volatile uint16_t temp[2];
+
+void readMacAddress(void){
+	myLongAddress[0] = 16;
+	myLongAddress[1] = 53;
+	myLongAddress[2] = 0;
+	myLongAddress[3] = 32;
+	myLongAddress[4] = 89;
+	myLongAddress[5] = 37;
+	myLongAddress[6] = 128;
+	myLongAddress[7] = MAC_ADDR;	
+}
 
 int main ( void )
 {
@@ -99,7 +111,6 @@ int main ( void )
 	cpu_irq_enable();
 
 	config_led();
-
 	rtc_calendar_get_time_defaults(&rtc_time);
 	rtc_time.year	= 2019;
 	rtc_time.month	= 3;
@@ -113,48 +124,11 @@ int main ( void )
 	rtc_calendar_set_time(&rtc_instance, &rtc_time);
 	system_set_sleepmode(SYSTEM_SLEEPMODE_STANDBY);
 
-	sio2host_init();
+	readMacAddress();
 	wsndemo_init();
 	configure_adc();
-
-		
     while(1)
 	{
-/*
-		adc_flush(&adc_instance);
-		adc_start_conversion(&adc_instance);
-		delay_us(100);
-		adc_read(&adc_instance,&adcResult);
-		temp[0] = adcResult;
-*/
-/*		
-		port_pin_toggle_output_level(LED_0_PIN);
-		delay_ms(500);
-*/			
-//		adc_start_conversion(&adc_instance);
-//		delay_us(100);
-//		adc_read(&adc_instance,&adcResult);
-//		temp[1] = adcResult;
 		wsndemo_task();
     }
 }
-
-/*********************************************************************
-* Function:         void ReadMacAddress()
-*
-* PreCondition:     none
-*
-* Input:		    none
-*
-* Output:		    Reads MAC Address from MAC Address EEPROM
-*
-* Side Effects:	    none
-*
-* Overview:		    Uses the MAC Address from the EEPROM for addressing
-*
-* Note:			    
-**********************************************************************/
-void ReadMacAddress(void)
-{
-}
-
