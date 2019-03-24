@@ -18,13 +18,9 @@ src\ASF\sam0\drivers\sercom\i2c\i2c_sam0\i2c_master.c
 
 src\ASF\sam0\drivers\sercom\sercom.c
 
-src\ASF\sam0\drivers\sercom\sercom_interrupt.c
-
 src\ASF\sam0\drivers\sercom\spi\spi.c
 
 src\ASF\sam0\drivers\sercom\usart\usart.c
-
-src\ASF\sam0\drivers\sercom\usart\usart_interrupt.c
 
 src\ASF\sam0\drivers\system\clock\clock_samd21_r21_da_ha1\clock.c
 

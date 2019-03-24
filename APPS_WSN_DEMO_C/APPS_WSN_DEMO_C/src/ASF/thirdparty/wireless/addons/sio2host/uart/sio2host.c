@@ -78,26 +78,6 @@ static uint8_t serial_rx_count;
 
 void sio2host_init(void)
 {
-#if SAMD || SAMR21 || SAML21 || SAMR30
-	struct usart_config host_uart_config;
-	/* Configure USART for unit test output */
-	usart_get_config_defaults(&host_uart_config);
-	host_uart_config.mux_setting = HOST_SERCOM_MUX_SETTING;
-
-	host_uart_config.pinmux_pad0 = HOST_SERCOM_PINMUX_PAD0;
-	host_uart_config.pinmux_pad1 = HOST_SERCOM_PINMUX_PAD1;
-	host_uart_config.pinmux_pad2 = HOST_SERCOM_PINMUX_PAD2;
-	host_uart_config.pinmux_pad3 = HOST_SERCOM_PINMUX_PAD3;
-	host_uart_config.baudrate    = USART_HOST_BAUDRATE;
-	stdio_serial_init(&host_uart_module, USART_HOST, &host_uart_config);
-	usart_enable(&host_uart_module);
-	/* Enable transceivers */
-	usart_enable_transceiver(&host_uart_module, USART_TRANSCEIVER_TX);
-	usart_enable_transceiver(&host_uart_module, USART_TRANSCEIVER_RX);
-#else
-	stdio_serial_init(USART_HOST, &usart_serial_options);
-#endif
-	USART_HOST_RX_ISR_ENABLE();
 }
 
 uint8_t sio2host_tx(uint8_t *data, uint8_t length)

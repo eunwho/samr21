@@ -75,10 +75,6 @@
 // From module: Part identification macros
 #include <parts.h>
 
-// From module: SERCOM Callback API
-#include <sercom.h>
-#include <sercom_interrupt.h>
-
 // From module: SERCOM I2C - Master Mode I2C (Polled APIs)
 #include <i2c_common.h>
 #include <i2c_master.h>
@@ -89,9 +85,8 @@
 // From module: SERCOM SPI - Serial Peripheral Interface (Polled APIs)
 #include <spi.h>
 
-// From module: SERCOM USART - Serial Communications (Callback APIs)
+// From module: SERCOM USART - Serial Communications (Polled APIs)
 #include <usart.h>
-#include <usart_interrupt.h>
 
 // From module: SYSTEM - Clock Management for SAMD21/R21/DA/HA
 #include <clock.h>

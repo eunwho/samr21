@@ -1,140 +1,74 @@
 /**
 * \file  main.c
-*
-* \brief Main file for WSN Demo Example on MiWi Mesh.
-*
-* Copyright (c) 2018 Microchip Technology Inc. and its subsidiaries. 
-*
-* \asf_license_start
-*
-* \page License
-*
-* Subject to your compliance with these terms, you may use Microchip
-* software and any derivatives exclusively with Microchip products. 
-* It is your responsibility to comply with third party license terms applicable 
-* to your use of third party software (including open source software) that 
-* may accompany Microchip software.
-*
-* THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS".  NO WARRANTIES, 
-* WHETHER EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE, 
-* INCLUDING ANY IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, 
-* AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT WILL MICROCHIP BE 
-* LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE, INCIDENTAL OR CONSEQUENTIAL 
-* LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND WHATSOEVER RELATED TO THE 
-* SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS BEEN ADVISED OF THE 
-* POSSIBILITY OR THE DAMAGES ARE FORESEEABLE.  TO THE FULLEST EXTENT 
-* ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN ANY WAY 
-* RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY, 
-* THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
-*
-* \asf_license_stop
-*
 */
-/*
-* Support and FAQ: visit <a href="https://www.microchip.com/support/">Microchip Support</a>
-*/
-
-/**
-* \mainpage
-* \section preface Preface
-* This is the reference manual for the WSN Demo Application
-* The WSNDemo application implements a typical wireless sensor network scenario,
-* in which one central node collects the data from a network of sensors and
-* passes this data over a serial connection for further processing.
-* In the case of the WSNDemo this processing is performed by the WSNMonitor PC
-* application. The MiWi™ Quick Start Guide  provides a detailed description
-* of the WSNDemo application scenario, and instructions on how to use WSNMonitor.
-* <P>• Device types (PAN Coordinator, Coordinator and End Device) and its address in 
-* MiWi™ Mesh network is displayed on the nodes.</P>
-* <P>• The value of the extended address field is set equal to the value of the
-* short address field.</P>
-* <P>• For all frames, the LQI and RSSI fields are filled in by the coordinator
-* with the values of LQI and RSSI from the received frame. This means that nodes
-* that are not connected to the coordinator directly will have the same values
-* as the last node on the route to the coordinator.</P>
-* <P>• Sensor data values are generated randomly on all platforms.</P>
-* <P>• Sending data to the nodes can be triggered when the light button on the 
-* node is clicked. This also blinks the LED in node.
-* </P>
-*/
-
-
-/************************ HEADERS ****************************************/
 #include "asf.h"
 #include "sio2host.h"
 #include "wsndemo.h"
 #include "miwi_api.h"
 
-#if ((BOARD == SAMR30_XPLAINED_PRO) || (BOARD == SAMR21_XPLAINED_PRO))
-#include "edbg-eui.h"
-#endif
-
-/************************** DEFINITIONS **********************************/
-#if (BOARD == SAMR21ZLL_EK)
-#define NVM_UID_ADDRESS   ((volatile uint16_t *)(0x00804008U))
-#endif
-
-/************************** PROTOTYPES **********************************/
 void readMacAddress(void);
 
-/*********************************************************************
-* Function:         void main(void)
-*
-* PreCondition:     none
-*
-* Input:		    none
-*
-* Output:		    none
-*
-* Side Effects:	    none
-*
-* Overview:		    This is the main function that runs the simple 
-*                   example demo. The purpose of this example is to
-*                   demonstrate the simple application programming
-*                   interface for the MiWi(TM) Development 
-*                   Environment. By virtually total of less than 30 
-*                   lines of code, we can develop a complete 
-*                   application using MiApp interface. The 
-*                   application will first try to establish a
-*                   link with another device and then process the 
-*                   received information as well as transmit its own 
-*                   information.
-*                   MiWi(TM) DE also support a set of rich 
-*                   features. Example code FeatureExample will
-*                   demonstrate how to implement the rich features 
-*                   through MiApp programming interfaces.
-*
-* Note:			    
-**********************************************************************/
+void configure_usart(void);
+void config_rs485_TX_EN(void);
+
+struct usart_module usart_instance;
+void configure_usart(void)
+{
+	struct usart_config config_usart;
+	usart_get_config_defaults(&config_usart);
+	config_usart.baudrate    = 9600;
+	
+//	config_usart.mux_setting = EDBG_CDC_SERCOM_MUX_SETTING;
+//	config_usart.pinmux_pad0 = EDBG_CDC_SERCOM_PINMUX_PAD0;
+//	config_usart.pinmux_pad1 = EDBG_CDC_SERCOM_PINMUX_PAD1;
+//	config_usart.pinmux_pad2 = EDBG_CDC_SERCOM_PINMUX_PAD2;
+//	config_usart.pinmux_pad3 = EDBG_CDC_SERCOM_PINMUX_PAD3;
+
+	config_usart.mux_setting = USART_RX_3_TX_2_XCK_3;
+	// config_usart.pinmux_pad0 = EDBG_CDC_SERCOM_PINMUX_PAD0;
+	// config_usart.pinmux_pad1 = EDBG_CDC_SERCOM_PINMUX_PAD1;
+	config_usart.pinmux_pad2 = PINMUX_PB22D_SERCOM5_PAD2;		// Tx
+	config_usart.pinmux_pad3 = PINMUX_PB23D_SERCOM5_PAD3;		// Rx
+
+	while (usart_init(&usart_instance, SERCOM5, &config_usart) != STATUS_OK) {
+	}
+
+	usart_enable(&usart_instance);
+}
+
+void config_rs485_TX_EN(void){
+	struct port_config pin_config;
+	port_get_config_defaults( &pin_config);
+	pin_config.direction  = PORT_PIN_DIR_OUTPUT;
+	port_pin_set_config(PIN_PA27, &pin_config);
+	port_pin_set_output_level(PIN_PA27, false);
+}
+
+
+uint8_t string[]="Hello World! \r\n";
+
 int main ( void )
 {
+	
 	irq_initialize_vectors();
-
-#if SAMD || SAMR21 || SAML21 || SAMR30
 	system_init();
 	delay_init();
-#else
-	sysclk_init();
-	board_init();
-#endif
-
 	cpu_irq_enable();	
+	config_rs485_TX_EN( );
 
-#if defined (ENABLE_LCD)	
-	LCD_Initialize();
-#endif
-
-	sio2host_init();
-	
-	/* Read the MAC address from either flash or EDBG */
+//	LCD_Initialize();
 	readMacAddress();
-
-    /* Initialize the demo */
 	wsndemo_init();
+	configure_usart();
 	
     while(1)
     {
-		wsndemo_task();
+		port_pin_set_output_level(PIN_PA27, true);
+		usart_write_buffer_wait(&usart_instance, string, sizeof(string));
+		delay_ms(10);
+		port_pin_set_output_level(PIN_PA27, false);
+		delay_ms(1000);		
+		// wsndemo_task();
     }
 
 }

@@ -22,6 +22,9 @@ unsigned char gflagConnect;
 
 unsigned char gUartRxDone;
 
+// receive protocol {0x02, ADDR_485,'R','3','4','5','6','7','8','9','A', 0x03, 0x00};
+// byte 0 STX, 1 address, 2 w don't care, 3 ~ 10 dummy, 11 ETX
+ 	
 unsigned char gUartRxBuffer[14];
 unsigned char gUartTxBuffer[14] = {0x02, ADDR_485,'R','3','4','5','6','7','8','9','A', 0x03, 0x00};
 
