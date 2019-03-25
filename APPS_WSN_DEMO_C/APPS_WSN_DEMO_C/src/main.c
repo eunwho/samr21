@@ -68,10 +68,8 @@ void config_rs485_TX_EN(void){
 
 void configure_usart_callbacks(void)
 {
-	usart_register_callback(&usart_instance,
-	usart_write_callback, USART_CALLBACK_BUFFER_TRANSMITTED);
-	usart_register_callback(&usart_instance,
-	usart_read_callback, USART_CALLBACK_BUFFER_RECEIVED);
+	usart_register_callback(&usart_instance, usart_write_callback, USART_CALLBACK_BUFFER_TRANSMITTED);
+	usart_register_callback(&usart_instance, usart_read_callback, USART_CALLBACK_BUFFER_RECEIVED);
 
 	usart_enable_callback(&usart_instance, USART_CALLBACK_BUFFER_TRANSMITTED);
 	usart_enable_callback(&usart_instance, USART_CALLBACK_BUFFER_RECEIVED);
@@ -114,6 +112,9 @@ int main ( void )
 		port_pin_set_output_level(PIN_PA27, true);	
 		usart_write_buffer_wait(&usart_instance, readDout485, sizeof(readDout485));
 		port_pin_set_output_level(PIN_PA27, false);
+
+		usart_read_buffer_wait(&usart_instance, rx_buffer,13); 
+
 		delay_ms(10);
 		port_pin_set_output_level(PIN_PA27, true);
 		delay_ms(2000);
