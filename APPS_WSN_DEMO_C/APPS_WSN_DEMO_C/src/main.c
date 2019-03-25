@@ -78,6 +78,10 @@ void configure_usart_callbacks(void)
 }
 
 uint8_t readIn485[]={0x02,0x51,'R','F','F','F','F','F','F','F','F',0x03,0x00};
+
+uint8_t writeDout485[]={0x02,0x52,'W','P','A','0','0','F','F','F','F',0x03,0x00};
+uint8_t readDout485[]={0x02,0x52,'R','F','F','0','0','F','F','F','F',0x03,0x00};
+
 volatile uint16_t temp;
 
 int main ( void )
@@ -95,15 +99,24 @@ int main ( void )
 	configure_usart();
 	// configure_usart_callbacks();
 	// system_interrupt_enable_global();
+
+	port_pin_set_output_level(PIN_PA27, true);
+	usart_write_buffer_wait(&usart_instance, writeDout485, sizeof(writeDout485));
+	delay_us(100);
+	port_pin_set_output_level(PIN_PA27, false);
+	delay_ms(10);
+	port_pin_set_output_level(PIN_PA27, true);
 		
 	while (true) {
-		port_pin_set_output_level(PIN_PA27, false);
+		//port_pin_set_output_level(PIN_PA27, false);
 		//usart_read_buffer_job(&usart_instance, rx_buffer, MAX_RX_BUFFER_LENGTH);	
 		//port_pin_set_output_level(PIN_PA27, true);
 		port_pin_set_output_level(PIN_PA27, true);	
-		usart_write_buffer_wait(&usart_instance, readIn485, sizeof(readIn485));
+		usart_write_buffer_wait(&usart_instance, readDout485, sizeof(readDout485));
 		port_pin_set_output_level(PIN_PA27, false);
-		delay_ms(1000);
+		delay_ms(10);
+		port_pin_set_output_level(PIN_PA27, true);
+		delay_ms(2000);
 	}
 
 /*	
