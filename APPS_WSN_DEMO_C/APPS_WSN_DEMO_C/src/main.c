@@ -6,12 +6,34 @@
 #include "wsndemo.h"
 #include "miwi_api.h"
 
+#define MAX_RX_BUFFER_LENGTH   14
+struct usart_module usart_instance;
+
+void usart_read_callback(struct usart_module *const usart_module);
+void usart_write_callback(struct usart_module *const usart_module);
+
+volatile uint8_t rx_buffer[MAX_RX_BUFFER_LENGTH];
+
+void usart_read_callback(struct usart_module *const usart_module)
+{
+	usart_write_buffer_job(&usart_instance,
+	(uint8_t *)rx_buffer, MAX_RX_BUFFER_LENGTH);
+}
+
+void usart_write_callback(struct usart_module *const usart_module)
+{
+	port_pin_toggle_output_level(LED_0_PIN);
+}
+
 void readMacAddress(void);
 
+
 void configure_usart(void);
+void configure_usart_callbacks(void);
+
 void config_rs485_TX_EN(void);
 
-struct usart_module usart_instance;
+
 void configure_usart(void)
 {
 	struct usart_config config_usart;
@@ -44,8 +66,19 @@ void config_rs485_TX_EN(void){
 	port_pin_set_output_level(PIN_PA27, false);
 }
 
+void configure_usart_callbacks(void)
+{
+	usart_register_callback(&usart_instance,
+	usart_write_callback, USART_CALLBACK_BUFFER_TRANSMITTED);
+	usart_register_callback(&usart_instance,
+	usart_read_callback, USART_CALLBACK_BUFFER_RECEIVED);
 
-uint8_t string[]="Hello World! \r\n";
+	usart_enable_callback(&usart_instance, USART_CALLBACK_BUFFER_TRANSMITTED);
+	usart_enable_callback(&usart_instance, USART_CALLBACK_BUFFER_RECEIVED);
+}
+
+uint8_t readIn485[]={0x02,0x51,'R','F','F','F','F','F','F','F','F',0x03,0x00};
+volatile uint16_t temp;
 
 int main ( void )
 {
@@ -60,17 +93,39 @@ int main ( void )
 	readMacAddress();
 	wsndemo_init();
 	configure_usart();
-	
+	// configure_usart_callbacks();
+	// system_interrupt_enable_global();
+		
+	while (true) {
+		port_pin_set_output_level(PIN_PA27, false);
+		//usart_read_buffer_job(&usart_instance, rx_buffer, MAX_RX_BUFFER_LENGTH);	
+		//port_pin_set_output_level(PIN_PA27, true);
+		port_pin_set_output_level(PIN_PA27, true);	
+		usart_write_buffer_wait(&usart_instance, readIn485, sizeof(readIn485));
+		port_pin_set_output_level(PIN_PA27, false);
+		delay_ms(1000);
+	}
+
+/*	
     while(1)
     {
 		port_pin_set_output_level(PIN_PA27, true);
-		usart_write_buffer_wait(&usart_instance, string, sizeof(string));
-		delay_ms(10);
+		usart_write_buffer_wait(&usart_instance, readIn485, sizeof(readIn485));
+		delay_ms(7);
 		port_pin_set_output_level(PIN_PA27, false);
-		delay_ms(1000);		
+		
+		port_pin_set_output_level(PIN_PA27, false);
+		if (usart_read_wait(&usart_instance, &temp) == STATUS_OK) {
+			port_pin_set_output_level(PIN_PA27, true);
+			delay_us(10);
+			while (usart_write_wait(&usart_instance, temp) != STATUS_OK) {
+			}			
+			port_pin_set_output_level(PIN_PA27, false);			
+		}
+//		delay_ms(1000);		
 		// wsndemo_task();
     }
-
+*/
 }
 
 void readMacAddress(void){
