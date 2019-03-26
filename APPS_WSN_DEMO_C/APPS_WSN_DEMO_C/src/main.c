@@ -2,9 +2,39 @@
 * \file  main.c
 */
 #include "asf.h"
+#include "main.h"
 #include "sio2host.h"
 #include "wsndemo.h"
 #include "miwi_api.h"
+
+#include "common/include/nm_common.h"
+#include "driver/include/m2m_wifi.h"
+#include "socket/include/socket.h"
+
+#define STRING_EOL    "\r\n"
+#define STRING_HEADER "-- WINC1500 TCP client example --"STRING_EOL \
+"-- "BOARD_NAME " --"STRING_EOL	\
+"-- Compiled: "__DATE__ " "__TIME__ " --"STRING_EOL
+
+typedef struct s_msg_wifi_product {
+	uint8_t name[9];
+} t_msg_wifi_product;
+
+static t_msg_wifi_product msg_wifi_product = {
+	.name = MAIN_WIFI_M2M_PRODUCT_NAME,
+};
+
+static uint8_t gau8SocketTestBuffer[MAIN_WIFI_M2M_BUFFER_SIZE];
+static SOCKET tcp_client_socket = -1;
+static uint8_t wifi_connected;
+
+
+
+
+
+
+/** UART module for debug. */
+static struct usart_module cdc_uart_module;
 
 #define MAX_RX_BUFFER_LENGTH   14
 struct usart_module usart_instance;
@@ -91,10 +121,13 @@ int main ( void )
 	cpu_irq_enable();	
 	config_rs485_TX_EN( );
 
+	sio2host_init();
+	
 //	LCD_Initialize();
 	readMacAddress();
 	wsndemo_init();
 	configure_usart();
+
 	// configure_usart_callbacks();
 	// system_interrupt_enable_global();
 
@@ -104,8 +137,17 @@ int main ( void )
 	port_pin_set_output_level(PIN_PA27, false);
 	delay_ms(10);
 	port_pin_set_output_level(PIN_PA27, true);
+
+//--- wifi setting
+/*
+	if(SystTick_Config(system_cpu_clock_get_hz() / 1000 )) {
+		puts("main: Systick configuration error!");
+		while(1);
+	}
+*/
 		
 	while (true) {
+/*
 		//port_pin_set_output_level(PIN_PA27, false);
 		//usart_read_buffer_job(&usart_instance, rx_buffer, MAX_RX_BUFFER_LENGTH);	
 		//port_pin_set_output_level(PIN_PA27, true);
@@ -118,6 +160,8 @@ int main ( void )
 		delay_ms(10);
 		port_pin_set_output_level(PIN_PA27, true);
 		delay_ms(2000);
+*/
+		wsndemo_task();
 	}
 
 /*	
