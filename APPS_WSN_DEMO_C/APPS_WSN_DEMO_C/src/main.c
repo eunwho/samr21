@@ -154,9 +154,7 @@ int main ( void )
 		port_pin_set_output_level(PIN_PA27, true);	
 		usart_write_buffer_wait(&usart_instance, readDout485, sizeof(readDout485));
 		port_pin_set_output_level(PIN_PA27, false);
-
 		usart_read_buffer_wait(&usart_instance, rx_buffer,13); 
-
 		delay_ms(10);
 		port_pin_set_output_level(PIN_PA27, true);
 		delay_ms(2000);

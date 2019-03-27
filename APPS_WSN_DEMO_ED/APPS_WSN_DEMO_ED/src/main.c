@@ -30,7 +30,7 @@ void rtc_match_callback(void){
 	}
 */
 	alarm.mask = RTC_CALENDAR_ALARM_MASK_SEC;	
-	alarm.time.second += 1;
+	alarm.time.second += 10;
 	alarm.time.second = alarm.time.second % 60;
 	rtc_calendar_set_alarm(&rtc_instance, &alarm, RTC_CALENDAR_ALARM_0);
 }

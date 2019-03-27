@@ -15,21 +15,21 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
   5 .comment      000000e5  00000000  00000000  000200e4  2**0
                   CONTENTS, READONLY
-  6 .debug_info   0004d090  00000000  00000000  000201c9  2**0
+  6 .debug_info   0004d08f  00000000  00000000  000201c9  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 0000780c  00000000  00000000  0006d259  2**0
+  7 .debug_abbrev 0000780c  00000000  00000000  0006d258  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_loc    0000e41d  00000000  00000000  00074a65  2**0
+  8 .debug_loc    0000e41d  00000000  00000000  00074a64  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_aranges 00000ab8  00000000  00000000  00082e82  2**0
+  9 .debug_aranges 00000ab8  00000000  00000000  00082e81  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_ranges 00001200  00000000  00000000  0008393a  2**0
+ 10 .debug_ranges 00001200  00000000  00000000  00083939  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_macro  00020376  00000000  00000000  00084b3a  2**0
+ 11 .debug_macro  00020376  00000000  00000000  00084b39  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_line   000199f5  00000000  00000000  000a4eb0  2**0
+ 12 .debug_line   000199f5  00000000  00000000  000a4eaf  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_str    00089965  00000000  00000000  000be8a5  2**0
+ 13 .debug_str    00089966  00000000  00000000  000be8a4  2**0
                   CONTENTS, READONLY, DEBUGGING
  14 .debug_frame  00001e10  00000000  00000000  0014820c  2**2
                   CONTENTS, READONLY, DEBUGGING
@@ -12175,9 +12175,9 @@ void rtc_match_callback(void){
     3e22:	4c08      	ldr	r4, [pc, #32]	; (3e44 <rtc_match_callback+0x24>)
     3e24:	2301      	movs	r3, #1
     3e26:	7223      	strb	r3, [r4, #8]
-	alarm.time.second += 1;
+	alarm.time.second += 10;
     3e28:	7820      	ldrb	r0, [r4, #0]
-    3e2a:	3001      	adds	r0, #1
+    3e2a:	300a      	adds	r0, #10
 	alarm.time.second = alarm.time.second % 60;
     3e2c:	b2c0      	uxtb	r0, r0
     3e2e:	213c      	movs	r1, #60	; 0x3c
@@ -12478,7 +12478,7 @@ void readMacAddress(void){
     3fbe:	325b      	adds	r2, #91	; 0x5b
     3fc0:	719a      	strb	r2, [r3, #6]
 	myLongAddress[7] = MAC_ADDR;	
-    3fc2:	3a5f      	subs	r2, #95	; 0x5f
+    3fc2:	3a7c      	subs	r2, #124	; 0x7c
     3fc4:	71da      	strb	r2, [r3, #7]
 }
     3fc6:	4770      	bx	lr
@@ -12859,523 +12859,522 @@ void wsndemo_task(void)
     41ec:	b5f0      	push	{r4, r5, r6, r7, lr}
     41ee:	b087      	sub	sp, #28
 	MeshTasks();
-    41f0:	4bc4      	ldr	r3, [pc, #784]	; (4504 <wsndemo_task+0x318>)
+    41f0:	4bc3      	ldr	r3, [pc, #780]	; (4500 <wsndemo_task+0x314>)
     41f2:	4798      	blx	r3
 	switch(appState)
-    41f4:	4bc4      	ldr	r3, [pc, #784]	; (4508 <wsndemo_task+0x31c>)
+    41f4:	4bc3      	ldr	r3, [pc, #780]	; (4504 <wsndemo_task+0x318>)
     41f6:	781b      	ldrb	r3, [r3, #0]
     41f8:	2b02      	cmp	r3, #2
-    41fa:	d066      	beq.n	42ca <wsndemo_task+0xde>
+    41fa:	d064      	beq.n	42c6 <wsndemo_task+0xda>
     41fc:	b2da      	uxtb	r2, r3
     41fe:	2a02      	cmp	r2, #2
-    4200:	d90e      	bls.n	4220 <wsndemo_task+0x34>
+    4200:	d90d      	bls.n	421e <wsndemo_task+0x32>
     4202:	2b05      	cmp	r3, #5
-    4204:	d100      	bne.n	4208 <wsndemo_task+0x1c>
-    4206:	e06a      	b.n	42de <wsndemo_task+0xf2>
-    4208:	2b07      	cmp	r3, #7
-    420a:	d15c      	bne.n	42c6 <wsndemo_task+0xda>
+    4204:	d069      	beq.n	42da <wsndemo_task+0xee>
+    4206:	2b07      	cmp	r3, #7
+    4208:	d15b      	bne.n	42c2 <wsndemo_task+0xd6>
 			appState = APP_STATE_WAIT_SEND_TIMER;
-    420c:	2208      	movs	r2, #8
-    420e:	4bbe      	ldr	r3, [pc, #760]	; (4508 <wsndemo_task+0x31c>)
-    4210:	701a      	strb	r2, [r3, #0]
+    420a:	2208      	movs	r2, #8
+    420c:	4bbd      	ldr	r3, [pc, #756]	; (4504 <wsndemo_task+0x318>)
+    420e:	701a      	strb	r2, [r3, #0]
   __ASM volatile ("dsb");
-    4212:	f3bf 8f4f 	dsb	sy
+    4210:	f3bf 8f4f 	dsb	sy
   __ASM volatile ("wfi");
-    4216:	bf30      	wfi
+    4214:	bf30      	wfi
 			SYS_TimerStart(&appDataSendingTimer);
-    4218:	48bc      	ldr	r0, [pc, #752]	; (450c <wsndemo_task+0x320>)
-    421a:	4bbd      	ldr	r3, [pc, #756]	; (4510 <wsndemo_task+0x324>)
-    421c:	4798      	blx	r3
+    4216:	48bc      	ldr	r0, [pc, #752]	; (4508 <wsndemo_task+0x31c>)
+    4218:	4bbc      	ldr	r3, [pc, #752]	; (450c <wsndemo_task+0x320>)
+    421a:	4798      	blx	r3
 	APP_TaskHandler();
 }
-    421e:	e052      	b.n	42c6 <wsndemo_task+0xda>
+    421c:	e051      	b.n	42c2 <wsndemo_task+0xd6>
 	switch(appState)
-    4220:	2b00      	cmp	r3, #0
-    4222:	d150      	bne.n	42c6 <wsndemo_task+0xda>
+    421e:	2b00      	cmp	r3, #0
+    4220:	d14f      	bne.n	42c2 <wsndemo_task+0xd6>
 	appMsg.commandId            = APP_COMMAND_ID_NETWORK_INFO;
-    4224:	48bb      	ldr	r0, [pc, #748]	; (4514 <wsndemo_task+0x328>)
-    4226:	2501      	movs	r5, #1
-    4228:	7005      	strb	r5, [r0, #0]
+    4222:	48bb      	ldr	r0, [pc, #748]	; (4510 <wsndemo_task+0x324>)
+    4224:	2501      	movs	r5, #1
+    4226:	7005      	strb	r5, [r0, #0]
 	appMsg.nodeType             = APP_NODE_TYPE;
-    422a:	2602      	movs	r6, #2
-    422c:	7046      	strb	r6, [r0, #1]
+    4228:	2602      	movs	r6, #2
+    422a:	7046      	strb	r6, [r0, #1]
 	appMsg.extAddr              = 0;
-    422e:	2400      	movs	r4, #0
-    4230:	2200      	movs	r2, #0
-    4232:	8042      	strh	r2, [r0, #2]
-    4234:	8082      	strh	r2, [r0, #4]
-    4236:	80c2      	strh	r2, [r0, #6]
-    4238:	8102      	strh	r2, [r0, #8]
+    422c:	2400      	movs	r4, #0
+    422e:	2200      	movs	r2, #0
+    4230:	8042      	strh	r2, [r0, #2]
+    4232:	8082      	strh	r2, [r0, #4]
+    4234:	80c2      	strh	r2, [r0, #6]
+    4236:	8102      	strh	r2, [r0, #8]
 	appMsg.shortAddr            = 0;
-    423a:	2300      	movs	r3, #0
-    423c:	8143      	strh	r3, [r0, #10]
+    4238:	2300      	movs	r3, #0
+    423a:	8143      	strh	r3, [r0, #10]
 	appMsg.softVersion          = 0x01100000;
-    423e:	2388      	movs	r3, #136	; 0x88
-    4240:	045b      	lsls	r3, r3, #17
-    4242:	60c3      	str	r3, [r0, #12]
+    423c:	2388      	movs	r3, #136	; 0x88
+    423e:	045b      	lsls	r3, r3, #17
+    4240:	60c3      	str	r3, [r0, #12]
 	appMsg.channelMask          = CHANNEL_MAP;
-    4244:	2380      	movs	r3, #128	; 0x80
-    4246:	049b      	lsls	r3, r3, #18
-    4248:	6103      	str	r3, [r0, #16]
+    4242:	2380      	movs	r3, #128	; 0x80
+    4244:	049b      	lsls	r3, r3, #18
+    4246:	6103      	str	r3, [r0, #16]
 	appMsg.nextHopAddr          = 0;
-    424a:	75c2      	strb	r2, [r0, #23]
-    424c:	7602      	strb	r2, [r0, #24]
+    4248:	75c2      	strb	r2, [r0, #23]
+    424a:	7602      	strb	r2, [r0, #24]
 	appMsg.lqi                  = 0;
-    424e:	7644      	strb	r4, [r0, #25]
+    424c:	7644      	strb	r4, [r0, #25]
 	appMsg.rssi                 = 0;
-    4250:	7684      	strb	r4, [r0, #26]
+    424e:	7684      	strb	r4, [r0, #26]
 	appMsg.sensors.type        = 1;
-    4252:	76c5      	strb	r5, [r0, #27]
+    4250:	76c5      	strb	r5, [r0, #27]
 	appMsg.sensors.size        = sizeof(int32_t) * 3;
-    4254:	230c      	movs	r3, #12
-    4256:	7703      	strb	r3, [r0, #28]
+    4252:	230c      	movs	r3, #12
+    4254:	7703      	strb	r3, [r0, #28]
 	appMsg.sensors.battery     = 0;
-    4258:	0003      	movs	r3, r0
-    425a:	7742      	strb	r2, [r0, #29]
-    425c:	7782      	strb	r2, [r0, #30]
-    425e:	77c2      	strb	r2, [r0, #31]
-    4260:	331d      	adds	r3, #29
-    4262:	70da      	strb	r2, [r3, #3]
+    4256:	0003      	movs	r3, r0
+    4258:	7742      	strb	r2, [r0, #29]
+    425a:	7782      	strb	r2, [r0, #30]
+    425c:	77c2      	strb	r2, [r0, #31]
+    425e:	331d      	adds	r3, #29
+    4260:	70da      	strb	r2, [r3, #3]
 	appMsg.sensors.temperature = 0;
-    4264:	0003      	movs	r3, r0
-    4266:	3321      	adds	r3, #33	; 0x21
-    4268:	701a      	strb	r2, [r3, #0]
-    426a:	705a      	strb	r2, [r3, #1]
-    426c:	709a      	strb	r2, [r3, #2]
-    426e:	70da      	strb	r2, [r3, #3]
+    4262:	0003      	movs	r3, r0
+    4264:	3321      	adds	r3, #33	; 0x21
+    4266:	701a      	strb	r2, [r3, #0]
+    4268:	705a      	strb	r2, [r3, #1]
+    426a:	709a      	strb	r2, [r3, #2]
+    426c:	70da      	strb	r2, [r3, #3]
 	appMsg.sensors.light       = 0;
-    4270:	0003      	movs	r3, r0
-    4272:	3325      	adds	r3, #37	; 0x25
-    4274:	701a      	strb	r2, [r3, #0]
-    4276:	705a      	strb	r2, [r3, #1]
-    4278:	709a      	strb	r2, [r3, #2]
-    427a:	70da      	strb	r2, [r3, #3]
+    426e:	0003      	movs	r3, r0
+    4270:	3325      	adds	r3, #37	; 0x25
+    4272:	701a      	strb	r2, [r3, #0]
+    4274:	705a      	strb	r2, [r3, #1]
+    4276:	709a      	strb	r2, [r3, #2]
+    4278:	70da      	strb	r2, [r3, #3]
 	appMsg.caption.type         = 32;
-    427c:	3220      	adds	r2, #32
-    427e:	2329      	movs	r3, #41	; 0x29
-    4280:	54c2      	strb	r2, [r0, r3]
+    427a:	3220      	adds	r2, #32
+    427c:	2329      	movs	r3, #41	; 0x29
+    427e:	54c2      	strb	r2, [r0, r3]
 	appMsg.caption.size         = APP_CAPTION_SIZE;
-    4282:	3a11      	subs	r2, #17
-    4284:	3301      	adds	r3, #1
-    4286:	54c2      	strb	r2, [r0, r3]
+    4280:	3a11      	subs	r2, #17
+    4282:	3301      	adds	r3, #1
+    4284:	54c2      	strb	r2, [r0, r3]
 	memcpy(appMsg.caption.text, APP_CAPTION, APP_CAPTION_SIZE);
-    4288:	302b      	adds	r0, #43	; 0x2b
-    428a:	49a3      	ldr	r1, [pc, #652]	; (4518 <wsndemo_task+0x32c>)
-    428c:	4ba3      	ldr	r3, [pc, #652]	; (451c <wsndemo_task+0x330>)
-    428e:	4798      	blx	r3
+    4286:	302b      	adds	r0, #43	; 0x2b
+    4288:	49a2      	ldr	r1, [pc, #648]	; (4514 <wsndemo_task+0x328>)
+    428a:	4ba3      	ldr	r3, [pc, #652]	; (4518 <wsndemo_task+0x32c>)
+    428c:	4798      	blx	r3
 	appDataSendingTimer.interval = APP_SENDING_INTERVAL;
-    4290:	4b9e      	ldr	r3, [pc, #632]	; (450c <wsndemo_task+0x320>)
-    4292:	22fa      	movs	r2, #250	; 0xfa
-    4294:	0092      	lsls	r2, r2, #2
-    4296:	609a      	str	r2, [r3, #8]
+    428e:	4b9e      	ldr	r3, [pc, #632]	; (4508 <wsndemo_task+0x31c>)
+    4290:	4aa2      	ldr	r2, [pc, #648]	; (451c <wsndemo_task+0x330>)
+    4292:	609a      	str	r2, [r3, #8]
 	appDataSendingTimer.mode = SYS_TIMER_INTERVAL_MODE;
-    4298:	731c      	strb	r4, [r3, #12]
+    4294:	731c      	strb	r4, [r3, #12]
 	appDataSendingTimer.handler = appDataSendingTimerHandler;
-    429a:	49a1      	ldr	r1, [pc, #644]	; (4520 <wsndemo_task+0x334>)
-    429c:	6119      	str	r1, [r3, #16]
+    4296:	49a2      	ldr	r1, [pc, #648]	; (4520 <wsndemo_task+0x334>)
+    4298:	6119      	str	r1, [r3, #16]
 	appNetworkStatus = false;
-    429e:	4ba1      	ldr	r3, [pc, #644]	; (4524 <wsndemo_task+0x338>)
-    42a0:	701c      	strb	r4, [r3, #0]
+    429a:	4ba2      	ldr	r3, [pc, #648]	; (4524 <wsndemo_task+0x338>)
+    429c:	701c      	strb	r4, [r3, #0]
 	appNetworkStatusTimer.interval = APP_NWKSTATUS_INTERVAL;
-    42a2:	48a1      	ldr	r0, [pc, #644]	; (4528 <wsndemo_task+0x33c>)
-    42a4:	6082      	str	r2, [r0, #8]
+    429e:	48a2      	ldr	r0, [pc, #648]	; (4528 <wsndemo_task+0x33c>)
+    42a0:	6082      	str	r2, [r0, #8]
 	appNetworkStatusTimer.mode = SYS_TIMER_PERIODIC_MODE;
-    42a6:	7305      	strb	r5, [r0, #12]
+    42a2:	7305      	strb	r5, [r0, #12]
 	appNetworkStatusTimer.handler = appNetworkStatusTimerHandler;
-    42a8:	4ba0      	ldr	r3, [pc, #640]	; (452c <wsndemo_task+0x340>)
-    42aa:	6103      	str	r3, [r0, #16]
+    42a4:	4ba1      	ldr	r3, [pc, #644]	; (452c <wsndemo_task+0x340>)
+    42a6:	6103      	str	r3, [r0, #16]
 	SYS_TimerStart(&appNetworkStatusTimer);
-    42ac:	4b98      	ldr	r3, [pc, #608]	; (4510 <wsndemo_task+0x324>)
-    42ae:	4798      	blx	r3
+    42a8:	4b98      	ldr	r3, [pc, #608]	; (450c <wsndemo_task+0x320>)
+    42aa:	4798      	blx	r3
 		port_base->OUTSET.reg = pin_mask;
-    42b0:	2280      	movs	r2, #128	; 0x80
-    42b2:	0512      	lsls	r2, r2, #20
-    42b4:	4b9e      	ldr	r3, [pc, #632]	; (4530 <wsndemo_task+0x344>)
-    42b6:	619a      	str	r2, [r3, #24]
+    42ac:	2280      	movs	r2, #128	; 0x80
+    42ae:	0512      	lsls	r2, r2, #20
+    42b0:	4b9f      	ldr	r3, [pc, #636]	; (4530 <wsndemo_task+0x344>)
+    42b2:	619a      	str	r2, [r3, #24]
 	APP_CommandsInit();
-    42b8:	4b9e      	ldr	r3, [pc, #632]	; (4534 <wsndemo_task+0x348>)
-    42ba:	4798      	blx	r3
+    42b4:	4b9f      	ldr	r3, [pc, #636]	; (4534 <wsndemo_task+0x348>)
+    42b6:	4798      	blx	r3
 	MiApp_SubscribeDataIndicationCallback(appDataInd);
-    42bc:	489e      	ldr	r0, [pc, #632]	; (4538 <wsndemo_task+0x34c>)
-    42be:	4b9f      	ldr	r3, [pc, #636]	; (453c <wsndemo_task+0x350>)
-    42c0:	4798      	blx	r3
+    42b8:	489f      	ldr	r0, [pc, #636]	; (4538 <wsndemo_task+0x34c>)
+    42ba:	4ba0      	ldr	r3, [pc, #640]	; (453c <wsndemo_task+0x350>)
+    42bc:	4798      	blx	r3
 	appState = APP_STATE_CONNECT_NETWORK;
-    42c2:	4b91      	ldr	r3, [pc, #580]	; (4508 <wsndemo_task+0x31c>)
-    42c4:	701e      	strb	r6, [r3, #0]
+    42be:	4b91      	ldr	r3, [pc, #580]	; (4504 <wsndemo_task+0x318>)
+    42c0:	701e      	strb	r6, [r3, #0]
 }
-    42c6:	b007      	add	sp, #28
-    42c8:	bdf0      	pop	{r4, r5, r6, r7, pc}
+    42c2:	b007      	add	sp, #28
+    42c4:	bdf0      	pop	{r4, r5, r6, r7, pc}
 			MiApp_SearchConnection(APP_SCAN_DURATION, CHANNEL_MAP, searchConfim);
-    42ca:	4a9d      	ldr	r2, [pc, #628]	; (4540 <wsndemo_task+0x354>)
-    42cc:	2180      	movs	r1, #128	; 0x80
-    42ce:	0489      	lsls	r1, r1, #18
-    42d0:	200a      	movs	r0, #10
-    42d2:	4b9c      	ldr	r3, [pc, #624]	; (4544 <wsndemo_task+0x358>)
-    42d4:	4798      	blx	r3
+    42c6:	4a9e      	ldr	r2, [pc, #632]	; (4540 <wsndemo_task+0x354>)
+    42c8:	2180      	movs	r1, #128	; 0x80
+    42ca:	0489      	lsls	r1, r1, #18
+    42cc:	200a      	movs	r0, #10
+    42ce:	4b9d      	ldr	r3, [pc, #628]	; (4544 <wsndemo_task+0x358>)
+    42d0:	4798      	blx	r3
 			appState = APP_STATE_CONNECTING_NETWORK;
-    42d6:	2203      	movs	r2, #3
-    42d8:	4b8b      	ldr	r3, [pc, #556]	; (4508 <wsndemo_task+0x31c>)
-    42da:	701a      	strb	r2, [r3, #0]
-    42dc:	e7f3      	b.n	42c6 <wsndemo_task+0xda>
+    42d2:	2203      	movs	r2, #3
+    42d4:	4b8b      	ldr	r3, [pc, #556]	; (4504 <wsndemo_task+0x318>)
+    42d6:	701a      	strb	r2, [r3, #0]
+    42d8:	e7f3      	b.n	42c2 <wsndemo_task+0xd6>
     uint16_t shortAddressLocal = 0xFFFF;
-    42de:	2301      	movs	r3, #1
-    42e0:	425b      	negs	r3, r3
-    42e2:	2212      	movs	r2, #18
-    42e4:	446a      	add	r2, sp
-    42e6:	8013      	strh	r3, [r2, #0]
+    42da:	2301      	movs	r3, #1
+    42dc:	425b      	negs	r3, r3
+    42de:	2212      	movs	r2, #18
+    42e0:	446a      	add	r2, sp
+    42e2:	8013      	strh	r3, [r2, #0]
     uint16_t shortAddressPanId = 0xFFFF;
-    42e8:	aa05      	add	r2, sp, #20
-    42ea:	8013      	strh	r3, [r2, #0]
+    42e4:	aa05      	add	r2, sp, #20
+    42e6:	8013      	strh	r3, [r2, #0]
     uint16_t dstAddr = 0; /* PAN Coordinator Address */
-    42ec:	2200      	movs	r2, #0
-    42ee:	3317      	adds	r3, #23
-    42f0:	446b      	add	r3, sp
-    42f2:	801a      	strh	r2, [r3, #0]
+    42e8:	2200      	movs	r2, #0
+    42ea:	3317      	adds	r3, #23
+    42ec:	446b      	add	r3, sp
+    42ee:	801a      	strh	r2, [r3, #0]
 	Adc *const adc_module = module_inst->hw;
-    42f4:	4b94      	ldr	r3, [pc, #592]	; (4548 <wsndemo_task+0x35c>)
-    42f6:	681a      	ldr	r2, [r3, #0]
-    42f8:	7e53      	ldrb	r3, [r2, #25]
+    42f0:	4b95      	ldr	r3, [pc, #596]	; (4548 <wsndemo_task+0x35c>)
+    42f2:	681a      	ldr	r2, [r3, #0]
+    42f4:	7e53      	ldrb	r3, [r2, #25]
 	while (adc_is_syncing(module_inst)) {
-    42fa:	b25b      	sxtb	r3, r3
-    42fc:	2b00      	cmp	r3, #0
-    42fe:	dbfb      	blt.n	42f8 <wsndemo_task+0x10c>
+    42f6:	b25b      	sxtb	r3, r3
+    42f8:	2b00      	cmp	r3, #0
+    42fa:	dbfb      	blt.n	42f4 <wsndemo_task+0x108>
 	adc_module->SWTRIG.reg |= ADC_SWTRIG_START;
-    4300:	7b13      	ldrb	r3, [r2, #12]
-    4302:	2102      	movs	r1, #2
-    4304:	430b      	orrs	r3, r1
-    4306:	7313      	strb	r3, [r2, #12]
-    4308:	7e53      	ldrb	r3, [r2, #25]
+    42fc:	7b13      	ldrb	r3, [r2, #12]
+    42fe:	2102      	movs	r1, #2
+    4300:	430b      	orrs	r3, r1
+    4302:	7313      	strb	r3, [r2, #12]
+    4304:	7e53      	ldrb	r3, [r2, #25]
 	while (adc_is_syncing(module_inst)) {
-    430a:	b25b      	sxtb	r3, r3
-    430c:	2b00      	cmp	r3, #0
-    430e:	dbfb      	blt.n	4308 <wsndemo_task+0x11c>
+    4306:	b25b      	sxtb	r3, r3
+    4308:	2b00      	cmp	r3, #0
+    430a:	dbfb      	blt.n	4304 <wsndemo_task+0x118>
 	delay_us(100);
-    4310:	2064      	movs	r0, #100	; 0x64
-    4312:	4b8e      	ldr	r3, [pc, #568]	; (454c <wsndemo_task+0x360>)
-    4314:	4798      	blx	r3
+    430c:	2064      	movs	r0, #100	; 0x64
+    430e:	4b8f      	ldr	r3, [pc, #572]	; (454c <wsndemo_task+0x360>)
+    4310:	4798      	blx	r3
 	Adc *const adc_module = module_inst->hw;
-    4316:	4b8c      	ldr	r3, [pc, #560]	; (4548 <wsndemo_task+0x35c>)
-    4318:	681b      	ldr	r3, [r3, #0]
+    4312:	4b8d      	ldr	r3, [pc, #564]	; (4548 <wsndemo_task+0x35c>)
+    4314:	681b      	ldr	r3, [r3, #0]
 	uint32_t int_flags = adc_module->INTFLAG.reg;
-    431a:	7e19      	ldrb	r1, [r3, #24]
-    431c:	b2c9      	uxtb	r1, r1
+    4316:	7e19      	ldrb	r1, [r3, #24]
+    4318:	b2c9      	uxtb	r1, r1
 	if (int_flags & ADC_INTFLAG_RESRDY) {
-    431e:	2201      	movs	r2, #1
-    4320:	400a      	ands	r2, r1
+    431a:	2201      	movs	r2, #1
+    431c:	400a      	ands	r2, r1
 	if (int_flags & ADC_INTFLAG_WINMON) {
-    4322:	0748      	lsls	r0, r1, #29
-    4324:	d501      	bpl.n	432a <wsndemo_task+0x13e>
+    431e:	0748      	lsls	r0, r1, #29
+    4320:	d501      	bpl.n	4326 <wsndemo_task+0x13a>
 		status_flags |= ADC_STATUS_WINDOW;
-    4326:	2002      	movs	r0, #2
-    4328:	4302      	orrs	r2, r0
+    4322:	2002      	movs	r0, #2
+    4324:	4302      	orrs	r2, r0
 	if (int_flags & ADC_INTFLAG_OVERRUN) {
-    432a:	0789      	lsls	r1, r1, #30
-    432c:	d501      	bpl.n	4332 <wsndemo_task+0x146>
+    4326:	0789      	lsls	r1, r1, #30
+    4328:	d501      	bpl.n	432e <wsndemo_task+0x142>
 		status_flags |= ADC_STATUS_OVERRUN;
-    432e:	2104      	movs	r1, #4
-    4330:	430a      	orrs	r2, r1
+    432a:	2104      	movs	r1, #4
+    432c:	430a      	orrs	r2, r1
 	if (!(adc_get_status(module_inst) & ADC_STATUS_RESULT_READY)) {
-    4332:	07d2      	lsls	r2, r2, #31
-    4334:	d500      	bpl.n	4338 <wsndemo_task+0x14c>
-    4336:	e0cb      	b.n	44d0 <wsndemo_task+0x2e4>
+    432e:	07d2      	lsls	r2, r2, #31
+    4330:	d500      	bpl.n	4334 <wsndemo_task+0x148>
+    4332:	e0cb      	b.n	44cc <wsndemo_task+0x2e0>
 	appMsg.sensors.light       = adcResult;
-    4338:	4a85      	ldr	r2, [pc, #532]	; (4550 <wsndemo_task+0x364>)
-    433a:	8811      	ldrh	r1, [r2, #0]
-    433c:	4a75      	ldr	r2, [pc, #468]	; (4514 <wsndemo_task+0x328>)
-    433e:	3225      	adds	r2, #37	; 0x25
-    4340:	7011      	strb	r1, [r2, #0]
-    4342:	0a08      	lsrs	r0, r1, #8
-    4344:	7050      	strb	r0, [r2, #1]
-    4346:	2000      	movs	r0, #0
-    4348:	7090      	strb	r0, [r2, #2]
-    434a:	0e09      	lsrs	r1, r1, #24
-    434c:	70d1      	strb	r1, [r2, #3]
-    434e:	7e5a      	ldrb	r2, [r3, #25]
+    4334:	4a86      	ldr	r2, [pc, #536]	; (4550 <wsndemo_task+0x364>)
+    4336:	8811      	ldrh	r1, [r2, #0]
+    4338:	4a75      	ldr	r2, [pc, #468]	; (4510 <wsndemo_task+0x324>)
+    433a:	3225      	adds	r2, #37	; 0x25
+    433c:	7011      	strb	r1, [r2, #0]
+    433e:	0a08      	lsrs	r0, r1, #8
+    4340:	7050      	strb	r0, [r2, #1]
+    4342:	2000      	movs	r0, #0
+    4344:	7090      	strb	r0, [r2, #2]
+    4346:	0e09      	lsrs	r1, r1, #24
+    4348:	70d1      	strb	r1, [r2, #3]
+    434a:	7e5a      	ldrb	r2, [r3, #25]
 	while (adc_is_syncing(module_inst)) {
-    4350:	b252      	sxtb	r2, r2
-    4352:	2a00      	cmp	r2, #0
-    4354:	dbfb      	blt.n	434e <wsndemo_task+0x162>
+    434c:	b252      	sxtb	r2, r2
+    434e:	2a00      	cmp	r2, #0
+    4350:	dbfb      	blt.n	434a <wsndemo_task+0x15e>
 			(adc_module->INPUTCTRL.reg & ~ADC_INPUTCTRL_MUXPOS_Msk) |
-    4356:	691a      	ldr	r2, [r3, #16]
-    4358:	211f      	movs	r1, #31
-    435a:	438a      	bics	r2, r1
-    435c:	3907      	subs	r1, #7
-    435e:	430a      	orrs	r2, r1
+    4352:	691a      	ldr	r2, [r3, #16]
+    4354:	211f      	movs	r1, #31
+    4356:	438a      	bics	r2, r1
+    4358:	3907      	subs	r1, #7
+    435a:	430a      	orrs	r2, r1
 	adc_module->INPUTCTRL.reg =
-    4360:	611a      	str	r2, [r3, #16]
-    4362:	7e5a      	ldrb	r2, [r3, #25]
+    435c:	611a      	str	r2, [r3, #16]
+    435e:	7e5a      	ldrb	r2, [r3, #25]
 	while (adc_is_syncing(module_inst)) {
-    4364:	b252      	sxtb	r2, r2
-    4366:	2a00      	cmp	r2, #0
-    4368:	dbfb      	blt.n	4362 <wsndemo_task+0x176>
+    4360:	b252      	sxtb	r2, r2
+    4362:	2a00      	cmp	r2, #0
+    4364:	dbfb      	blt.n	435e <wsndemo_task+0x172>
 	delay_us(10);
-    436a:	200a      	movs	r0, #10
-    436c:	4b77      	ldr	r3, [pc, #476]	; (454c <wsndemo_task+0x360>)
-    436e:	4798      	blx	r3
+    4366:	200a      	movs	r0, #10
+    4368:	4b78      	ldr	r3, [pc, #480]	; (454c <wsndemo_task+0x360>)
+    436a:	4798      	blx	r3
 	Adc *const adc_module = module_inst->hw;
-    4370:	4b75      	ldr	r3, [pc, #468]	; (4548 <wsndemo_task+0x35c>)
-    4372:	681a      	ldr	r2, [r3, #0]
-    4374:	7e53      	ldrb	r3, [r2, #25]
+    436c:	4b76      	ldr	r3, [pc, #472]	; (4548 <wsndemo_task+0x35c>)
+    436e:	681a      	ldr	r2, [r3, #0]
+    4370:	7e53      	ldrb	r3, [r2, #25]
 	while (adc_is_syncing(module_inst)) {
-    4376:	b25b      	sxtb	r3, r3
-    4378:	2b00      	cmp	r3, #0
-    437a:	dbfb      	blt.n	4374 <wsndemo_task+0x188>
+    4372:	b25b      	sxtb	r3, r3
+    4374:	2b00      	cmp	r3, #0
+    4376:	dbfb      	blt.n	4370 <wsndemo_task+0x184>
 	adc_module->SWTRIG.reg |= ADC_SWTRIG_START;
-    437c:	7b13      	ldrb	r3, [r2, #12]
-    437e:	2102      	movs	r1, #2
-    4380:	430b      	orrs	r3, r1
-    4382:	7313      	strb	r3, [r2, #12]
-    4384:	7e53      	ldrb	r3, [r2, #25]
+    4378:	7b13      	ldrb	r3, [r2, #12]
+    437a:	2102      	movs	r1, #2
+    437c:	430b      	orrs	r3, r1
+    437e:	7313      	strb	r3, [r2, #12]
+    4380:	7e53      	ldrb	r3, [r2, #25]
 	while (adc_is_syncing(module_inst)) {
-    4386:	b25b      	sxtb	r3, r3
-    4388:	2b00      	cmp	r3, #0
-    438a:	dbfb      	blt.n	4384 <wsndemo_task+0x198>
+    4382:	b25b      	sxtb	r3, r3
+    4384:	2b00      	cmp	r3, #0
+    4386:	dbfb      	blt.n	4380 <wsndemo_task+0x194>
 	delay_us(10);
-    438c:	200a      	movs	r0, #10
-    438e:	4b6f      	ldr	r3, [pc, #444]	; (454c <wsndemo_task+0x360>)
-    4390:	4798      	blx	r3
+    4388:	200a      	movs	r0, #10
+    438a:	4b70      	ldr	r3, [pc, #448]	; (454c <wsndemo_task+0x360>)
+    438c:	4798      	blx	r3
 	Adc *const adc_module = module_inst->hw;
-    4392:	4b6d      	ldr	r3, [pc, #436]	; (4548 <wsndemo_task+0x35c>)
-    4394:	681b      	ldr	r3, [r3, #0]
+    438e:	4b6e      	ldr	r3, [pc, #440]	; (4548 <wsndemo_task+0x35c>)
+    4390:	681b      	ldr	r3, [r3, #0]
 	uint32_t int_flags = adc_module->INTFLAG.reg;
-    4396:	7e19      	ldrb	r1, [r3, #24]
-    4398:	b2c9      	uxtb	r1, r1
+    4392:	7e19      	ldrb	r1, [r3, #24]
+    4394:	b2c9      	uxtb	r1, r1
 	if (int_flags & ADC_INTFLAG_RESRDY) {
-    439a:	2201      	movs	r2, #1
-    439c:	400a      	ands	r2, r1
+    4396:	2201      	movs	r2, #1
+    4398:	400a      	ands	r2, r1
 	if (int_flags & ADC_INTFLAG_WINMON) {
-    439e:	0748      	lsls	r0, r1, #29
-    43a0:	d501      	bpl.n	43a6 <wsndemo_task+0x1ba>
+    439a:	0748      	lsls	r0, r1, #29
+    439c:	d501      	bpl.n	43a2 <wsndemo_task+0x1b6>
 		status_flags |= ADC_STATUS_WINDOW;
-    43a2:	2002      	movs	r0, #2
-    43a4:	4302      	orrs	r2, r0
+    439e:	2002      	movs	r0, #2
+    43a0:	4302      	orrs	r2, r0
 	if (int_flags & ADC_INTFLAG_OVERRUN) {
-    43a6:	0789      	lsls	r1, r1, #30
-    43a8:	d501      	bpl.n	43ae <wsndemo_task+0x1c2>
+    43a2:	0789      	lsls	r1, r1, #30
+    43a4:	d501      	bpl.n	43aa <wsndemo_task+0x1be>
 		status_flags |= ADC_STATUS_OVERRUN;
-    43aa:	2104      	movs	r1, #4
-    43ac:	430a      	orrs	r2, r1
+    43a6:	2104      	movs	r1, #4
+    43a8:	430a      	orrs	r2, r1
 	if (!(adc_get_status(module_inst) & ADC_STATUS_RESULT_READY)) {
-    43ae:	07d2      	lsls	r2, r2, #31
-    43b0:	d500      	bpl.n	43b4 <wsndemo_task+0x1c8>
-    43b2:	e0dd      	b.n	4570 <wsndemo_task+0x384>
+    43aa:	07d2      	lsls	r2, r2, #31
+    43ac:	d500      	bpl.n	43b0 <wsndemo_task+0x1c4>
+    43ae:	e0df      	b.n	4570 <wsndemo_task+0x384>
 	appMsg.sensors.temperature = adcResult;
-    43b4:	4a66      	ldr	r2, [pc, #408]	; (4550 <wsndemo_task+0x364>)
-    43b6:	8811      	ldrh	r1, [r2, #0]
-    43b8:	4a56      	ldr	r2, [pc, #344]	; (4514 <wsndemo_task+0x328>)
-    43ba:	3221      	adds	r2, #33	; 0x21
-    43bc:	7011      	strb	r1, [r2, #0]
-    43be:	0a08      	lsrs	r0, r1, #8
-    43c0:	7050      	strb	r0, [r2, #1]
-    43c2:	2000      	movs	r0, #0
-    43c4:	7090      	strb	r0, [r2, #2]
-    43c6:	0e09      	lsrs	r1, r1, #24
-    43c8:	70d1      	strb	r1, [r2, #3]
-    43ca:	7e5a      	ldrb	r2, [r3, #25]
+    43b0:	4a67      	ldr	r2, [pc, #412]	; (4550 <wsndemo_task+0x364>)
+    43b2:	8811      	ldrh	r1, [r2, #0]
+    43b4:	4a56      	ldr	r2, [pc, #344]	; (4510 <wsndemo_task+0x324>)
+    43b6:	3221      	adds	r2, #33	; 0x21
+    43b8:	7011      	strb	r1, [r2, #0]
+    43ba:	0a08      	lsrs	r0, r1, #8
+    43bc:	7050      	strb	r0, [r2, #1]
+    43be:	2000      	movs	r0, #0
+    43c0:	7090      	strb	r0, [r2, #2]
+    43c2:	0e09      	lsrs	r1, r1, #24
+    43c4:	70d1      	strb	r1, [r2, #3]
+    43c6:	7e5a      	ldrb	r2, [r3, #25]
 	while (adc_is_syncing(module_inst)) {
-    43cc:	b252      	sxtb	r2, r2
-    43ce:	2a00      	cmp	r2, #0
-    43d0:	dbfb      	blt.n	43ca <wsndemo_task+0x1de>
+    43c8:	b252      	sxtb	r2, r2
+    43ca:	2a00      	cmp	r2, #0
+    43cc:	dbfb      	blt.n	43c6 <wsndemo_task+0x1da>
 			(adc_module->INPUTCTRL.reg & ~ADC_INPUTCTRL_MUXPOS_Msk) |
-    43d2:	691a      	ldr	r2, [r3, #16]
-    43d4:	211f      	movs	r1, #31
-    43d6:	438a      	bics	r2, r1
-    43d8:	3904      	subs	r1, #4
-    43da:	430a      	orrs	r2, r1
+    43ce:	691a      	ldr	r2, [r3, #16]
+    43d0:	211f      	movs	r1, #31
+    43d2:	438a      	bics	r2, r1
+    43d4:	3904      	subs	r1, #4
+    43d6:	430a      	orrs	r2, r1
 	adc_module->INPUTCTRL.reg =
-    43dc:	611a      	str	r2, [r3, #16]
-    43de:	7e5a      	ldrb	r2, [r3, #25]
+    43d8:	611a      	str	r2, [r3, #16]
+    43da:	7e5a      	ldrb	r2, [r3, #25]
 	while (adc_is_syncing(module_inst)) {
-    43e0:	b252      	sxtb	r2, r2
-    43e2:	2a00      	cmp	r2, #0
-    43e4:	dbfb      	blt.n	43de <wsndemo_task+0x1f2>
-    43e6:	7e5a      	ldrb	r2, [r3, #25]
+    43dc:	b252      	sxtb	r2, r2
+    43de:	2a00      	cmp	r2, #0
+    43e0:	dbfb      	blt.n	43da <wsndemo_task+0x1ee>
+    43e2:	7e5a      	ldrb	r2, [r3, #25]
 	while (adc_is_syncing(module_inst)) {
-    43e8:	b252      	sxtb	r2, r2
-    43ea:	2a00      	cmp	r2, #0
-    43ec:	dbfb      	blt.n	43e6 <wsndemo_task+0x1fa>
+    43e4:	b252      	sxtb	r2, r2
+    43e6:	2a00      	cmp	r2, #0
+    43e8:	dbfb      	blt.n	43e2 <wsndemo_task+0x1f6>
 	adc_module->SWTRIG.reg |= ADC_SWTRIG_START;
-    43ee:	7b1a      	ldrb	r2, [r3, #12]
-    43f0:	2102      	movs	r1, #2
-    43f2:	430a      	orrs	r2, r1
-    43f4:	731a      	strb	r2, [r3, #12]
-    43f6:	7e5a      	ldrb	r2, [r3, #25]
+    43ea:	7b1a      	ldrb	r2, [r3, #12]
+    43ec:	2102      	movs	r1, #2
+    43ee:	430a      	orrs	r2, r1
+    43f0:	731a      	strb	r2, [r3, #12]
+    43f2:	7e5a      	ldrb	r2, [r3, #25]
 	while (adc_is_syncing(module_inst)) {
-    43f8:	b252      	sxtb	r2, r2
-    43fa:	2a00      	cmp	r2, #0
-    43fc:	dbfb      	blt.n	43f6 <wsndemo_task+0x20a>
+    43f4:	b252      	sxtb	r2, r2
+    43f6:	2a00      	cmp	r2, #0
+    43f8:	dbfb      	blt.n	43f2 <wsndemo_task+0x206>
 	delay_us(10);
-    43fe:	200a      	movs	r0, #10
-    4400:	4b52      	ldr	r3, [pc, #328]	; (454c <wsndemo_task+0x360>)
-    4402:	4798      	blx	r3
+    43fa:	200a      	movs	r0, #10
+    43fc:	4b53      	ldr	r3, [pc, #332]	; (454c <wsndemo_task+0x360>)
+    43fe:	4798      	blx	r3
 	Adc *const adc_module = module_inst->hw;
-    4404:	4b50      	ldr	r3, [pc, #320]	; (4548 <wsndemo_task+0x35c>)
-    4406:	6819      	ldr	r1, [r3, #0]
+    4400:	4b51      	ldr	r3, [pc, #324]	; (4548 <wsndemo_task+0x35c>)
+    4402:	6819      	ldr	r1, [r3, #0]
 	uint32_t int_flags = adc_module->INTFLAG.reg;
-    4408:	7e0a      	ldrb	r2, [r1, #24]
-    440a:	b2d2      	uxtb	r2, r2
+    4404:	7e0a      	ldrb	r2, [r1, #24]
+    4406:	b2d2      	uxtb	r2, r2
 	if (int_flags & ADC_INTFLAG_RESRDY) {
-    440c:	2301      	movs	r3, #1
-    440e:	4013      	ands	r3, r2
+    4408:	2301      	movs	r3, #1
+    440a:	4013      	ands	r3, r2
 	if (int_flags & ADC_INTFLAG_WINMON) {
-    4410:	0750      	lsls	r0, r2, #29
-    4412:	d501      	bpl.n	4418 <wsndemo_task+0x22c>
+    440c:	0750      	lsls	r0, r2, #29
+    440e:	d501      	bpl.n	4414 <wsndemo_task+0x228>
 		status_flags |= ADC_STATUS_WINDOW;
-    4414:	2002      	movs	r0, #2
-    4416:	4303      	orrs	r3, r0
+    4410:	2002      	movs	r0, #2
+    4412:	4303      	orrs	r3, r0
 	if (int_flags & ADC_INTFLAG_OVERRUN) {
-    4418:	0792      	lsls	r2, r2, #30
-    441a:	d501      	bpl.n	4420 <wsndemo_task+0x234>
+    4414:	0792      	lsls	r2, r2, #30
+    4416:	d501      	bpl.n	441c <wsndemo_task+0x230>
 		status_flags |= ADC_STATUS_OVERRUN;
-    441c:	2204      	movs	r2, #4
-    441e:	4313      	orrs	r3, r2
+    4418:	2204      	movs	r2, #4
+    441a:	4313      	orrs	r3, r2
 	if (!(adc_get_status(module_inst) & ADC_STATUS_RESULT_READY)) {
-    4420:	07db      	lsls	r3, r3, #31
-    4422:	d500      	bpl.n	4426 <wsndemo_task+0x23a>
-    4424:	e0be      	b.n	45a4 <wsndemo_task+0x3b8>
+    441c:	07db      	lsls	r3, r3, #31
+    441e:	d500      	bpl.n	4422 <wsndemo_task+0x236>
+    4420:	e0c0      	b.n	45a4 <wsndemo_task+0x3b8>
 	appMsg.sensors.battery     = adcResult;
-    4426:	4c3b      	ldr	r4, [pc, #236]	; (4514 <wsndemo_task+0x328>)
-    4428:	4b49      	ldr	r3, [pc, #292]	; (4550 <wsndemo_task+0x364>)
-    442a:	881b      	ldrh	r3, [r3, #0]
-    442c:	0022      	movs	r2, r4
-    442e:	7763      	strb	r3, [r4, #29]
-    4430:	0a19      	lsrs	r1, r3, #8
-    4432:	77a1      	strb	r1, [r4, #30]
-    4434:	2100      	movs	r1, #0
-    4436:	77e1      	strb	r1, [r4, #31]
-    4438:	321d      	adds	r2, #29
-    443a:	0e1b      	lsrs	r3, r3, #24
-    443c:	70d3      	strb	r3, [r2, #3]
+    4422:	4c3b      	ldr	r4, [pc, #236]	; (4510 <wsndemo_task+0x324>)
+    4424:	4b4a      	ldr	r3, [pc, #296]	; (4550 <wsndemo_task+0x364>)
+    4426:	881b      	ldrh	r3, [r3, #0]
+    4428:	0022      	movs	r2, r4
+    442a:	7763      	strb	r3, [r4, #29]
+    442c:	0a19      	lsrs	r1, r3, #8
+    442e:	77a1      	strb	r1, [r4, #30]
+    4430:	2100      	movs	r1, #0
+    4432:	77e1      	strb	r1, [r4, #31]
+    4434:	321d      	adds	r2, #29
+    4436:	0e1b      	lsrs	r3, r3, #24
+    4438:	70d3      	strb	r3, [r2, #3]
 	MiApp_Get(SHORT_ADDRESS, (uint8_t *)&shortAddressLocal);
-    443e:	2512      	movs	r5, #18
-    4440:	446d      	add	r5, sp
-    4442:	0029      	movs	r1, r5
-    4444:	2002      	movs	r0, #2
-    4446:	4e43      	ldr	r6, [pc, #268]	; (4554 <wsndemo_task+0x368>)
-    4448:	47b0      	blx	r6
+    443a:	2512      	movs	r5, #18
+    443c:	446d      	add	r5, sp
+    443e:	0029      	movs	r1, r5
+    4440:	2002      	movs	r0, #2
+    4442:	4e44      	ldr	r6, [pc, #272]	; (4554 <wsndemo_task+0x368>)
+    4444:	47b0      	blx	r6
 		appMsg.shortAddr = shortAddressLocal;
-    444a:	882b      	ldrh	r3, [r5, #0]
-    444c:	8163      	strh	r3, [r4, #10]
+    4446:	882b      	ldrh	r3, [r5, #0]
+    4448:	8163      	strh	r3, [r4, #10]
 	appMsg.extAddr   = appMsg.shortAddr;
-    444e:	8063      	strh	r3, [r4, #2]
-    4450:	0c1b      	lsrs	r3, r3, #16
-    4452:	80a3      	strh	r3, [r4, #4]
-    4454:	2300      	movs	r3, #0
-    4456:	80e3      	strh	r3, [r4, #6]
-    4458:	8123      	strh	r3, [r4, #8]
+    444a:	8063      	strh	r3, [r4, #2]
+    444c:	0c1b      	lsrs	r3, r3, #16
+    444e:	80a3      	strh	r3, [r4, #4]
+    4450:	2300      	movs	r3, #0
+    4452:	80e3      	strh	r3, [r4, #6]
+    4454:	8123      	strh	r3, [r4, #8]
 	appMsg.nextHopAddr = MiApp_MeshGetNextHopAddr(PAN_COORDINATOR_SHORT_ADDRESS);
-    445a:	2000      	movs	r0, #0
-    445c:	4b3e      	ldr	r3, [pc, #248]	; (4558 <wsndemo_task+0x36c>)
-    445e:	4798      	blx	r3
-    4460:	75e0      	strb	r0, [r4, #23]
-    4462:	0a00      	lsrs	r0, r0, #8
-    4464:	7620      	strb	r0, [r4, #24]
+    4456:	2000      	movs	r0, #0
+    4458:	4b3f      	ldr	r3, [pc, #252]	; (4558 <wsndemo_task+0x36c>)
+    445a:	4798      	blx	r3
+    445c:	75e0      	strb	r0, [r4, #23]
+    445e:	0a00      	lsrs	r0, r0, #8
+    4460:	7620      	strb	r0, [r4, #24]
 	MiApp_Get(CHANNEL, (uint8_t *)&appMsg.workingChannel);
-    4466:	0021      	movs	r1, r4
-    4468:	3116      	adds	r1, #22
-    446a:	2000      	movs	r0, #0
-    446c:	47b0      	blx	r6
+    4462:	0021      	movs	r1, r4
+    4464:	3116      	adds	r1, #22
+    4466:	2000      	movs	r0, #0
+    4468:	47b0      	blx	r6
 	MiApp_Get(PANID, (uint8_t *)&shortAddressPanId);
-    446e:	af05      	add	r7, sp, #20
-    4470:	0039      	movs	r1, r7
-    4472:	2001      	movs	r0, #1
-    4474:	47b0      	blx	r6
+    446a:	af05      	add	r7, sp, #20
+    446c:	0039      	movs	r1, r7
+    446e:	2001      	movs	r0, #1
+    4470:	47b0      	blx	r6
         appMsg.panId = shortAddressPanId;
-    4476:	883b      	ldrh	r3, [r7, #0]
-    4478:	82a3      	strh	r3, [r4, #20]
-    447a:	2280      	movs	r2, #128	; 0x80
-    447c:	0512      	lsls	r2, r2, #20
-    447e:	4b2c      	ldr	r3, [pc, #176]	; (4530 <wsndemo_task+0x344>)
-    4480:	619a      	str	r2, [r3, #24]
+    4472:	883b      	ldrh	r3, [r7, #0]
+    4474:	82a3      	strh	r3, [r4, #20]
+    4476:	2280      	movs	r2, #128	; 0x80
+    4478:	0512      	lsls	r2, r2, #20
+    447a:	4b2d      	ldr	r3, [pc, #180]	; (4530 <wsndemo_task+0x344>)
+    447c:	619a      	str	r2, [r3, #24]
 	appMsg.caption.type         = 32;
-    4482:	2220      	movs	r2, #32
-    4484:	2329      	movs	r3, #41	; 0x29
-    4486:	54e2      	strb	r2, [r4, r3]
+    447e:	2220      	movs	r2, #32
+    4480:	2329      	movs	r3, #41	; 0x29
+    4482:	54e2      	strb	r2, [r4, r3]
     appMsg.caption.size         = APP_CAPTION_SIZE;
-    4488:	3a11      	subs	r2, #17
-    448a:	3301      	adds	r3, #1
-    448c:	54e2      	strb	r2, [r4, r3]
+    4484:	3a11      	subs	r2, #17
+    4486:	3301      	adds	r3, #1
+    4488:	54e2      	strb	r2, [r4, r3]
     memcpy(appMsg.caption.text, APP_CAPTION, APP_CAPTION_SIZE);
-    448e:	0026      	movs	r6, r4
-    4490:	362b      	adds	r6, #43	; 0x2b
-    4492:	4921      	ldr	r1, [pc, #132]	; (4518 <wsndemo_task+0x32c>)
-    4494:	0030      	movs	r0, r6
-    4496:	4b21      	ldr	r3, [pc, #132]	; (451c <wsndemo_task+0x330>)
-    4498:	4798      	blx	r3
+    448a:	0026      	movs	r6, r4
+    448c:	362b      	adds	r6, #43	; 0x2b
+    448e:	4921      	ldr	r1, [pc, #132]	; (4514 <wsndemo_task+0x328>)
+    4490:	0030      	movs	r0, r6
+    4492:	4b21      	ldr	r3, [pc, #132]	; (4518 <wsndemo_task+0x32c>)
+    4494:	4798      	blx	r3
 	sprintf(appMsg.caption.text, "SUN%03d -0x%04x", MAC_ADDR, shortAddressLocal);
-    449a:	882b      	ldrh	r3, [r5, #0]
-    449c:	2221      	movs	r2, #33	; 0x21
-    449e:	492f      	ldr	r1, [pc, #188]	; (455c <wsndemo_task+0x370>)
-    44a0:	0030      	movs	r0, r6
-    44a2:	4d2f      	ldr	r5, [pc, #188]	; (4560 <wsndemo_task+0x374>)
-    44a4:	47a8      	blx	r5
+    4496:	882b      	ldrh	r3, [r5, #0]
+    4498:	2204      	movs	r2, #4
+    449a:	4930      	ldr	r1, [pc, #192]	; (455c <wsndemo_task+0x370>)
+    449c:	0030      	movs	r0, r6
+    449e:	4d30      	ldr	r5, [pc, #192]	; (4560 <wsndemo_task+0x374>)
+    44a0:	47a8      	blx	r5
 	if (MiApp_SendData(2, (uint8_t *)&dstAddr, sizeof(appMsg), (uint8_t *)&appMsg, wsnmsghandle, true, appDataConf))
-    44a6:	4b2f      	ldr	r3, [pc, #188]	; (4564 <wsndemo_task+0x378>)
-    44a8:	9302      	str	r3, [sp, #8]
-    44aa:	2301      	movs	r3, #1
-    44ac:	9301      	str	r3, [sp, #4]
-    44ae:	4b2e      	ldr	r3, [pc, #184]	; (4568 <wsndemo_task+0x37c>)
-    44b0:	781b      	ldrb	r3, [r3, #0]
-    44b2:	9300      	str	r3, [sp, #0]
-    44b4:	0023      	movs	r3, r4
-    44b6:	223a      	movs	r2, #58	; 0x3a
-    44b8:	2116      	movs	r1, #22
-    44ba:	4469      	add	r1, sp
-    44bc:	2002      	movs	r0, #2
-    44be:	4c2b      	ldr	r4, [pc, #172]	; (456c <wsndemo_task+0x380>)
-    44c0:	47a0      	blx	r4
-    44c2:	2800      	cmp	r0, #0
-    44c4:	d000      	beq.n	44c8 <wsndemo_task+0x2dc>
-    44c6:	e087      	b.n	45d8 <wsndemo_task+0x3ec>
+    44a2:	4b30      	ldr	r3, [pc, #192]	; (4564 <wsndemo_task+0x378>)
+    44a4:	9302      	str	r3, [sp, #8]
+    44a6:	2301      	movs	r3, #1
+    44a8:	9301      	str	r3, [sp, #4]
+    44aa:	4b2f      	ldr	r3, [pc, #188]	; (4568 <wsndemo_task+0x37c>)
+    44ac:	781b      	ldrb	r3, [r3, #0]
+    44ae:	9300      	str	r3, [sp, #0]
+    44b0:	0023      	movs	r3, r4
+    44b2:	223a      	movs	r2, #58	; 0x3a
+    44b4:	2116      	movs	r1, #22
+    44b6:	4469      	add	r1, sp
+    44b8:	2002      	movs	r0, #2
+    44ba:	4c2c      	ldr	r4, [pc, #176]	; (456c <wsndemo_task+0x380>)
+    44bc:	47a0      	blx	r4
+    44be:	2800      	cmp	r0, #0
+    44c0:	d000      	beq.n	44c4 <wsndemo_task+0x2d8>
+    44c2:	e089      	b.n	45d8 <wsndemo_task+0x3ec>
 		appState = APP_STATE_SENDING_DONE;
-    44c8:	2207      	movs	r2, #7
-    44ca:	4b0f      	ldr	r3, [pc, #60]	; (4508 <wsndemo_task+0x31c>)
-    44cc:	701a      	strb	r2, [r3, #0]
-    44ce:	e6fa      	b.n	42c6 <wsndemo_task+0xda>
-    44d0:	7e5a      	ldrb	r2, [r3, #25]
+    44c4:	2207      	movs	r2, #7
+    44c6:	4b0f      	ldr	r3, [pc, #60]	; (4504 <wsndemo_task+0x318>)
+    44c8:	701a      	strb	r2, [r3, #0]
+    44ca:	e6fa      	b.n	42c2 <wsndemo_task+0xd6>
+    44cc:	7e5a      	ldrb	r2, [r3, #25]
 	while (adc_is_syncing(module_inst)) {
-    44d2:	b252      	sxtb	r2, r2
-    44d4:	2a00      	cmp	r2, #0
-    44d6:	dbfb      	blt.n	44d0 <wsndemo_task+0x2e4>
+    44ce:	b252      	sxtb	r2, r2
+    44d0:	2a00      	cmp	r2, #0
+    44d2:	dbfb      	blt.n	44cc <wsndemo_task+0x2e0>
 	*result = adc_module->RESULT.reg;
-    44d8:	8b59      	ldrh	r1, [r3, #26]
-    44da:	4a1d      	ldr	r2, [pc, #116]	; (4550 <wsndemo_task+0x364>)
-    44dc:	8011      	strh	r1, [r2, #0]
+    44d4:	8b59      	ldrh	r1, [r3, #26]
+    44d6:	4a1e      	ldr	r2, [pc, #120]	; (4550 <wsndemo_task+0x364>)
+    44d8:	8011      	strh	r1, [r2, #0]
 	adc_module->INTFLAG.reg = int_flags;
-    44de:	2201      	movs	r2, #1
-    44e0:	761a      	strb	r2, [r3, #24]
+    44da:	2201      	movs	r2, #1
+    44dc:	761a      	strb	r2, [r3, #24]
 	uint32_t int_flags = adc_module->INTFLAG.reg;
-    44e2:	7e19      	ldrb	r1, [r3, #24]
-    44e4:	b2c9      	uxtb	r1, r1
+    44de:	7e19      	ldrb	r1, [r3, #24]
+    44e0:	b2c9      	uxtb	r1, r1
 	if (int_flags & ADC_INTFLAG_RESRDY) {
-    44e6:	400a      	ands	r2, r1
+    44e2:	400a      	ands	r2, r1
 	if (int_flags & ADC_INTFLAG_WINMON) {
-    44e8:	0748      	lsls	r0, r1, #29
-    44ea:	d501      	bpl.n	44f0 <wsndemo_task+0x304>
+    44e4:	0748      	lsls	r0, r1, #29
+    44e6:	d501      	bpl.n	44ec <wsndemo_task+0x300>
 		status_flags |= ADC_STATUS_WINDOW;
-    44ec:	2002      	movs	r0, #2
-    44ee:	4302      	orrs	r2, r0
+    44e8:	2002      	movs	r0, #2
+    44ea:	4302      	orrs	r2, r0
 	if (int_flags & ADC_INTFLAG_OVERRUN) {
-    44f0:	0789      	lsls	r1, r1, #30
-    44f2:	d501      	bpl.n	44f8 <wsndemo_task+0x30c>
+    44ec:	0789      	lsls	r1, r1, #30
+    44ee:	d501      	bpl.n	44f4 <wsndemo_task+0x308>
 		status_flags |= ADC_STATUS_OVERRUN;
-    44f4:	2104      	movs	r1, #4
-    44f6:	430a      	orrs	r2, r1
+    44f0:	2104      	movs	r1, #4
+    44f2:	430a      	orrs	r2, r1
 	if (adc_get_status(module_inst) & ADC_STATUS_OVERRUN) {
-    44f8:	0752      	lsls	r2, r2, #29
-    44fa:	d400      	bmi.n	44fe <wsndemo_task+0x312>
-    44fc:	e71c      	b.n	4338 <wsndemo_task+0x14c>
+    44f4:	0752      	lsls	r2, r2, #29
+    44f6:	d400      	bmi.n	44fa <wsndemo_task+0x30e>
+    44f8:	e71c      	b.n	4334 <wsndemo_task+0x148>
 	adc_module->INTFLAG.reg = int_flags;
-    44fe:	2202      	movs	r2, #2
-    4500:	761a      	strb	r2, [r3, #24]
-    4502:	e719      	b.n	4338 <wsndemo_task+0x14c>
-    4504:	00004a89 	.word	0x00004a89
-    4508:	2000027c 	.word	0x2000027c
-    450c:	20001280 	.word	0x20001280
-    4510:	00002e59 	.word	0x00002e59
-    4514:	2000022c 	.word	0x2000022c
-    4518:	00007edc 	.word	0x00007edc
-    451c:	000074d7 	.word	0x000074d7
+    44fa:	2202      	movs	r2, #2
+    44fc:	761a      	strb	r2, [r3, #24]
+    44fe:	e719      	b.n	4334 <wsndemo_task+0x148>
+    4500:	00004a89 	.word	0x00004a89
+    4504:	2000027c 	.word	0x2000027c
+    4508:	20001280 	.word	0x20001280
+    450c:	00002e59 	.word	0x00002e59
+    4510:	2000022c 	.word	0x2000022c
+    4514:	00007edc 	.word	0x00007edc
+    4518:	000074d7 	.word	0x000074d7
+    451c:	00002710 	.word	0x00002710
     4520:	00004119 	.word	0x00004119
     4524:	20000266 	.word	0x20000266
     4528:	20000268 	.word	0x20000268
@@ -13428,11 +13427,11 @@ void wsndemo_task(void)
 	if (adc_get_status(module_inst) & ADC_STATUS_OVERRUN) {
     4598:	0752      	lsls	r2, r2, #29
     459a:	d400      	bmi.n	459e <wsndemo_task+0x3b2>
-    459c:	e70a      	b.n	43b4 <wsndemo_task+0x1c8>
+    459c:	e708      	b.n	43b0 <wsndemo_task+0x1c4>
 	adc_module->INTFLAG.reg = int_flags;
     459e:	2202      	movs	r2, #2
     45a0:	761a      	strb	r2, [r3, #24]
-    45a2:	e707      	b.n	43b4 <wsndemo_task+0x1c8>
+    45a2:	e705      	b.n	43b0 <wsndemo_task+0x1c4>
     45a4:	7e4b      	ldrb	r3, [r1, #25]
 	while (adc_is_syncing(module_inst)) {
     45a6:	b25b      	sxtb	r3, r3
@@ -13465,11 +13464,11 @@ void wsndemo_task(void)
 	if (adc_get_status(module_inst) & ADC_STATUS_OVERRUN) {
     45cc:	075b      	lsls	r3, r3, #29
     45ce:	d400      	bmi.n	45d2 <wsndemo_task+0x3e6>
-    45d0:	e729      	b.n	4426 <wsndemo_task+0x23a>
+    45d0:	e727      	b.n	4422 <wsndemo_task+0x236>
 	adc_module->INTFLAG.reg = int_flags;
     45d2:	2302      	movs	r3, #2
     45d4:	760b      	strb	r3, [r1, #24]
-    45d6:	e726      	b.n	4426 <wsndemo_task+0x23a>
+    45d6:	e724      	b.n	4422 <wsndemo_task+0x236>
 		++wsnmsghandle;
     45d8:	4a04      	ldr	r2, [pc, #16]	; (45ec <wsndemo_task+0x400>)
     45da:	7813      	ldrb	r3, [r2, #0]
@@ -13479,7 +13478,7 @@ void wsndemo_task(void)
     45e0:	2206      	movs	r2, #6
     45e2:	4b03      	ldr	r3, [pc, #12]	; (45f0 <wsndemo_task+0x404>)
     45e4:	701a      	strb	r2, [r3, #0]
-    45e6:	e66e      	b.n	42c6 <wsndemo_task+0xda>
+    45e6:	e66c      	b.n	42c2 <wsndemo_task+0xd6>
     45e8:	20001272 	.word	0x20001272
     45ec:	2000027d 	.word	0x2000027d
     45f0:	2000027c 	.word	0x2000027c

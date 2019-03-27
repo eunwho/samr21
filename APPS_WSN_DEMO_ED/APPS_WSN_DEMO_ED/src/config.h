@@ -41,11 +41,11 @@
 #include  "miwi_config_mesh.h"
 /*****************************************************************************
 *****************************************************************************/
-#define APP_SENDING_INTERVAL    1000
+#define APP_SENDING_INTERVAL    10000
 
 #define APP_SENDING_INTERVAL_IN_SIMULATION 60000
 
-#define APP_NWKSTATUS_INTERVAL  1000
+#define APP_NWKSTATUS_INTERVAL  10000
 
 #define APP_RX_BUF_SIZE         20
 
@@ -53,7 +53,7 @@
 #define SHORT_ADDRESS_CAPTION_SIZE     7
 
 //#define APP_CAPTION     "End Device"
-#define MAC_ADDR		33
+#define MAC_ADDR		4
 #define APP_CAPTION     "SUN"
 #define APP_NODE_TYPE   2
 #define APP_COORDINATOR 0
