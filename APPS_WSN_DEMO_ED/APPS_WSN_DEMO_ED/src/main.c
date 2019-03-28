@@ -1,12 +1,39 @@
 /**
 * \file  main.c
 */
-#include "header.h"
-#include "extern.h"
-#include "global.h"
+#include "asf.h"
+#include "sio2host.h"
+#include "wsndemo.h"
+#include "miwi_api.h"
+#include "config.h"
 
-extern AppState_t appState;
+void rtc_match_callback(void);
+void configure_rtc_callbacks(void);
+void configure_rtc_calendar(void);
+void config_led(void);
+void readMacAddress(void);
 
+struct rtc_module rtc_instance;
+struct rtc_calendar_alarm_time alarm;
+//extern AppState_t appState;
+// extern void appSendData();
+
+int temp1;
+
+void rtc_match_callback(void){
+	
+	// port_pin_toggle_output_level(LED_0_PIN);
+//	LED_Toggle(LED_NETWORK); //by jsk
+/*
+	if (APP_STATE_WAIT_SEND_TIMER == appState) {
+		appState = APP_STATE_SEND;
+	}
+*/
+	alarm.mask = RTC_CALENDAR_ALARM_MASK_SEC;	
+	alarm.time.second += 10;
+	alarm.time.second = alarm.time.second % 60;
+	rtc_calendar_set_alarm(&rtc_instance, &alarm, RTC_CALENDAR_ALARM_0);
+}
 
 void configure_rtc_callbacks(void){
 	rtc_calendar_register_callback(	&rtc_instance, rtc_match_callback, RTC_CALENDAR_CALLBACK_ALARM_0);
@@ -31,6 +58,7 @@ void configure_rtc_calendar(void){
 	rtc_calendar_enable(&rtc_instance);
 }
 
+void configure_adc(void);
 //void ReadMacAddress(void);
 
 struct adc_module adc_instance;
@@ -58,6 +86,10 @@ void config_led(void){
 	port_pin_set_output_level(PIN_PA28, false);
 }
 
+
+uint16_t adcResult;
+volatile uint16_t temp[2];
+
 void readMacAddress(void){
 	myLongAddress[0] = 16;
 	myLongAddress[1] = 53;
@@ -66,11 +98,12 @@ void readMacAddress(void){
 	myLongAddress[4] = 89;
 	myLongAddress[5] = 37;
 	myLongAddress[6] = 128;
-	myLongAddress[7] = MAC_ADDR;
+	myLongAddress[7] = MAC_ADDR;	
 }
 
 int main ( void )
 {
+	struct rtc_calendar_time rtc_time;
 	
 	irq_initialize_vectors();
 	system_init();
@@ -99,5 +132,3 @@ int main ( void )
 		wsndemo_task();
     }
 }
-
-/* end of main.c */

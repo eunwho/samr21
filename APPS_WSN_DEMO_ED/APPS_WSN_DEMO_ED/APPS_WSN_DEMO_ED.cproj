@@ -1162,6 +1162,9 @@
     <None Include="src\ASF\sam0\drivers\sercom\usart\usart_interrupt.h">
       <SubType>compile</SubType>
     </None>
+    <None Include="src\wsndemo.h">
+      <SubType>compile</SubType>
+    </None>
     <None Include="src\ASF\sam0\utils\cmsis\samr21\include\pio\samr21g16a.h">
       <SubType>compile</SubType>
     </None>
@@ -1537,24 +1540,6 @@
     <None Include="src\config\conf_sleepmgr.h">
       <SubType>compile</SubType>
     </None>
-    <Compile Include="src\define.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\extern.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\global.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\header.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\modules.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\include.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\main.c">
       <SubType>compile</SubType>
     </Compile>
