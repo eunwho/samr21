@@ -48,6 +48,7 @@ typedef struct  AppMessage_t {
 	} caption;
 } AppMessage_t;
 
+/*
 typedef enum AppState_t {
 	APP_STATE_INITIAL,
 	APP_STATE_START_NETWORK,
@@ -63,10 +64,11 @@ typedef enum AppState_t {
 	APP_STATE_SLEEP,
 	APP_STATE_WAKEUP,
 } AppState_t;
+*/
 COMPILER_PACK_RESET()
 
 /*- Variables --------------------------------------------------------------*/
-static AppState_t appState = APP_STATE_INITIAL;
+//static AppState_t appState = APP_STATE_INITIAL;
 static SYS_Timer_t appNetworkStatusTimer;
 
 static bool appNetworkStatus;
@@ -89,16 +91,18 @@ static void appDataInd(RECEIVED_MESH_MESSAGE *ind){
     appCmdDataInd(ind);
 }
 
-static void appDataSendingTimerHandler(SYS_Timer_t *timer){
+static void appDataSendingTimerHandler(SYS_Timer_t *timer){		
 	if (APP_STATE_WAIT_SEND_TIMER == appState) appState = APP_STATE_SEND;
 	else	SYS_TimerStart(&appDataSendingTimer);
 	(void)timer;
+
 }
 
 static void appNetworkStatusTimerHandler(SYS_Timer_t *timer)
 {
 #if (LED_COUNT > 0 )
-	LED_Toggle(LED_NETWORK);
+//	LED_Toggle(LED_NETWORK);
+	LED_Toggle(LED_DATA);
 #endif
 	(void)timer;
 }
@@ -256,10 +260,11 @@ static void APP_TaskHandler(void)
 		case APP_STATE_SENDING_DONE:
 			// appState = APP_STATE_WAIT_SEND_TIMER;
 			appState = APP_STATE_SEND;
+			SYS_TimerStop(&appDataSendingTimer);
 			system_sleep();
-//			SYS_TimerStart(&appDataSendingTimer);
 			break;		
-		default:break;
+		default:
+			break;
 	}
 }
 

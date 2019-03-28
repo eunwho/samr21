@@ -16,23 +16,24 @@ void readMacAddress(void);
 struct rtc_module rtc_instance;
 struct rtc_calendar_alarm_time alarm;
 //extern AppState_t appState;
-// extern void appSendData();
+
+AppState_t appState = APP_STATE_INITIAL;
 
 int temp1;
 
 void rtc_match_callback(void){
-	
-	// port_pin_toggle_output_level(LED_0_PIN);
-//	LED_Toggle(LED_NETWORK); //by jsk
+	port_pin_set_output_level(PIN_PA28,true);
 /*
 	if (APP_STATE_WAIT_SEND_TIMER == appState) {
 		appState = APP_STATE_SEND;
 	}
 */
+	appState = APP_STATE_SEND;
 	alarm.mask = RTC_CALENDAR_ALARM_MASK_SEC;	
 	alarm.time.second += 1;
 	alarm.time.second = alarm.time.second % 60;
 	rtc_calendar_set_alarm(&rtc_instance, &alarm, RTC_CALENDAR_ALARM_0);
+	port_pin_set_output_level(PIN_PA28,false);
 }
 
 void configure_rtc_callbacks(void){
@@ -48,7 +49,7 @@ void configure_rtc_calendar(void){
 	alarm.time.day		= 11;
 	alarm.time.hour		= 8;
 	alarm.time.minute	= 0;
-	alarm.time.second	= 10;
+	alarm.time.second	= 30;
 	
 	config_rtc_calendar.clock_24h = true;
 	config_rtc_calendar.alarm[0].time = alarm.time;
@@ -77,8 +78,10 @@ void config_led(void){
 	struct port_config pin_config;
 	port_get_config_defaults( &pin_config);
 	pin_config.direction  = PORT_PIN_DIR_OUTPUT;
-	port_pin_set_config(LED_0_PIN, &pin_config);
-	port_pin_set_output_level(LED_0_PIN, false);
+//	port_pin_set_config(LED_0_PIN, &pin_config);
+//	port_pin_set_output_level(LED_0_PIN, false);
+	port_pin_set_config(PIN_PA27, &pin_config);
+	port_pin_set_output_level(PIN_PA27, false);
 
 	port_get_config_defaults( &pin_config);
 	pin_config.direction  = PORT_PIN_DIR_OUTPUT;
@@ -111,6 +114,8 @@ int main ( void )
 	cpu_irq_enable();
 
 	config_led();
+
+
 	rtc_calendar_get_time_defaults(&rtc_time);
 	rtc_time.year	= 2019;
 	rtc_time.month	= 3;
@@ -127,6 +132,10 @@ int main ( void )
 	readMacAddress();
 	wsndemo_init();
 	configure_adc();
+	
+	
+
+	
     while(1)
 	{
 		wsndemo_task();

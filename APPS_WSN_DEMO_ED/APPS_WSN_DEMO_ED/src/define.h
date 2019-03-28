@@ -12,29 +12,22 @@
 #define MAC_ADDR		3
 #define SLEEP_SECOND	3
 
-#ifndef LED_COUNT
 #define LED_COUNT 2
-#endif
 
-#if LED_COUNT > 2
-#define LED_NETWORK       LED0_GPIO
-#define LED_DATA          LED1_GPIO
-//#define LED_DATA          PIN_PA28		// by jsk
-
-#define LED_BLINK         LED2_GPIO
-#define LED_IDENTIFY      LED0_GPIO
-#elif LED_COUNT == 2
+/*
 #define LED_NETWORK       LED0_GPIO
 #define LED_DATA          LED1_GPIO
 #define LED_BLINK         LED1_GPIO
 #define LED_IDENTIFY      LED0_GPIO
-#elif LED_COUNT == 1
-#define LED_NETWORK       LED0_GPIO
+*/
+
+#define LED_NETWORK       PIN_PA28
 #define LED_DATA          LED0_GPIO
 #define LED_BLINK         LED0_GPIO
-#define LED_IDENTIFY      LED0_GPIO
-#endif
+#define LED_IDENTIFY      PIN_PA28
 
+
+/*
 #ifdef LED0_ACTIVE_LEVEL
 #define LED_NETWORK_GPIO       LED0_GPIO
 #define LED_DATA_GPIO          LED0_GPIO
@@ -49,4 +42,5 @@
 #define LED_BLINK_ACTIVE_LEVEL  LED0_ACTIVE_LEVEL
 #define LED_BLINK_INACTIVE_LEVEL  LED0_INACTIVE_LEVEL
 #endif
+*/
 #endif /* DEFINE_H_ */

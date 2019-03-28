@@ -506,8 +506,6 @@ void system_board_init(void);
  */
 #define LED_Toggle(led_gpio)  port_pin_toggle_output_level(led_gpio)
 
-
-
 #ifdef __cplusplus
 }
 #endif
