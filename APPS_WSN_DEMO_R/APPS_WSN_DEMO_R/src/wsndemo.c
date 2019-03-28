@@ -61,7 +61,8 @@
 /*****************************************************************************
 *****************************************************************************/
 #define APP_SCAN_DURATION 10
-#define APP_CAPTION_SIZE  (sizeof(APP_CAPTION) - 1 + SHORT_ADDRESS_CAPTION_SIZE)
+//#define APP_CAPTION_SIZE  (sizeof(APP_CAPTION) - 1 + SHORT_ADDRESS_CAPTION_SIZE)
+#define APP_CAPTION_SIZE  15	// jsk
 
 /*- Types ------------------------------------------------------------------*/
 COMPILER_PACK_SET(1)
@@ -269,7 +270,7 @@ static void appSendData(void)
 
 	/* Get Short address */
 	MiApp_Get(SHORT_ADDRESS, (uint8_t *)&shortAddressLocal);
-        appMsg.shortAddr = shortAddressLocal;
+    appMsg.shortAddr = shortAddressLocal;
 	appMsg.extAddr   = appMsg.shortAddr;
 #ifndef PAN_COORDINATOR
     /* Get Next Hop Short address to reach PAN Coordinator*/
@@ -282,31 +283,14 @@ static void appSendData(void)
 	/* Get current working PanId */
 	MiApp_Get(PANID, (uint8_t *)&shortAddressPanId);
         appMsg.panId = shortAddressPanId;
-#if defined(PAN_COORDINATOR)
-	sprintf(&(appMsg.caption.text[APP_CAPTION_SIZE - SHORT_ADDRESS_CAPTION_SIZE]), "-0x%04X", shortAddressLocal);
-	appUartSendMessage((uint8_t *)&appMsg, sizeof(appMsg));
-	SYS_TimerStart(&appDataSendingTimer);
-	appState = APP_STATE_WAIT_SEND_TIMER;
-#else
+
 #if (LED_COUNT > 0)
 	LED_On(LED_DATA);
 #endif
 
 	appMsg.caption.type         = 32;
-#if defined(COORDINATOR)
-	if (shortAddressLocal & RXON_ENDEVICE_ADDRESS_MASK)
-	{
-		appMsg.caption.size         = APP_CAPTION_ED_SIZE;
-	    memcpy(appMsg.caption.text, APP_CAPTION_ED, APP_CAPTION_ED_SIZE);
-		sprintf(&(appMsg.caption.text[APP_CAPTION_ED_SIZE - SHORT_ADDRESS_CAPTION_SIZE]), "-0x%04X", shortAddressLocal);
-	}
-	else
-#endif
-	{
-	    appMsg.caption.size         = APP_CAPTION_SIZE;
-	    memcpy(appMsg.caption.text, APP_CAPTION, APP_CAPTION_SIZE);
-		sprintf(&(appMsg.caption.text[APP_CAPTION_SIZE - SHORT_ADDRESS_CAPTION_SIZE]), "-0x%04X", shortAddressLocal);
-	}
+//    memcpy(appMsg.caption.text, APP_CAPTION, APP_CAPTION_SIZE);
+	sprintf(appMsg.caption.text, "R%03d -0x%04x", ID_ROUTER, shortAddressLocal);
 
 	if (MiApp_SendData(2, (uint8_t *)&dstAddr, sizeof(appMsg), (uint8_t *)&appMsg, wsnmsghandle, true, appDataConf))
 	{
@@ -317,7 +301,6 @@ static void appSendData(void)
 	{
 		appState = APP_STATE_SENDING_DONE;
 	}
-#endif
 }
 
 /*************************************************************************//**

@@ -29,7 +29,7 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
  12 .debug_line   0001be02  00000000  00000000  000ada5d  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_str    0008e14c  00000000  00000000  000c985f  2**0
+ 13 .debug_str    0008e14d  00000000  00000000  000c985f  2**0
                   CONTENTS, READONLY, DEBUGGING
  14 .debug_frame  000022e8  00000000  00000000  001579ac  2**2
                   CONTENTS, READONLY, DEBUGGING
@@ -7000,8 +7000,8 @@ static inline enum status_code usart_serial_read_packet(
 	host_uart_config.pinmux_pad3 = HOST_SERCOM_PINMUX_PAD3;
     22be:	930f      	str	r3, [sp, #60]	; 0x3c
 	host_uart_config.baudrate    = USART_HOST_BAUDRATE;
-    22c0:	2396      	movs	r3, #150	; 0x96
-    22c2:	021b      	lsls	r3, r3, #8
+    22c0:	23e1      	movs	r3, #225	; 0xe1
+    22c2:	025b      	lsls	r3, r3, #9
     22c4:	9308      	str	r3, [sp, #32]
 static inline void stdio_serial_init(
 		struct usart_module *const module,

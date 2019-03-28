@@ -64,6 +64,7 @@
 #include "sio2host.h"
 #include "wsndemo.h"
 #include "miwi_api.h"
+#include "config.h"
 
 #if ((BOARD == SAMR30_XPLAINED_PRO) || (BOARD == SAMR21_XPLAINED_PRO))
 #include "edbg-eui.h"
@@ -77,59 +78,17 @@
 /************************** PROTOTYPES **********************************/
 void ReadMacAddress(void);
 
-/*********************************************************************
-* Function:         void main(void)
-*
-* PreCondition:     none
-*
-* Input:		    none
-*
-* Output:		    none
-*
-* Side Effects:	    none
-*
-* Overview:		    This is the main function that runs the simple 
-*                   example demo. The purpose of this example is to
-*                   demonstrate the simple application programming
-*                   interface for the MiWi(TM) Development 
-*                   Environment. By virtually total of less than 30 
-*                   lines of code, we can develop a complete 
-*                   application using MiApp interface. The 
-*                   application will first try to establish a
-*                   link with another device and then process the 
-*                   received information as well as transmit its own 
-*                   information.
-*                   MiWi(TM) DE also support a set of rich 
-*                   features. Example code FeatureExample will
-*                   demonstrate how to implement the rich features 
-*                   through MiApp programming interfaces.
-*
-* Note:			    
-**********************************************************************/
 int main ( void )
 {
 	irq_initialize_vectors();
 
-#if SAMD || SAMR21 || SAML21 || SAMR30
 	system_init();
 	delay_init();
-#else
-	sysclk_init();
-	board_init();
-#endif
 
 	cpu_irq_enable();	
 
-#if defined (ENABLE_LCD)	
-	LCD_Initialize();
-#endif
-
 	sio2host_init();
-	
-	/* Read the MAC address from either flash or EDBG */
-//	ReadMacAddress();
-
-    /* Initialize the demo */
+	ReadMacAddress();
 	wsndemo_init();
 	
     while(1)
@@ -139,36 +98,14 @@ int main ( void )
 
 }
 
-/*********************************************************************
-* Function:         void ReadMacAddress()
-*
-* PreCondition:     none
-*
-* Input:		    none
-*
-* Output:		    Reads MAC Address from MAC Address EEPROM
-*
-* Side Effects:	    none
-*
-* Overview:		    Uses the MAC Address from the EEPROM for addressing
-*
-* Note:			    
-**********************************************************************/
-void ReadMacAddress(void)
-{
-#if BOARD == SAMR21ZLL_EK
-   uint8_t i = 0, j = 0;
-   for (i = 0; i < 8; i += 2, j++)
-   {
-     myLongAddress[i] = (NVM_UID_ADDRESS[j] & 0xFF);
-	 myLongAddress[i + 1] = (NVM_UID_ADDRESS[j] >> 8);
-   }
-#elif ((BOARD == SAMR30_XPLAINED_PRO) || (BOARD == SAMR21_XPLAINED_PRO))
-   uint8_t* peui64 = edbg_eui_read_eui64();
-	for(uint8_t k=0; k<MY_ADDRESS_LENGTH; k++)
-   {
-		myLongAddress[k] = peui64[MY_ADDRESS_LENGTH-k-1];
-   }
-#endif
+void ReadMacAddress(void){
+	myLongAddress[0] = 16;
+	myLongAddress[1] = 53;
+	myLongAddress[2] = 0;
+	myLongAddress[3] = 32;
+	myLongAddress[4] = 89;
+	myLongAddress[5] = 37;
+	myLongAddress[6] = 128;
+	myLongAddress[7] = 130 - ID_ROUTER;
 }
 
