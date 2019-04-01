@@ -41,7 +41,7 @@
 #include  "miwi_config_mesh.h"
 /*****************************************************************************
 *****************************************************************************/
-#define APP_SENDING_INTERVAL    10000
+#define APP_SENDING_INTERVAL    1000
 
 #define APP_SENDING_INTERVAL_IN_SIMULATION 60000
 

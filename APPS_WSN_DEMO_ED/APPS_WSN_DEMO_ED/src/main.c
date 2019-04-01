@@ -7,56 +7,40 @@
 #include "miwi_api.h"
 #include "config.h"
 
-void rtc_match_callback(void);
+struct rtc_module rtc_instance;
+
+void rtc_overflow_callback(void);
+void configure_rtc_count(void);
 void configure_rtc_callbacks(void);
-void configure_rtc_calendar(void);
+
+void rtc_overflow_callback(void){	
+	port_pin_toggle_output_level(PIN_PA28);
+	// if( appState == APP_STATE_SENDING_DONE) appState = APP_STATE_SEND ;
+}
+
 void config_led(void);
 void readMacAddress(void);
-
-struct rtc_module rtc_instance;
-struct rtc_calendar_alarm_time alarm;
-//extern AppState_t appState;
 
 AppState_t appState = APP_STATE_INITIAL;
 
 int temp1;
 
-void rtc_match_callback(void){
-	port_pin_set_output_level(PIN_PA28,true);
-/*
-	if (APP_STATE_WAIT_SEND_TIMER == appState) {
-		appState = APP_STATE_SEND;
-	}
-*/
-	appState = APP_STATE_SEND;
-	alarm.mask = RTC_CALENDAR_ALARM_MASK_SEC;	
-	alarm.time.second += 1;
-	alarm.time.second = alarm.time.second % 60;
-	rtc_calendar_set_alarm(&rtc_instance, &alarm, RTC_CALENDAR_ALARM_0);
-	port_pin_set_output_level(PIN_PA28,false);
+void configure_rtc_count(void){
+	
+	struct rtc_count_config config_rtc_count;
+	rtc_count_get_config_defaults(&config_rtc_count);
+	
+	config_rtc_count.prescaler				= RTC_COUNT_PRESCALER_DIV_1;
+	config_rtc_count.mode					= RTC_COUNT_MODE_16BIT;
+	config_rtc_count.continuously_update	= true;
+
+	rtc_count_init(&rtc_instance, RTC, &config_rtc_count);
+	rtc_count_enable(&rtc_instance);
 }
 
 void configure_rtc_callbacks(void){
-	rtc_calendar_register_callback(	&rtc_instance, rtc_match_callback, RTC_CALENDAR_CALLBACK_ALARM_0);
-	rtc_calendar_enable_callback(	&rtc_instance, RTC_CALENDAR_CALLBACK_ALARM_0);	
-}
-
-void configure_rtc_calendar(void){
-	struct rtc_calendar_config config_rtc_calendar;
-	rtc_calendar_get_config_defaults(&config_rtc_calendar);
-	alarm.time.year		= 2019;
-	alarm.time.month	= 3;
-	alarm.time.day		= 11;
-	alarm.time.hour		= 8;
-	alarm.time.minute	= 0;
-	alarm.time.second	= 30;
-	
-	config_rtc_calendar.clock_24h = true;
-	config_rtc_calendar.alarm[0].time = alarm.time;
-	config_rtc_calendar.alarm[0].mask = RTC_CALENDAR_ALARM_MASK_YEAR;
-	
-	rtc_calendar_init(&rtc_instance, RTC, &config_rtc_calendar);	
-	rtc_calendar_enable(&rtc_instance);
+	rtc_count_register_callback( &rtc_instance, rtc_overflow_callback,RTC_COUNT_CALLBACK_OVERFLOW);
+	rtc_count_enable_callback( &rtc_instance, RTC_COUNT_CALLBACK_OVERFLOW);
 }
 
 void configure_adc(void);
@@ -91,7 +75,7 @@ void config_led(void){
 
 
 uint16_t adcResult;
-volatile uint16_t temp[2];
+volatile uint16_t tmp1, tmp2;
 
 void readMacAddress(void){
 	myLongAddress[0] = 16;
@@ -106,38 +90,30 @@ void readMacAddress(void){
 
 int main ( void )
 {
-	struct rtc_calendar_time rtc_time;
-	
-	irq_initialize_vectors();
 	system_init();
 	delay_init();
-	cpu_irq_enable();
-
+	irq_initialize_vectors();
 	config_led();
-
-
-	rtc_calendar_get_time_defaults(&rtc_time);
-	rtc_time.year	= 2019;
-	rtc_time.month	= 3;
-	rtc_time.day	= 11;
-	rtc_time.hour	= 8;
-	rtc_time.minute	= 0;
-	rtc_time.second	= 0;
-
-	configure_rtc_calendar();
-	configure_rtc_callbacks();
-	rtc_calendar_set_time(&rtc_instance, &rtc_time);
-	system_set_sleepmode(SYSTEM_SLEEPMODE_STANDBY);
-
 	readMacAddress();
 	wsndemo_init();
 	configure_adc();
-	
-	
-
-	
+	configure_rtc_count();
+	configure_rtc_callbacks();
+	rtc_count_set_period(&rtc_instance, 2000);
+	system_set_sleepmode(SYSTEM_SLEEPMODE_STANDBY);
+	cpu_irq_enable();	
     while(1)
 	{
+/*
+		if(tmp1 > 19 ){
+			system_sleep();
+			tmp1 = 0 ;
+		} else {
+			delay_ms(200);
+			port_pin_toggle_output_level(PIN_PA28);			
+			tmp1++;
+		}
+*/
 		wsndemo_task();
     }
 }

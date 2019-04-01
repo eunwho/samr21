@@ -235,7 +235,6 @@ static void appInit(void)
 #if (LED_COUNT > 0 )
 	LED_On(LED_NETWORK);
 #endif
-
 	APP_CommandsInit();
 	MiApp_SubscribeDataIndicationCallback(appDataInd);
 
@@ -258,9 +257,8 @@ static void APP_TaskHandler(void)
 			appSendData();
 			break;
 		case APP_STATE_SENDING_DONE:
-			// appState = APP_STATE_WAIT_SEND_TIMER;
-			appState = APP_STATE_SEND;
-			SYS_TimerStop(&appDataSendingTimer);
+			appState = APP_STATE_WAIT_SEND_TIMER;
+			SYS_TimerStart(&appDataSendingTimer);
 			system_sleep();
 			break;		
 		default:

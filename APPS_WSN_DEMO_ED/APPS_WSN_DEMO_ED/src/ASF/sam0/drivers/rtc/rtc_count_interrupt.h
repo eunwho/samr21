@@ -1,7 +1,7 @@
 /**
  * \file
  *
- * \brief SAM RTC Driver (Calendar Interrupt Mode)
+ * \brief SAM RTC Driver (Count Interrupt Mode)
  *
  * Copyright (c) 2013-2018 Microchip Technology Inc. and its subsidiaries.
  *
@@ -34,17 +34,17 @@
  * Support and FAQ: visit <a href="https://www.microchip.com/support/">Microchip Support</a>
  */
 
-#ifndef RTC_CALENDAR_INTERRUPT_H_INCLUDED
-#define RTC_CALENDAR_INTERRUPT_H_INCLUDED
+#ifndef RTC_COUNT_INTERRUPT_H_INCLUDED
+#define RTC_COUNT_INTERRUPT_H_INCLUDED
 
-#include "rtc_calendar.h"
+#include "rtc_count.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /**
- * \addtogroup asfdoc_sam0_rtc_calendar_group
+ * \addtogroup asfdoc_sam0_rtc_count_group
  * @{
  */
 
@@ -52,28 +52,29 @@ extern "C" {
  * \name Callbacks
  * @{
  */
-enum status_code rtc_calendar_register_callback(
+enum status_code rtc_count_register_callback(
 		struct rtc_module *const module,
-		rtc_calendar_callback_t callback,
-		enum rtc_calendar_callback callback_type);
+		rtc_count_callback_t callback,
+		enum rtc_count_callback callback_type);
 
-enum status_code rtc_calendar_unregister_callback(
+enum status_code rtc_count_unregister_callback(
 		struct rtc_module *const module,
-		enum rtc_calendar_callback callback_type);
+		enum rtc_count_callback callback_type);
 
-void rtc_calendar_enable_callback(
+void rtc_count_enable_callback(
 		struct rtc_module *const module,
-		enum rtc_calendar_callback callback_type);
+		enum rtc_count_callback callback_type);
 
-void rtc_calendar_disable_callback(
-	struct rtc_module *const module,
-	enum rtc_calendar_callback callback_type);
+void rtc_count_disable_callback(
+		struct rtc_module *const module,
+		enum rtc_count_callback callback_type);
 
 /** @} */
+
 /** @} */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* RTC_CALENDAR_INTERRUPT_H_INCLUDED */
+#endif /* RTC_COUNT_INTERRUPT_H_INCLUDED */
