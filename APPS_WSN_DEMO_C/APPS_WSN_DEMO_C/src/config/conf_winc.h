@@ -44,54 +44,41 @@ extern "C" {
 /* This configuration files comes with empty settings! */
 /* Default settings for SAMR21 Xplained Pro with WINC on EXT1 are */
 /* available in comments for reference. */
-#warning Please modify conf_winc.h for WINC module settings!
 
-/*
-   ---------------------------------
-   ---------- PIN settings ---------
-   ---------------------------------
-*/
+// #warning Please modify conf_winc.h for WINC module settings!
 
-#define CONF_WINC_PIN_RESET				0 /* PIN_PA13 */
-#define CONF_WINC_PIN_CHIP_ENABLE		0 /* PIN_PA23 */
-#define CONF_WINC_PIN_WAKE				0 /* PIN_PA28 */
+// 게이트웨이-v04 세팅용 //
+#define CONF_WINC_PIN_RESET				PIN_PA13
+#define CONF_WINC_PIN_CHIP_ENABLE		PIN_PA14
+#define CONF_WINC_PIN_WAKE				PIN_PA22
 
-/*
-   ---------------------------------
-   ---------- SPI settings ---------
-   ---------------------------------
-*/
+// SPI settings
 
 #define CONF_WINC_USE_SPI				(1)
 
-/** SPI pin and instance settings. */
-#define CONF_WINC_SPI_MODULE			0 /* SERCOM5 */
-#define CONF_WINC_SPI_SERCOM_MUX		0 /* SPI_SIGNAL_MUX_SETTING_E */
-#define CONF_WINC_SPI_PINMUX_PAD0		0 /* PINMUX_PB02D_SERCOM5_PAD0 */ /* in */
-#define CONF_WINC_SPI_PINMUX_PAD1		0 /* PINMUX_PB02D_SERCOM5_PAD1 */ /* cs driven from software */
-#define CONF_WINC_SPI_PINMUX_PAD2		0 /* PINMUX_PB02D_SERCOM5_PAD2 */ /* out */
-#define CONF_WINC_SPI_PINMUX_PAD3		0 /* PINMUX_PB02D_SERCOM5_PAD3 */ /* sck */
-#define CONF_WINC_SPI_CS_PIN			0 /* PIN_PB03 */
+// 게이트웨이 세팅용 //
+#define CONF_WINC_SPI_MODULE			SERCOM3
+#define CONF_WINC_SPI_SERCOM_MUX		SPI_SIGNAL_MUX_SETTING_E
+#define CONF_WINC_SPI_PINMUX_PAD0		PINMUX_PA16D_SERCOM3_PAD0 /* in */
+#define CONF_WINC_SPI_PINMUX_PAD1		PINMUX_UNUSED /* cs driven from software */
+#define CONF_WINC_SPI_PINMUX_PAD2		PINMUX_PA18D_SERCOM3_PAD2 /* out */
+#define CONF_WINC_SPI_PINMUX_PAD3		PINMUX_PA19D_SERCOM3_PAD3 /* sck */
+#define CONF_WINC_SPI_CS_PIN			PIN_PA17
 
-#define CONF_WINC_SPI_MISO				EXT1_PIN_SPI_MISO
-#define CONF_WINC_SPI_MOSI				EXT1_PIN_SPI_MOSI
-#define CONF_WINC_SPI_SCK				EXT1_PIN_SPI_SCK
-#define CONF_WINC_SPI_SS				EXT1_PIN_SPI_SS_0
+#define CONF_WINC_SPI_MISO			PIN_PA16
+#define CONF_WINC_SPI_MOSI			PIN_PA18
+#define CONF_WINC_SPI_SCK			PIN_PA19
+#define CONF_WINC_SPI_SS			PIN_PA17
 
 /** SPI interrupt pin. */
-#define CONF_WINC_SPI_INT_PIN			0 /* PIN_PA22A_EIC_EXTINT6 */
-#define CONF_WINC_SPI_INT_MUX			0 /* PINMUX_PA22A_EIC_EXTINT6 */
-#define CONF_WINC_SPI_INT_EIC			0 /* (6) */
+#define CONF_WINC_SPI_INT_PIN	PIN_PA15A_EIC_EXTINT15
+#define CONF_WINC_SPI_INT_MUX	MUX_PA15A_EIC_EXTINT15
+#define CONF_WINC_SPI_INT_EIC	(15)
 
 /** SPI clock. */
 #define CONF_WINC_SPI_CLOCK				(12000000)
 
-/*
-   ---------------------------------
-   --------- Debug Options ---------
-   ---------------------------------
-*/
-
+//   --------- Debug Options ---------
 #define CONF_WINC_DEBUG					(1)
 #define CONF_WINC_PRINTF				printf
 

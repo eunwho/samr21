@@ -63,6 +63,11 @@
 #define APP_SCAN_DURATION 10
 #define APP_CAPTION_SIZE  (sizeof(APP_CAPTION) - 1 + SHORT_ADDRESS_CAPTION_SIZE)
 
+
+//extern 
+extern uint8_t zbeeSensState[10];
+extern uint8_t write_plc[17];
+
 /*- Types ------------------------------------------------------------------*/
 COMPILER_PACK_SET(1)
 typedef struct  AppMessage_t {
@@ -143,6 +148,7 @@ static void appBroadcastDataConf(uint8_t msgConfHandle, miwi_status_t status, ui
 
 /*****************************************************************************
 *****************************************************************************/
+	 
 void UartBytesReceived(uint16_t bytes, uint8_t *byte )
 {
 	for (uint16_t i = 0; i < bytes; i++) {
@@ -178,15 +184,33 @@ static void appUartSendMessage(uint8_t *data, uint8_t size)
 
 /*****************************************************************************
 *****************************************************************************/
-static void appDataInd(RECEIVED_MESH_MESSAGE *ind)
+void appDataInd(RECEIVED_MESH_MESSAGE *ind);
+
+uint8_t bitFlag[] = {0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80};
+
+void appDataInd(RECEIVED_MESH_MESSAGE *ind)
 {
+	int addrId, byteNo, bitNo, setValue;
 	AppMessage_t *msg = (AppMessage_t *)ind->payload;
+	
+	char * caption;
+	
+
 #if (LED_COUNT > 0)
 	LED_Toggle(LED_DATA);
 #endif
 	msg->lqi = ind->packetLQI;
 	msg->rssi = ind->packetRSSI;
 #if defined(PAN_COORDINATOR)
+	
+	caption = (msg->caption).text;
+	
+	addrId = (*(caption+5)-'0')*10 + *(caption +6)-'0';
+	byteNo = addrId / 8;
+	bitNo = addrId % 8;		
+	setValue = (((msg->sensors).light) > 1200 ) ? bitFlag[bitNo] : 0x00;
+	write_plc[13+ byteNo] += setValue;
+
 	appUartSendMessage(ind->payload, ind->payloadSize);
 #else
     appCmdDataInd(ind);
