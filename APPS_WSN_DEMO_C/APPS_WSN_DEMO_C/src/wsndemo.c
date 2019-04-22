@@ -69,30 +69,30 @@
 /*- Types ------------------------------------------------------------------*/
 COMPILER_PACK_SET(1)
 typedef struct  AppMessage_t {
-	uint8_t commandId;
-	uint8_t nodeType;
-	uint64_t extAddr;
-	uint16_t shortAddr;
-	uint32_t softVersion;
-	uint32_t channelMask;
-	uint16_t panId;
-	uint8_t workingChannel;
-	uint16_t nextHopAddr;
-	uint8_t lqi;
-	int8_t rssi;
+	uint8_t commandId;				// [0]
+	uint8_t nodeType;				// [1]
+	uint64_t extAddr;				// [2,3,4,5,6,7,8,9]
+	uint16_t shortAddr;				// [10,11]
+	uint32_t softVersion;			// [12,13,14,15]
+	uint32_t channelMask;			// [16,17,18,19]
+	uint16_t panId;					// [20,21]
+	uint8_t workingChannel;			// [22]
+	uint16_t nextHopAddr;			// [23,24]
+	uint8_t lqi;					// [25]
+	int8_t rssi;					// [26]
 
 	struct {
-		uint8_t type;
-		uint8_t size;
-		int32_t battery;
-		int32_t temperature;
-		int32_t light;
+		uint8_t type;				// [27]
+		uint8_t size;				// [28]
+		int32_t battery;			// [29,30,31,32]
+		int32_t temperature;		// [33,34,35,36]
+		int32_t light;				// [37,38,39,40]
 	} sensors;
 
 	struct {
-		uint8_t type;
-		uint8_t size;
-		char text[APP_CAPTION_SIZE];
+		uint8_t type;				// [41]
+		uint8_t size;				// [42]
+		char text[APP_CAPTION_SIZE];// [43~]	
 	} caption;
 } AppMessage_t;
 
@@ -188,40 +188,66 @@ uint8_t bitFlag[] = {0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80};
 
 void appDataInd(RECEIVED_MESH_MESSAGE *ind)
 {
-	uint8_t bufTest1[]={0x02,0x52,'W','P','A','5','5','5','5','5','5',0x03,0x00};
-	uint8_t bufTest2[]={0x02,0x52,'W','P','A','A','A','A','A','A','A',0x03,0x00};
+	uint8_t bufTest1[]={0x02,0x52,'A','1','2','3','4','5','6','7','8',0x03,0x00};
+	uint8_t bufTest2[]={0x02,0x52,'A','0','0','0','0','0','0','0','0',0x03,0x00};
 	static int temp;
 	
 	int addrId, byteNo, bitNo, setValue;
+	char * zbeeId;
+	char * chTemp;
+	
 	AppMessage_t *msg = (AppMessage_t *)ind->payload;
-	
-	char * caption;
-	
+	chTemp = (char *)ind->payload;
 
 #if (LED_COUNT > 0)
 	LED_Toggle(LED_DATA);
 #endif
 	msg->lqi = ind->packetLQI;
 	msg->rssi = ind->packetRSSI;
-#if defined(PAN_COORDINATOR)
+	int32_t light;
 	
-	caption = (msg->caption).text;
-	
-	addrId = (*(caption+5)-'0')*10 + *(caption +6)-'0';
+
+	/*
+	zbeeId = (msg->caption).text;
+	setValue = (msg->sensors).light;
+	addrId = (*(zbeeId+5)-'0')*10 + *(zbeeId +6)-'0';
 	byteNo = addrId / 8;
 	bitNo = addrId % 8;		
 	setValue = (((msg->sensors).light) > 1200 ) ? bitFlag[bitNo] : 0x00;
 	write_plc[13+ byteNo] += setValue;
+	*/
 
+	//sprintf(chTemp,"caption.text = %s, SensValue = %d \r\n",zbeeId,setValue);
+	//snprintf(chTemp,40,"caption.text = %s,\r\n",zbeeId);
+	// snprintf(chTemp,100,"%s \r\n",);
+	//usart_write_buffer_wait(&usart_instance, chTemp, sizeof(chTemp));
+
+	char *chTemp2;
+	
+	light  = ((*(chTemp+37)) * 256 + ( * (chTemp+38) ) ) * 256 ;
+	light += (*(chTemp+39)) * 256 + (*(chTemp+40)) ;
+	
+	//snprintf(chTemp2,50,"Sensor Value = %d", light);	
+	//usart_write_buffer_wait(&usart_instance, chTemp2+37, );	//"sens value"	
+	//usart_write_buffer_wait(&usart_instance, chTemp + 43, 14); //"sun001 -0x0001"
+	usart_write_buffer_wait(&usart_instance, chTemp + 29, 30); //"sun001 -0x0001"
+
+/*
 	txd_en;
-	temp = (temp) ? 0 : 1;
-	(temp ) ? printf("%s",bufTest1): printf("%s",bufTest2);
-	rxd_en;
-		
+//	temp = (temp) ? 0 : 1;
+
+//	(temp ) ? printf("%s",bufTest1): printf("%s",bufTest2);
+
+	if(temp){
+		temp = 0 ;
+		usart_write_buffer_wait(&usart_instance, bufTest1, sizeof(bufTest1));
+	} else {
+		temp = 1 ;
+		usart_write_buffer_wait(&usart_instance, bufTest2, sizeof(bufTest2));		
+	}
+	rxd_en;	
+*/
 	appUartSendMessage(ind->payload, ind->payloadSize);
-#else
-    appCmdDataInd(ind);
-#endif
 }
 
 /*****************************************************************************

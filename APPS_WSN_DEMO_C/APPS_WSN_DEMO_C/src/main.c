@@ -59,9 +59,6 @@ _Bool senser_arrive_bool[100];
 
 _Bool zigbee_setdata = false;
 
-//! [module_inst]
-struct usart_module usart_instance;
-//! [module_inst]
 
 volatile uint8_t rx_buffer[MAX_RX_BUFFER_LENGTH];
 

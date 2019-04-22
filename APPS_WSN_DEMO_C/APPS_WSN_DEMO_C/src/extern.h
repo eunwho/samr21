@@ -11,5 +11,6 @@
 
 extern uint8_t zbeeSensState[10];
 extern uint8_t write_plc[17];
+extern struct usart_module usart_instance;
 
 #endif /* EXTERN_H_ */
