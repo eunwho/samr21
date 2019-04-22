@@ -10,11 +10,9 @@
 #include "common/include/nm_common.h"
 #include "driver/include/m2m_wifi.h"
 #include "socket/include/socket.h"
+#include "define.h"
 #include "global.h"
 
-#define MAX_RX_BUFFER_LENGTH   14
-#define  txd_en PORT->Group[0].OUTSET.reg=PORT_PA27
-#define  rxd_en PORT->Group[0].OUTCLR.reg=PORT_PA27
 
 volatile unsigned int clock_count_timer = 0;
 
@@ -148,7 +146,6 @@ void configure_usart_callbacks(void)
 void initGpio(void)
 {
 	PORT->Group[0].DIRSET.bit.DIRSET=PORT_PA27;	// RS3485 ENABLE PIN CONTROL PORT
-
 }
 
 int main ( void )
@@ -164,11 +161,12 @@ int main ( void )
 
 	initGpio();
 	configure_tc();
-	configure_tc_callbacks();
+//	configure_tc_callbacks();
 
 	sio2host_init();
 	readMacAddress();
 	wsndemo_init();
+/*	
 	nm_bsp_init();		// WINC1500 핀 설정 및 초기화
 
 	// Initialize socket address structure. 
@@ -176,10 +174,9 @@ int main ( void )
 	addr.sin_port = _htons(MAIN_WIFI_M2M_SERVER_PORT);
 	addr.sin_addr.s_addr = _htonl(MAIN_WIFI_M2M_SERVER_IP); // IP
 
-	// Initialize Wi-Fi parameters structure. */
+	// Initialize Wi-Fi parameters structure.
 	memset((uint8_t *)&param, 0, sizeof(tstrWifiInitParam));	// param 초기화
-	param.pfAppWifiCb = wifi_cb;
-	ret = m2m_wifi_init(&param);	
+	param.pfAppWifiCb = wifi_cb;	ret = m2m_wifi_init(&param);	
 	
 	if(M2M_SUCCESS != ret){
 		//		printf("main: m2m_wifi_init call error!(%d)\r\n", ret);
@@ -192,10 +189,12 @@ int main ( void )
 	m2m_wifi_connect((char *)MAIN_WLAN_SSID,sizeof(MAIN_WLAN_SSID),
 		MAIN_WLAN_AUTH,(char *)MAIN_WLAN_PSK, M2M_WIFI_CH_ALL);	
 	system_interrupt_enable_global();	//! [enable_global_interrupts]
+*/
 	configure_usart();
-
+	
 	while (true) {
 		wsndemo_task();
+/*
 		m2m_wifi_handle_events(NULL);	// Handle pending events from network controller. //
 
 		if(wifi_connected == M2M_WIFI_CONNECTED){
@@ -219,7 +218,8 @@ int main ( void )
 			//txd_en; printf("Wifi disconnected"); rxd_en;
 			}
 		}
-	}
+*/	}
+
 	return 0;
 }
 
@@ -387,7 +387,7 @@ void socket_cb(SOCKET sock, uint8_t u8Msg, void *pvMsg)
 				//갯수만큼 늘려줘야함. 1개 기준 14개
 				//
 				//unsigned char write_plc[14];
-				unsigned char write_plc[17];
+				write_plc[17];
 //				int wpl=0;
 				//1개당 전진 후진을 정하고있음.
 				//8비트라서 2개 씩 처리 해야함 값 1byte당 4개의 솔밸브를 처리할수 있음

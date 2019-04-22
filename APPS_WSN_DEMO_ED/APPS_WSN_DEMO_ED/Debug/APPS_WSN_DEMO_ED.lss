@@ -29,7 +29,7 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
  12 .debug_line   000199ae  00000000  00000000  000a4aad  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_str    00089838  00000000  00000000  000be45b  2**0
+ 13 .debug_str    00089837  00000000  00000000  000be45b  2**0
                   CONTENTS, READONLY, DEBUGGING
  14 .debug_frame  00001e44  00000000  00000000  00147c94  2**2
                   CONTENTS, READONLY, DEBUGGING
@@ -12522,7 +12522,7 @@ void readMacAddress(void){
     3ff6:	325b      	adds	r2, #91	; 0x5b
     3ff8:	719a      	strb	r2, [r3, #6]
 	myLongAddress[7] = MAC_ADDR;	
-    3ffa:	3a76      	subs	r2, #118	; 0x76
+    3ffa:	3a7f      	subs	r2, #127	; 0x7f
     3ffc:	71da      	strb	r2, [r3, #7]
 }
     3ffe:	4770      	bx	lr
@@ -13322,7 +13322,7 @@ void wsndemo_task(void)
     44b2:	4798      	blx	r3
 	sprintf(appMsg.caption.text, "SUN%03d -0x%04x", MAC_ADDR, shortAddressLocal);
     44b4:	882b      	ldrh	r3, [r5, #0]
-    44b6:	220a      	movs	r2, #10
+    44b6:	2201      	movs	r2, #1
     44b8:	4930      	ldr	r1, [pc, #192]	; (457c <wsndemo_task+0x378>)
     44ba:	0030      	movs	r0, r6
     44bc:	4d30      	ldr	r5, [pc, #192]	; (4580 <wsndemo_task+0x37c>)

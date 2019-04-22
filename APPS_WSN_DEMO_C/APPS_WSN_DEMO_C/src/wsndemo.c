@@ -60,13 +60,11 @@
 #include "wsndemo.h"
 /*****************************************************************************
 *****************************************************************************/
+#include "define.h"
+#include "extern.h"
+
 #define APP_SCAN_DURATION 10
 #define APP_CAPTION_SIZE  (sizeof(APP_CAPTION) - 1 + SHORT_ADDRESS_CAPTION_SIZE)
-
-
-//extern 
-extern uint8_t zbeeSensState[10];
-extern uint8_t write_plc[17];
 
 /*- Types ------------------------------------------------------------------*/
 COMPILER_PACK_SET(1)
@@ -190,6 +188,10 @@ uint8_t bitFlag[] = {0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80};
 
 void appDataInd(RECEIVED_MESH_MESSAGE *ind)
 {
+	uint8_t bufTest1[]={0x02,0x52,'W','P','A','5','5','5','5','5','5',0x03,0x00};
+	uint8_t bufTest2[]={0x02,0x52,'W','P','A','A','A','A','A','A','A',0x03,0x00};
+	static int temp;
+	
 	int addrId, byteNo, bitNo, setValue;
 	AppMessage_t *msg = (AppMessage_t *)ind->payload;
 	
@@ -211,6 +213,11 @@ void appDataInd(RECEIVED_MESH_MESSAGE *ind)
 	setValue = (((msg->sensors).light) > 1200 ) ? bitFlag[bitNo] : 0x00;
 	write_plc[13+ byteNo] += setValue;
 
+	txd_en;
+	temp = (temp) ? 0 : 1;
+	(temp ) ? printf("%s",bufTest1): printf("%s",bufTest2);
+	rxd_en;
+		
 	appUartSendMessage(ind->payload, ind->payloadSize);
 #else
     appCmdDataInd(ind);

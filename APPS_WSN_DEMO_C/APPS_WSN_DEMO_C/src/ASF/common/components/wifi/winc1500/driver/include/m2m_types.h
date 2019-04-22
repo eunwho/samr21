@@ -91,7 +91,7 @@ MACROS
 	( ((uint32)M2M_MAKE_VERSION((fw_major),  (fw_minor),  (fw_patch)))  << M2M_FW_VERSION_SHIFT) | \
 	( ((uint32)M2M_MAKE_VERSION((drv_major), (drv_minor), (drv_patch))) << M2M_DRV_VERSION_SHIFT))
 
-#define REL_19_5_3_VER			M2M_MAKE_VERSION_INFO(19,5,3,19,3,0)
+//#define REL_19_5_3_VER			M2M_MAKE_VERSION_INFO(19,5,3,19,3,0)
 #define REL_19_5_2_VER			M2M_MAKE_VERSION_INFO(19,5,2,19,3,0)
 #define REL_19_5_1_VER			M2M_MAKE_VERSION_INFO(19,5,1,19,3,0)
 #define REL_19_5_0_VER			M2M_MAKE_VERSION_INFO(19,5,0,19,3,0)
@@ -123,7 +123,8 @@ MACROS
 /*!< Firmware Minor release version number.
 */
 
-#define M2M_RELEASE_VERSION_PATCH_NO						(4)
+//#define M2M_RELEASE_VERSION_PATCH_NO						(4)
+#define M2M_RELEASE_VERSION_PATCH_NO						(2)
 /*!< Firmware patch release version number.
 */
 
@@ -1121,7 +1122,7 @@ typedef enum {
 	Wi-Fi Operation Mode.
 */
 typedef enum {
-	M2M_WIFI_MODE_NORMAL = ((uint8) 1),
+	M2M_WIFI_MODE_NORMAL = ((uint8_t) 1),
 	/*!< Normal Mode means to run customer firmware version.
 	 */
 	M2M_WIFI_MODE_ATE_HIGH,

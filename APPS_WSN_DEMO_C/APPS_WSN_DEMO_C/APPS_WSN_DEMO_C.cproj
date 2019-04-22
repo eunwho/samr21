@@ -1682,6 +1682,12 @@
     <None Include="src\config\conf_winc.h">
       <SubType>compile</SubType>
     </None>
+    <Compile Include="src\define.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\extern.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\global.h">
       <SubType>compile</SubType>
     </Compile>
