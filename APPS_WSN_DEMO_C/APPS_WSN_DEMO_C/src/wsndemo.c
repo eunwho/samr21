@@ -187,11 +187,7 @@ void appDataInd(RECEIVED_MESH_MESSAGE *ind);
 uint8_t bitFlag[] = {0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80};
 
 void appDataInd(RECEIVED_MESH_MESSAGE *ind)
-{
-	uint8_t bufTest1[]={0x02,0x52,'A','1','2','3','4','5','6','7','8',0x03,0x00};
-	uint8_t bufTest2[]={0x02,0x52,'A','0','0','0','0','0','0','0','0',0x03,0x00};
-	static int temp;
-	
+{	
 	int addrId, byteNo, bitNo, setValue;
 	char * zbeeId;
 	char * chTemp;
@@ -206,15 +202,9 @@ void appDataInd(RECEIVED_MESH_MESSAGE *ind)
 	msg->rssi = ind->packetRSSI;
 	int32_t light;
 	
-
+	//usart_write_buffer_wait(&usart_instance, chTemp + 43, 14); //"sun001 -0x0001"
 	/*
 	zbeeId = (msg->caption).text;
-	setValue = (msg->sensors).light;
-	addrId = (*(zbeeId+5)-'0')*10 + *(zbeeId +6)-'0';
-	byteNo = addrId / 8;
-	bitNo = addrId % 8;		
-	setValue = (((msg->sensors).light) > 1200 ) ? bitFlag[bitNo] : 0x00;
-	write_plc[13+ byteNo] += setValue;
 	*/
 
 	//sprintf(chTemp,"caption.text = %s, SensValue = %d \r\n",zbeeId,setValue);
@@ -222,16 +212,28 @@ void appDataInd(RECEIVED_MESH_MESSAGE *ind)
 	// snprintf(chTemp,100,"%s \r\n",);
 	//usart_write_buffer_wait(&usart_instance, chTemp, sizeof(chTemp));
 
-	char *chTemp2;
+	if(*(chTemp +43) =='S'){
+		addrId = (*(chTemp+47)-'0') * 10 + (*(chTemp+48)-'0');
+		if( (addrId > 0) && (addrId < 81)){ 
+			byteNo = (addrId-1) / 8;
+			bitNo = addrId % 8;
+			// setValue = (((msg->sensors).light) > 1200 ) ? bitFlag[bitNo] : 0x00;
+			setValue = bitFlag[bitNo];
+			// write_plc[13+ byteNo] += setValue;
+			sensStateTable[byteNo] += setValue;
+		}
+	}
 	
+/*
+	char *chTemp2;	
 	light  = ((*(chTemp+37)) * 256 + ( * (chTemp+38) ) ) * 256 ;
 	light += (*(chTemp+39)) * 256 + (*(chTemp+40)) ;
-	
+*/	
 	//snprintf(chTemp2,50,"Sensor Value = %d", light);	
 	//usart_write_buffer_wait(&usart_instance, chTemp2+37, );	//"sens value"	
-	//usart_write_buffer_wait(&usart_instance, chTemp + 43, 14); //"sun001 -0x0001"
-	usart_write_buffer_wait(&usart_instance, chTemp + 29, 30); //"sun001 -0x0001"
+	//usart_write_buffer_wait(&usart_instance, chTemp + 43, 14); //"SUN001 -0x0001"
 
+	// usart_write_buffer_wait(&usart_instance, chTemp + 29, 30); //"sun001 -0x0001"
 /*
 	txd_en;
 //	temp = (temp) ? 0 : 1;
@@ -247,7 +249,7 @@ void appDataInd(RECEIVED_MESH_MESSAGE *ind)
 	}
 	rxd_en;	
 */
-	appUartSendMessage(ind->payload, ind->payloadSize);
+//	appUartSendMessage(ind->payload, ind->payloadSize); //jsk
 }
 
 /*****************************************************************************

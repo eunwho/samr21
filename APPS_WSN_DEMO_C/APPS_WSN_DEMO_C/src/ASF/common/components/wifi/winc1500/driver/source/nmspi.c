@@ -1213,10 +1213,10 @@ sint8 nm_spi_init(void)
 		/* Read failed. Try with CRC off. This might happen when module
 		is removed but chip isn't reset*/
 		gu8Crc_off = 1;
-		M2M_ERR("[nmi spi]: Failed internal read protocol with CRC on, retyring with CRC off...\n");
+		// M2M_ERR("[nmi spi]: Failed internal read protocol with CRC on, retyring with CRC off...\n");
 		if (!spi_read_reg(NMI_SPI_PROTOCOL_CONFIG, &reg)){
 			// Reaad failed with both CRC on and off, something went bad
-			M2M_ERR( "[nmi spi]: Failed internal read protocol...\n");
+			// M2M_ERR( "[nmi spi]: Failed internal read protocol...\n");
 			return 0;
 		}
 	}
@@ -1226,7 +1226,7 @@ sint8 nm_spi_init(void)
 		reg &= ~0x70;
 		reg |= (0x5 << 4);
 		if (!spi_write_reg(NMI_SPI_PROTOCOL_CONFIG, reg)) {
-			M2M_ERR( "[nmi spi]: Failed internal write protocol reg...\n");
+			// M2M_ERR( "[nmi spi]: Failed internal write protocol reg...\n");
 			return 0;
 		}
 		gu8Crc_off = 1;

@@ -285,7 +285,7 @@ sint8 nm_drv_init(void * arg)
 	
 	ret = nm_bus_iface_init(NULL);
 	if (M2M_SUCCESS != ret) {
-		M2M_ERR("[nmi start]: fail init bus\n");
+		//M2M_ERR("[nmi start]: fail init bus\n");
 		goto ERR1;
 	}
 
@@ -297,7 +297,7 @@ sint8 nm_drv_init(void * arg)
 #ifdef NO_HW_CHIP_EN
 	ret = chip_wake();
 	if (M2M_SUCCESS != ret) {
-		M2M_ERR("[nmi start]: fail chip_wakeup\n");
+		// M2M_ERR("[nmi start]: fail chip_wakeup\n");
 		goto ERR2;
 	}
 	/**
@@ -308,7 +308,7 @@ sint8 nm_drv_init(void * arg)
 		goto ERR2;
 	}
 #endif
-	M2M_INFO("Chip ID %lx\n", nmi_get_chipid());
+	// M2M_INFO("Chip ID %lx\n", nmi_get_chipid());
 #ifdef CONF_WINC_USE_SPI
 	/* Must do this after global reset to set SPI data packet size. */
 	nm_spi_init();

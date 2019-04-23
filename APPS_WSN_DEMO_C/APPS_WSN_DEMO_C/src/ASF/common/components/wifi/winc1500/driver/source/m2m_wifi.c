@@ -477,14 +477,14 @@ sint8 m2m_wifi_init(tstrWifiInitParam * param)
 
 	ret = nm_get_firmware_full_info(&strtmp);
 
-	M2M_INFO("Firmware ver   : %u.%u.%u Svnrev %u\n", strtmp.u8FirmwareMajor, strtmp.u8FirmwareMinor, strtmp.u8FirmwarePatch,strtmp.u16FirmwareSvnNum);
-	M2M_INFO("Firmware Build %s Time %s\n",strtmp.BuildDate,strtmp.BuildTime);
-	M2M_INFO("Firmware Min driver ver : %u.%u.%u\n", strtmp.u8DriverMajor, strtmp.u8DriverMinor, strtmp.u8DriverPatch);
-	M2M_INFO("Driver ver: %u.%u.%u\n", M2M_RELEASE_VERSION_MAJOR_NO, M2M_RELEASE_VERSION_MINOR_NO, M2M_RELEASE_VERSION_PATCH_NO);
-	M2M_INFO("Driver built at %s\t%s\n",__DATE__,__TIME__);
+	// M2M_INFO("Firmware ver   : %u.%u.%u Svnrev %u\n", strtmp.u8FirmwareMajor, strtmp.u8FirmwareMinor, strtmp.u8FirmwarePatch,strtmp.u16FirmwareSvnNum);
+	// M2M_INFO("Firmware Build %s Time %s\n",strtmp.BuildDate,strtmp.BuildTime);
+	// M2M_INFO("Firmware Min driver ver : %u.%u.%u\n", strtmp.u8DriverMajor, strtmp.u8DriverMinor, strtmp.u8DriverPatch);
+	// M2M_INFO("Driver ver: %u.%u.%u\n", M2M_RELEASE_VERSION_MAJOR_NO, M2M_RELEASE_VERSION_MINOR_NO, M2M_RELEASE_VERSION_PATCH_NO);
+	// M2M_INFO("Driver built at %s\t%s\n",__DATE__,__TIME__);
 	if(M2M_ERR_FW_VER_MISMATCH == ret)
 	{
-		M2M_ERR("Mismatch Firmawre Version\n");
+		// M2M_ERR("Mismatch Firmawre Version\n");
 	}
 
 	goto _EXIT0;
