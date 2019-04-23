@@ -4,29 +4,36 @@
  *
  * \brief This module contains NMC1000 SPI protocol bus APIs implementation.
  *
- * Copyright (c) 2016-2018 Microchip Technology Inc. and its subsidiaries.
+ * Copyright (c) 2016-2017 Atmel Corporation. All rights reserved.
  *
  * \asf_license_start
  *
  * \page License
  *
- * Subject to your compliance with these terms, you may use Microchip
- * software and any derivatives exclusively with Microchip products.
- * It is your responsibility to comply with third party license terms applicable
- * to your use of third party software (including open source software) that
- * may accompany Microchip software.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS". NO WARRANTIES,
- * WHETHER EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE,
- * INCLUDING ANY IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY,
- * AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT WILL MICROCHIP BE
- * LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE, INCIDENTAL OR CONSEQUENTIAL
- * LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND WHATSOEVER RELATED TO THE
- * SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS BEEN ADVISED OF THE
- * POSSIBILITY OR THE DAMAGES ARE FORESEEABLE.  TO THE FULLEST EXTENT
- * ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN ANY WAY
- * RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
- * THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * 3. The name of Atmel may not be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY ATMEL "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT ARE
+ * EXPRESSLY AND SPECIFICALLY DISCLAIMED. IN NO EVENT SHALL ATMEL BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  *
  * \asf_license_stop
  *
@@ -35,7 +42,7 @@
 
 #ifdef CONF_WINC_USE_SPI
 
-#define USE_OLD_SPI_SW	// jsk debug
+#define USE_OLD_SPI_SW
 
 #include "bus_wrapper/include/nm_bus_wrapper.h"
 #include "nmspi.h"
@@ -202,89 +209,101 @@ static sint8 spi_cmd(uint8 cmd, uint32 adr, uint32 u32data, uint32 sz,uint8 cloc
 	sint8 result = N_OK;
 
 	bc[0] = cmd;
-	switch (cmd) {
-	case CMD_SINGLE_READ:				/* single word (4 bytes) read */
-		bc[1] = (uint8)(adr >> 16);
-		bc[2] = (uint8)(adr >> 8);
-		bc[3] = (uint8)adr;
-		len = 5;
-		break;
-	case CMD_INTERNAL_READ:			/* internal register read */
-		bc[1] = (uint8)(adr >> 8);
-		if(clockless)  bc[1] |= (1 << 7);
-		bc[2] = (uint8)adr;
-		bc[3] = 0x00;
-		len = 5;
-		break;
-	case CMD_TERMINATE:					/* termination */
-		bc[1] = 0x00;
-		bc[2] = 0x00;
-		bc[3] = 0x00;
-		len = 5;
-		break;
-	case CMD_REPEAT:						/* repeat */
-		bc[1] = 0x00;
-		bc[2] = 0x00;
-		bc[3] = 0x00;
-		len = 5;
-		break;
-	case CMD_RESET:							/* reset */
-		bc[1] = 0xff;
-		bc[2] = 0xff;
-		bc[3] = 0xff;
-		len = 5;
-		break;
-	case CMD_DMA_WRITE:					/* dma write */
-	case CMD_DMA_READ:					/* dma read */
-		bc[1] = (uint8)(adr >> 16);
-		bc[2] = (uint8)(adr >> 8);
-		bc[3] = (uint8)adr;
-		bc[4] = (uint8)(sz >> 8);
-		bc[5] = (uint8)(sz);
-		len = 7;
-		break;
-	case CMD_DMA_EXT_WRITE:		/* dma extended write */
-	case CMD_DMA_EXT_READ:			/* dma extended read */
-		bc[1] = (uint8)(adr >> 16);
-		bc[2] = (uint8)(adr >> 8);
-		bc[3] = (uint8)adr;
-		bc[4] = (uint8)(sz >> 16);
-		bc[5] = (uint8)(sz >> 8);
-		bc[6] = (uint8)(sz);
-		len = 8;
-		break;
-	case CMD_INTERNAL_WRITE:		/* internal register write */
-		bc[1] = (uint8)(adr >> 8);
-		if(clockless)  bc[1] |= (1 << 7);
-		bc[2] = (uint8)(adr);
-		bc[3] = (uint8)(u32data >> 24);
-		bc[4] = (uint8)(u32data >> 16);
-		bc[5] = (uint8)(u32data >> 8);
-		bc[6] = (uint8)(u32data);
-		len = 8;
-		break;
-	case CMD_SINGLE_WRITE:			/* single word write */
-		bc[1] = (uint8)(adr >> 16);
-		bc[2] = (uint8)(adr >> 8);
-		bc[3] = (uint8)(adr);
-		bc[4] = (uint8)(u32data >> 24);
-		bc[5] = (uint8)(u32data >> 16);
-		bc[6] = (uint8)(u32data >> 8);
-		bc[7] = (uint8)(u32data);
-		len = 9;
-		break;
-	default:
-		result = N_FAIL;
-		break;
+	switch(cmd) 
+	{
+		case CMD_SINGLE_READ:				/* single word (4 bytes) read */
+			bc[1] = (uint8)(adr >> 16);
+			bc[2] = (uint8)(adr >> 8);
+			bc[3] = (uint8)adr;
+			len = 5;
+			break;
+			
+		case CMD_INTERNAL_READ:			/* internal register read */
+			bc[1] = (uint8)(adr >> 8);
+			if(clockless)  bc[1] |= (1 << 7);
+			bc[2] = (uint8)adr;
+			bc[3] = 0x00;
+			len = 5;
+			break;
+			
+		case CMD_TERMINATE:					/* termination */
+			bc[1] = 0x00;
+			bc[2] = 0x00;
+			bc[3] = 0x00;
+			len = 5;
+			break;
+			
+		case CMD_REPEAT:						/* repeat */
+			bc[1] = 0x00;
+			bc[2] = 0x00;
+			bc[3] = 0x00;
+			len = 5;
+			break;
+			
+		case CMD_RESET:							/* reset */
+			bc[1] = 0xff;
+			bc[2] = 0xff;
+			bc[3] = 0xff;
+			len = 5;
+			break;
+			
+		case CMD_DMA_WRITE:					/* dma write */
+		case CMD_DMA_READ:					/* dma read */
+			bc[1] = (uint8)(adr >> 16);
+			bc[2] = (uint8)(adr >> 8);
+			bc[3] = (uint8)adr;
+			bc[4] = (uint8)(sz >> 8);
+			bc[5] = (uint8)(sz);
+			len = 7;
+			break;
+			
+		case CMD_DMA_EXT_WRITE:		/* dma extended write */
+		case CMD_DMA_EXT_READ:			/* dma extended read */
+			bc[1] = (uint8)(adr >> 16);
+			bc[2] = (uint8)(adr >> 8);
+			bc[3] = (uint8)adr;
+			bc[4] = (uint8)(sz >> 16);
+			bc[5] = (uint8)(sz >> 8);
+			bc[6] = (uint8)(sz);
+			len = 8;
+			break;
+			
+		case CMD_INTERNAL_WRITE:		/* internal register write */
+			bc[1] = (uint8)(adr >> 8);
+			if(clockless)  bc[1] |= (1 << 7);
+			bc[2] = (uint8)(adr);
+			bc[3] = (uint8)(u32data >> 24);
+			bc[4] = (uint8)(u32data >> 16);
+			bc[5] = (uint8)(u32data >> 8);
+			bc[6] = (uint8)(u32data);
+			len = 8;
+			break;
+			
+		case CMD_SINGLE_WRITE:			/* single word write */
+			bc[1] = (uint8)(adr >> 16);
+			bc[2] = (uint8)(adr >> 8);
+			bc[3] = (uint8)(adr);
+			bc[4] = (uint8)(u32data >> 24);
+			bc[5] = (uint8)(u32data >> 16);
+			bc[6] = (uint8)(u32data >> 8);
+			bc[7] = (uint8)(u32data);
+			len = 9;
+			break;
+			
+		default:
+			result = N_FAIL;
+			break;
 	}
 
-	if (result) {
+	if(result) 
+	{
 		if (!gu8Crc_off)
 			bc[len-1] = (crc7(0x7f, (const uint8 *)&bc[0], len-1)) << 1;
 		else
 			len-=1;
 
-		if (M2M_SUCCESS != nmi_spi_write(bc, len)) {
+		if(M2M_SUCCESS != nmi_spi_write(bc, len)) 
+		{
 			M2M_ERR("[nmi spi]: Failed cmd write, bus error...\n");
 			result = N_FAIL;
 		}
@@ -734,6 +753,7 @@ _error_:
 	return result;
 }
 #endif
+
 static sint8 spi_data_read(uint8 *b, uint16 sz,uint8 clockless)
 {
 	sint16 retry, ix, nbytes;
@@ -745,30 +765,29 @@ static sint8 spi_data_read(uint8 *b, uint16 sz,uint8 clockless)
 		Data
 	**/
 	ix = 0;
-	do {
-		if (sz <= DATA_PKT_SZ)
-			nbytes = sz;
-		else
-			nbytes = DATA_PKT_SZ;
+	
+	do{
+		if (sz <= DATA_PKT_SZ){nbytes = sz;}
+		else{nbytes = DATA_PKT_SZ;}
 
 		/**
 			Data Respnose header
 		**/
 		retry = SPI_RESP_RETRY_COUNT;
-		do {
-			if (M2M_SUCCESS != nmi_spi_read(&rsp, 1)) {
+		do{
+			if(M2M_SUCCESS != nmi_spi_read(&rsp, 1)) 
+			{
 				M2M_ERR("[nmi spi]: Failed data response read, bus error...\n");
 				result = N_FAIL;
 				break;
 			}
-			if (((rsp >> 4) & 0xf) == 0xf)
-				break;
+			if(((rsp >> 4) & 0xf) == 0xf){break;}
 		} while (retry--);
 
-		if (result == N_FAIL)
-			break;
+		if (result == N_FAIL)break;
 
-		if (retry <= 0) {
+		if(retry <= 0) 
+		{
 			M2M_ERR("[nmi spi]: Failed data response read...(%02x)\n", rsp);
 			result = N_FAIL;
 			break;
@@ -777,28 +796,33 @@ static sint8 spi_data_read(uint8 *b, uint16 sz,uint8 clockless)
 		/**
 			Read bytes
 		**/
-		if (M2M_SUCCESS != nmi_spi_read(&b[ix], nbytes)) {
+		if(M2M_SUCCESS != nmi_spi_read(&b[ix], nbytes)) 
+		{
 			M2M_ERR("[nmi spi]: Failed data block read, bus error...\n");
 			result = N_FAIL;
 			break;
 		}
+		
 		if(!clockless)
 		{
 			/**
 			Read Crc
 			**/
-			if (!gu8Crc_off) {
-				if (M2M_SUCCESS != nmi_spi_read(crc, 2)) {
+			if(!gu8Crc_off) 
+			{
+				if(M2M_SUCCESS != nmi_spi_read(crc, 2)) 
+				{
 					M2M_ERR("[nmi spi]: Failed data block crc read, bus error...\n");
 					result = N_FAIL;
 					break;
 				}
 			}
 		}
+		
 		ix += nbytes;
 		sz -= nbytes;
 
-	} while (sz);
+	}while(sz);
 
 	return result;
 }
@@ -1034,28 +1058,32 @@ _RETRY_:
 		clockless = 0;
 	}
 
-#if defined USE_OLD_SPI_SW						// jsk debug
+#if defined USE_OLD_SPI_SW
 	result = spi_cmd(cmd, addr, 0, 4, clockless);
-	if (result != N_OK) {
+	if(result != N_OK) 
+	{
 		M2M_ERR("[nmi spi]: Failed cmd, read reg (%08x)...\n", (unsigned int)addr);
 		goto _FAIL_;
 	}
 
 	result = spi_cmd_rsp(cmd);
-	if (result != N_OK) {
+	if(result != N_OK) 
+	{
 		M2M_ERR("[nmi spi]: Failed cmd response, read reg (%08x)...\n", (unsigned int)addr);
 		goto _FAIL_;
 	}
 
 	/* to avoid endianess issues */
 	result = spi_data_read(&tmp[0], 4, clockless);
-	if (result != N_OK) {
+	if(result != N_OK) 
+	{
 		M2M_ERR("[nmi spi]: Failed data read...\n");
 		goto _FAIL_;
 	}
 #else
 	result = spi_cmd_complete(cmd, addr, (uint8*)&tmp[0], 4, clockless);
-	if (result != N_OK) {
+	if(result != N_OK) 
+	{
 		M2M_ERR( "[nmi spi]: Failed cmd, read reg (%08x)...\n", addr);
 		goto _FAIL_;
 	}

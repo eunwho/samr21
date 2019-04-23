@@ -4,29 +4,36 @@
  *
  * \brief WINC WLAN Application Interface.
  *
- * Copyright (c) 2016-2018 Microchip Technology Inc. and its subsidiaries.
+ * Copyright (c) 2016-2017 Atmel Corporation. All rights reserved.
  *
  * \asf_license_start
  *
  * \page License
  *
- * Subject to your compliance with these terms, you may use Microchip
- * software and any derivatives exclusively with Microchip products.
- * It is your responsibility to comply with third party license terms applicable
- * to your use of third party software (including open source software) that
- * may accompany Microchip software.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS". NO WARRANTIES,
- * WHETHER EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE,
- * INCLUDING ANY IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY,
- * AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT WILL MICROCHIP BE
- * LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE, INCIDENTAL OR CONSEQUENTIAL
- * LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND WHATSOEVER RELATED TO THE
- * SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS BEEN ADVISED OF THE
- * POSSIBILITY OR THE DAMAGES ARE FORESEEABLE.  TO THE FULLEST EXTENT
- * ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN ANY WAY
- * RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
- * THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * 3. The name of Atmel may not be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY ATMEL "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT ARE
+ * EXPRESSLY AND SPECIFICALLY DISCLAIMED. IN NO EVENT SHALL ATMEL BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  *
  * \asf_license_stop
  *
@@ -672,35 +679,6 @@ NMI_API sint8  m2m_wifi_init(tstrWifiInitParam * pWifiInitParam);
 */
 NMI_API sint8  m2m_wifi_deinit(void * arg);
 
-/*!
-@fn	\
-    NMI_API void m2m_wifi_yield(void);
-
-@brief
-    Yield from processing more synchronous M2M events
-
-@details 
-    This function causes the synchronous M2M event handler function to yield from processing further
-    events and return control to the caller.
-
-@param [in]	arg
-        Opaque argument, not used in current implementation.
-
-@return		
-    The function returns @ref M2M_SUCCESS for successful interrupt handling and a negative value 
-	otherwise.
-
-@pre
-    Prior to receiving  Wi-Fi interrupts, the WINC driver should have been successfully initialized 
-	by calling the @ref m2m_wifi_init function.
-     
-@warning
-    Failure to successfully complete this function indicates bus errors and hence a fatal error that will prevent the application from proceeding.
-*/
-
-NMI_API void m2m_wifi_yield(void);
-
-
  /**@}*/
 /** @defgroup WifiHandleEventsFn m2m_wifi_handle_events
 *  @ingroup WLANAPI
@@ -908,7 +886,7 @@ NMI_API sint8 m2m_wifi_connect(char *pcSsid, uint8 u8SsidLen, uint8 u8SecType, v
 @return	The function returns @ref M2M_SUCCESS for successful operations and a negative value otherwise.
 	
 */
- NMI_API sint8 m2m_wifi_connect_sc(char *pcSsid, uint8 u8SsidLen, uint8 u8SecType, void *pvAuthInfo, uint16 u16Ch, uint8 u8NoSaveCred);
+ NMI_API sint8 m2m_wifi_connect_sc(char *pcSsid, uint8 u8SsidLen, uint8 u8SecType, void *pvAuthInfo, uint16 u16Ch, uint8 u8SaveCred);
  /**@}*/
 /** @defgroup WifiDisconnectFn m2m_wifi_disconnect
  *   @ingroup WLANAPI
@@ -2897,33 +2875,6 @@ NMI_API sint8 m2m_wifi_set_receive_buffer(void* pvBuffer,uint16 u16BufferLen);
  */
 sint8 m2m_wifi_prng_get_random_bytes(uint8 * pu8PrngBuff,uint16 u16PrngSize);
 /**@}*/
-
-/** @defgroup WifiConfAutRate m2m_wifi_conf_auto_rate
-*	@ingroup WLANAPI
-*  Configures WLAN automatic TX rate adaptation algorithm.
-*/
-/**@{*/
-/*!
-@fn	\
-	 NMI_API sint8 m2m_wifi_conf_auto_rate(tstrConfAutoRate * pstrConfAutoRate)
-
-@brief
-	Allow the host MCU app to configure auto TX rate selection algorithm. The application can use this 
-	API to tweak the algorithm performance. Moreover, it allows the application to force a specific WLAN 
-	PHY rate for transmitted data packets to favor range vs. throughput needs.
-
-@param [in]	pstrConfAutoRate
-	The Auto rate configuration parameters as listed in tstrConfAutoRate.
-@sa
-	tstrConfAutoRate
-@return
-	The function SHALL return 0 for success and a negative value otherwise.
-*/
-
-NMI_API sint8 m2m_wifi_conf_auto_rate(tstrConfAutoRate * pstrConfAutoRate);
-/**@}*/
-
-
 #ifdef __cplusplus
 }
 #endif

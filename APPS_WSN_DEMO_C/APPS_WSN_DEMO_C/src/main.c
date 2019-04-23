@@ -123,6 +123,8 @@ void configure_usart(void);
 void configure_usart_callbacks(void);
 void config_rs485_TX_EN(void);
 
+// for 485
+/*
 void configure_usart(void)
 {
 	struct usart_config config_usart;
@@ -137,6 +139,38 @@ void configure_usart(void)
 
 	usart_enable(&usart_instance);
 }
+*/
+
+// for gate way
+void configure_usart(void)
+{
+	//! [setup_config]
+	struct usart_config config_usart;
+	//! [setup_config]
+	//! [setup_config_defaults]
+	usart_get_config_defaults(&config_usart);
+	//! [setup_config_defaults]
+
+	//! [setup_change_config]
+	config_usart.baudrate    = 9600;
+	config_usart.mux_setting = EDBG_CDC_SERCOM_MUX_SETTING;
+	config_usart.pinmux_pad0 = EDBG_CDC_SERCOM_PINMUX_PAD0;
+	config_usart.pinmux_pad1 = EDBG_CDC_SERCOM_PINMUX_PAD1;
+	config_usart.pinmux_pad2 = EDBG_CDC_SERCOM_PINMUX_PAD2;
+	config_usart.pinmux_pad3 = EDBG_CDC_SERCOM_PINMUX_PAD3;
+	//! [setup_change_config]
+
+	//! [setup_set_config]
+	while (usart_init(&usart_instance,
+	EDBG_CDC_MODULE, &config_usart) != STATUS_OK) {
+	}
+	//! [setup_set_config]
+
+	//! [setup_enable]
+	usart_enable(&usart_instance);
+	//! [setup_enable]
+}
+
 
 void configure_usart_callbacks(void)
 {

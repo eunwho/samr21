@@ -4,29 +4,36 @@
  *
  * \brief This module contains NMC1000 bus wrapper APIs implementation.
  *
- * Copyright (c) 2016-2018 Microchip Technology Inc. and its subsidiaries.
+ * Copyright (c) 2016-2017 Atmel Corporation. All rights reserved.
  *
  * \asf_license_start
  *
  * \page License
  *
- * Subject to your compliance with these terms, you may use Microchip
- * software and any derivatives exclusively with Microchip products.
- * It is your responsibility to comply with third party license terms applicable
- * to your use of third party software (including open source software) that
- * may accompany Microchip software.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS". NO WARRANTIES,
- * WHETHER EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE,
- * INCLUDING ANY IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY,
- * AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT WILL MICROCHIP BE
- * LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE, INCIDENTAL OR CONSEQUENTIAL
- * LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND WHATSOEVER RELATED TO THE
- * SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS BEEN ADVISED OF THE
- * POSSIBILITY OR THE DAMAGES ARE FORESEEABLE.  TO THE FULLEST EXTENT
- * ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN ANY WAY
- * RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
- * THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * 3. The name of Atmel may not be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY ATMEL "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT ARE
+ * EXPRESSLY AND SPECIFICALLY DISCLAIMED. IN NO EVENT SHALL ATMEL BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  *
  * \asf_license_stop
  *
@@ -108,7 +115,7 @@ static sint8 nm_i2c_write_special(uint8 *wb1, uint16 sz1, uint8 *wb2, uint16 sz2
 
 #ifdef CONF_WINC_USE_SPI
 
-struct spi_module master;
+struct spi_module master_wifi;
 struct spi_slave_inst slave_inst;
 
 static sint8 spi_rw(uint8* pu8Mosi, uint8* pu8Miso, uint16 u16Sz)
@@ -131,33 +138,30 @@ static sint8 spi_rw(uint8* pu8Mosi, uint8* pu8Miso, uint16 u16Sz)
 		u8SkipMiso = 1;
 	}
 
-	spi_select_slave(&master, &slave_inst, true);
+	spi_select_slave(&master_wifi, &slave_inst, true);
 
-	while (u16Sz) {
+	while(u16Sz) 
+	{
 		txd_data = *pu8Mosi;
-		while (!spi_is_ready_to_write(&master))
-			;
-		while(spi_write(&master, txd_data) != STATUS_OK)
-			;
+		
+		while(!spi_is_ready_to_write(&master_wifi));
+		while(spi_write(&master_wifi, txd_data) != STATUS_OK);
 
 		/* Read SPI master data register. */
-		while (!spi_is_ready_to_read(&master))
-			;
-		while (spi_read(&master, &rxd_data) != STATUS_OK)
-			;
+		while (!spi_is_ready_to_read(&master_wifi));
+		while (spi_read(&master_wifi, &rxd_data) != STATUS_OK);
 		*pu8Miso = rxd_data;
 
 		u16Sz--;
-		if (!u8SkipMiso)
+		if(!u8SkipMiso)
 			pu8Miso++;
-		if (!u8SkipMosi)
+		if(!u8SkipMosi)
 			pu8Mosi++;
 	}
 
-	while (!spi_is_write_complete(&master))
-		;
+	while(!spi_is_write_complete(&master_wifi));
 
-	spi_select_slave(&master, &slave_inst, false);
+	spi_select_slave(&master_wifi, &slave_inst, false);
 
 	return M2M_SUCCESS;
 }
@@ -176,10 +180,13 @@ sint8 nm_bus_init(void *pvinit)
 	struct spi_config config;
 	struct spi_slave_inst_config slave_config;
 
+	/* Select SPI slave CS pin. */
+	/* This step will set the CS high */
 	spi_slave_inst_get_config_defaults(&slave_config);
 	slave_config.ss_pin = CONF_WINC_SPI_CS_PIN;
 	spi_attach_slave(&slave_inst, &slave_config);
 
+	/* Configure the SPI master. */
 	spi_get_config_defaults(&config);
 	config.mux_setting = CONF_WINC_SPI_SERCOM_MUX;
 	config.pinmux_pad0 = CONF_WINC_SPI_PINMUX_PAD0;
@@ -189,16 +196,17 @@ sint8 nm_bus_init(void *pvinit)
 	config.master_slave_select_enable = false;
 
 	config.mode_specific.master.baudrate = CONF_WINC_SPI_CLOCK;
-	if (spi_init(&master, CONF_WINC_SPI_MODULE, &config) != STATUS_OK) {
+	if(spi_init(&master_wifi, CONF_WINC_SPI_MODULE, &config) != STATUS_OK) 
+	{
 		return M2M_ERR_BUS_FAIL;
 	}
 
 	/* Enable the SPI master. */
-	spi_enable(&master);
+	spi_enable(&master_wifi);
 
 	nm_bsp_reset();
 	nm_bsp_sleep(1);
-
+	
 	return result;
 }
 
@@ -269,7 +277,7 @@ sint8 nm_bus_deinit(void)
 	port_pin_set_config(CONF_WINC_I2C_SDA, &pin_conf);
 #endif /* CONF_WINC_USE_I2C */
 #ifdef CONF_WINC_USE_SPI
-	spi_disable(&master);
+	spi_disable(&master_wifi);
 	port_pin_set_config(CONF_WINC_SPI_MOSI, &pin_conf);
 	port_pin_set_config(CONF_WINC_SPI_MISO, &pin_conf);
 	port_pin_set_config(CONF_WINC_SPI_SCK,  &pin_conf);

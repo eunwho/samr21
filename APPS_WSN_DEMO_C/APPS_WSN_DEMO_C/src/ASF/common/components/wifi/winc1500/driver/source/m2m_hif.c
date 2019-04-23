@@ -4,29 +4,36 @@
  *
  * \brief This module contains M2M host interface APIs implementation.
  *
- * Copyright (c) 2016-2018 Microchip Technology Inc. and its subsidiaries.
+ * Copyright (c) 2016-2017 Atmel Corporation. All rights reserved.
  *
  * \asf_license_start
  *
  * \page License
  *
- * Subject to your compliance with these terms, you may use Microchip
- * software and any derivatives exclusively with Microchip products.
- * It is your responsibility to comply with third party license terms applicable
- * to your use of third party software (including open source software) that
- * may accompany Microchip software.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS". NO WARRANTIES,
- * WHETHER EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE,
- * INCLUDING ANY IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY,
- * AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT WILL MICROCHIP BE
- * LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE, INCIDENTAL OR CONSEQUENTIAL
- * LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND WHATSOEVER RELATED TO THE
- * SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS BEEN ADVISED OF THE
- * POSSIBILITY OR THE DAMAGES ARE FORESEEABLE.  TO THE FULLEST EXTENT
- * ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN ANY WAY
- * RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
- * THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * 3. The name of Atmel may not be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY ATMEL "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT ARE
+ * EXPRESSLY AND SPECIFICALLY DISCLAIMED. IN NO EVENT SHALL ATMEL BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  *
  * \asf_license_stop
  *
@@ -64,7 +71,6 @@ typedef struct {
  	uint8 u8ChipSleep;
  	uint8 u8HifRXDone;
  	uint8 u8Interrupt;
-	uint8 u8Yield;
  	uint32 u32RxAddr;
  	uint32 u32RxSize;
 	tpfHifCallBack pfWifiCb;
@@ -78,18 +84,11 @@ typedef struct {
 
 volatile tstrHifContext gstrHifCxt;
 
-#ifdef ETH_MODE
-extern void os_hook_isr(void);
-#endif
-
 static void isr(void)
 {
 	gstrHifCxt.u8Interrupt++;
 #ifdef NM_LEVEL_INTERRUPT
 	nm_bsp_interrupt_ctrl(0);
-#endif
-#ifdef ETH_MODE
-	os_hook_isr();
 #endif
 }
 static sint8 hif_set_rx_done(void)
@@ -143,6 +142,7 @@ static void m2m_hif_cb(uint8 u8OpCode, uint16 u16DataSize, uint32 u32Addr)
 sint8 hif_chip_wake(void)
 {
 	sint8 ret = M2M_SUCCESS;
+	
 	if(gstrHifCxt.u8HifRXDone)
 	{
 		/*chip already wake for the rx not done no need to send wake request*/
@@ -155,10 +155,9 @@ sint8 hif_chip_wake(void)
 			ret = chip_wake();
 			if(ret != M2M_SUCCESS)goto ERR1;
 		}
-		else
-		{
-		}
+		else;
 	}
+	
 	gstrHifCxt.u8ChipSleep++;
 ERR1:
 	return ret;
@@ -232,11 +231,8 @@ sint8 hif_chip_sleep(void)
 		{
 			ret = chip_sleep();
 			if(ret != M2M_SUCCESS)goto ERR1;
-
 		}
-		else
-		{
-		}
+		else;
 	}
 ERR1:
 	return ret;
@@ -295,12 +291,13 @@ sint8 hif_deinit(void * arg)
 sint8 hif_send(uint8 u8Gid,uint8 u8Opcode,uint8 *pu8CtrlBuf,uint16 u16CtrlBufSize,
 			   uint8 *pu8DataBuf,uint16 u16DataSize, uint16 u16DataOffset)
 {
-	sint8		ret = M2M_ERR_SEND;
+	sint8 ret = M2M_ERR_SEND;
 	volatile tstrHifHdr	strHif;
 
 	strHif.u8Opcode		= u8Opcode&(~NBIT7);
 	strHif.u8Gid		= u8Gid;
 	strHif.u16Length	= M2M_HIF_HDR_OFFSET;
+	
 	if(pu8DataBuf != NULL)
 	{
 		strHif.u16Length += u16DataOffset + u16DataSize;
@@ -309,7 +306,9 @@ sint8 hif_send(uint8 u8Gid,uint8 u8Opcode,uint8 *pu8CtrlBuf,uint16 u16CtrlBufSiz
 	{
 		strHif.u16Length += u16CtrlBufSize;
 	}
+	
 	ret = hif_chip_wake();
+	
 	if(ret == M2M_SUCCESS)
 	{
 		volatile uint32 reg, dma_addr = 0;
@@ -321,7 +320,7 @@ sint8 hif_send(uint8 u8Gid,uint8 u8Opcode,uint8 *pu8CtrlBuf,uint16 u16CtrlBufSiz
 		reg |= (uint32)u8Gid;
 		reg |= ((uint32)u8Opcode<<8);
 		reg |= ((uint32)strHif.u16Length<<16);
-		ret = nm_write_reg(NMI_STATE_REG,reg);
+		ret = nm_write_reg(NMI_STATE_REG,reg);	//
 		if(M2M_SUCCESS != ret) goto ERR1;
 
 		reg = 0UL;
@@ -347,16 +346,19 @@ sint8 hif_send(uint8 u8Gid,uint8 u8Opcode,uint8 *pu8CtrlBuf,uint16 u16CtrlBufSiz
 			 * If it takes too long to get a response, the slow down to 
 			 * avoid back-to-back register read operations.
 			 */
-			if(cnt >= 500) {
-				if(cnt < 501) {
+			if(cnt >= 500) 
+			{
+				if(cnt < 501) 
+				{
 					M2M_INFO("Slowing down...\n");
 				}
 				nm_bsp_sleep(1);
 			}
-			if (!(reg & NBIT1))
+			if(!(reg & NBIT1))
 			{
 				ret = nm_read_reg_with_ret(WIFI_HOST_RCV_CTRL_4,(uint32 *)&dma_addr);
-				if(ret != M2M_SUCCESS) {
+				if(ret != M2M_SUCCESS) 
+				{
 					/*in case of read error clear the DMA address and return error*/
 					dma_addr = 0;
 					goto ERR1;
@@ -366,7 +368,7 @@ sint8 hif_send(uint8 u8Gid,uint8 u8Opcode,uint8 *pu8CtrlBuf,uint16 u16CtrlBufSiz
 			}
 		}
 
-		if (dma_addr != 0)
+		if(dma_addr != 0)
 		{
 			volatile uint32	u32CurrAddr;
 			u32CurrAddr = dma_addr;
@@ -432,6 +434,7 @@ static sint8 hif_isr(void)
 	volatile tstrHifHdr strHif;
 
 	ret = nm_read_reg_with_ret(WIFI_HOST_RCV_CTRL_0, &reg);
+	
 	if(M2M_SUCCESS == ret)
 	{
 		if(reg & 0x1)	/* New interrupt has been received */
@@ -445,7 +448,8 @@ static sint8 hif_isr(void)
 			if(ret != M2M_SUCCESS)goto ERR1;
 			gstrHifCxt.u8HifRXDone = 1;
 			size = (uint16)((reg >> 2) & 0xfff);
-			if (size > 0) {
+			if(size > 0) 
+			{
 				uint32 address = 0;
 				/**
 				start bus transfer
@@ -564,16 +568,6 @@ ERR1:
 }
 
 /**
-*	@fn		hif_yield(void)
-*	@brief
-			Yields control from interrupt event handler.
-*/
-void hif_yield(void)
-{
-	gstrHifCxt.u8Yield = 1;
-}
-
-/**
 *	@fn		hif_handle_isr(void)
 *	@brief	Handle interrupt received from NMC1500 firmware.
 *   @return     The function SHALL return 0 for success and a negative value otherwise.
@@ -581,21 +575,26 @@ void hif_yield(void)
 
 sint8 hif_handle_isr(void)
 {
-	sint8 ret = M2M_SUCCESS;	
+	sint8 ret = M2M_SUCCESS;
 	
-	gstrHifCxt.u8Yield = 0;
-	while (gstrHifCxt.u8Interrupt && !gstrHifCxt.u8Yield) {
+	while(gstrHifCxt.u8Interrupt) 
+	{
 		/*must be at that place because of the race of interrupt increment and that decrement*/
 		/*when the interrupt enabled*/
 		gstrHifCxt.u8Interrupt--;
+		
 		while(1)
 		{
 			ret = hif_isr();
-			if(ret == M2M_SUCCESS) {
+			
+			if(ret == M2M_SUCCESS) 
+			{
 				/*we will try forever untill we get that interrupt*/
 				/*Fail return errors here due to bus errors (reading expected values)*/
 				break;
-			} else {
+			} 
+			else 
+			{
 				M2M_ERR("(HIF) Fail to handle interrupt %d try Again..\n",ret);
 			}
 		}

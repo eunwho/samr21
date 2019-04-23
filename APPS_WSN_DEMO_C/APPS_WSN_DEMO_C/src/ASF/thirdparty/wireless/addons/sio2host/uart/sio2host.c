@@ -77,7 +77,6 @@ static uint8_t serial_rx_count;
 /* === IMPLEMENTATION ====================================================== */
 void sio2host_init(void)
 {
-	#if SAMD || SAMR21 || SAML21 || SAMR30
 	struct usart_config host_uart_config;
 	/* Configure USART for unit test output */
 	usart_get_config_defaults(&host_uart_config);
@@ -93,35 +92,14 @@ void sio2host_init(void)
 	/* Enable transceivers */
 	usart_enable_transceiver(&host_uart_module, USART_TRANSCEIVER_TX);
 	usart_enable_transceiver(&host_uart_module, USART_TRANSCEIVER_RX);
-	#else
-	stdio_serial_init(USART_HOST, &usart_serial_options);
-	#endif
+
 	USART_HOST_RX_ISR_ENABLE();
 }
+#define  txd_en PORT->Group[0].OUTSET.reg=PORT_PA27
+#define  rxd_en PORT->Group[0].OUTCLR.reg=PORT_PA27
 
 uint8_t sio2host_tx(uint8_t *data, uint8_t length)
 {
-#if SAMD || SAMR21 || SAML21 || SAMR30
-	status_code_genare_t status;
-#else
-	status_code_t status;
-#endif /*SAMD || SAMR21 || SAML21 */
-
-	do {
-#if SAMD || SAMR21 || SAML21 || SAMR30
-		status
-			= usart_serial_write_packet(&host_uart_module,
-				(const uint8_t *)data, length);
-#elif SAM4S || SAM4E
-        status = usart_serial_write_packet((Usart *)USART_HOST,
-				(const uint8_t *)data,
-				length);
-#else
-	    status = usart_serial_write_packet(USART_HOST,
-				(const uint8_t *)data,
-				length);
-#endif
-	} while (status != STATUS_OK);
 	return length;
 }
 

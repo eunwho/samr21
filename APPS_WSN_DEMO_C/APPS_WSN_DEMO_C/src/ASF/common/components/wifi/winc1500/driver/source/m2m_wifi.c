@@ -4,29 +4,36 @@
  *
  * \brief This module contains M2M Wi-Fi APIs implementation.
  *
- * Copyright (c) 2016-2018 Microchip Technology Inc. and its subsidiaries.
+ * Copyright (c) 2016-2017 Atmel Corporation. All rights reserved.
  *
  * \asf_license_start
  *
  * \page License
  *
- * Subject to your compliance with these terms, you may use Microchip
- * software and any derivatives exclusively with Microchip products.
- * It is your responsibility to comply with third party license terms applicable
- * to your use of third party software (including open source software) that
- * may accompany Microchip software.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS". NO WARRANTIES,
- * WHETHER EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE,
- * INCLUDING ANY IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY,
- * AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT WILL MICROCHIP BE
- * LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE, INCIDENTAL OR CONSEQUENTIAL
- * LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND WHATSOEVER RELATED TO THE
- * SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS BEEN ADVISED OF THE
- * POSSIBILITY OR THE DAMAGES ARE FORESEEABLE.  TO THE FULLEST EXTENT
- * ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN ANY WAY
- * RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
- * THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * 3. The name of Atmel may not be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY ATMEL "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT ARE
+ * EXPRESSLY AND SPECIFICALLY DISCLAIMED. IN NO EVENT SHALL ATMEL BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  *
  * \asf_license_stop
  *
@@ -44,7 +51,7 @@
 
 static volatile uint8 gu8ChNum;
 static volatile uint8 gu8scanInProgress = 0;
-tpfAppWifiCb gpfAppWifiCb = NULL;
+static tpfAppWifiCb gpfAppWifiCb = NULL;
 
 
 #ifdef ETH_MODE
@@ -225,7 +232,7 @@ static void m2m_wifi_cb(uint8 u8OpCode, uint16 u16DataSize, uint32 u32Addr)
 		{
 			uint8 u8SetRxDone;
 			tstrM2mIpRsvdPkt strM2mRsvd;
-			if(hif_receive(u32Addr, (uint8 *)(&strM2mRsvd) ,sizeof(tstrM2mIpRsvdPkt), 0) == M2M_SUCCESS)
+			if(hif_receive(u32Addr, &strM2mRsvd ,sizeof(tstrM2mIpRsvdPkt), 0) == M2M_SUCCESS)
 			{
 				tstrM2mIpCtrlBuf  strM2mIpCtrlBuf;
 				uint16 u16Offset = strM2mRsvd.u16PktOffset;
@@ -447,24 +454,26 @@ sint8 m2m_wifi_init(tstrWifiInitParam * param)
 	sint8 ret = M2M_SUCCESS;
 	uint8 u8WifiMode = M2M_WIFI_MODE_NORMAL;
 	
-	if(param == NULL) {
+	if(param == NULL) 
+	{
 		ret = M2M_ERR_FAIL;
 		goto _EXIT0;
 	}
 	
 	gpfAppWifiCb = param->pfAppWifiCb;
-
+/*
 #ifdef ETH_MODE
 	gpfAppEthCb  	    = param->strEthInitParam.pfAppEthCb;
 	gau8ethRcvBuf       = param->strEthInitParam.au8ethRcvBuf;
 	gu16ethRcvBufSize	= param->strEthInitParam.u16ethRcvBufSize;
-	if (param->strEthInitParam.u8EthernetEnable)		
-		u8WifiMode = M2M_WIFI_MODE_ETHERNET;
-#endif /* ETH_MODE */
+	u8WifiMode = param->strEthInitParam.u8EthernetEnable;
+#endif // ETH_MODE //
 
 #ifdef CONF_MGMT
 	gpfAppMonCb  = param->pfAppMonCb;
 #endif
+*/
+
 	gu8scanInProgress = 0;
 	/* Apply device specific initialization. */
 	ret = nm_drv_init(&u8WifiMode);
@@ -477,14 +486,14 @@ sint8 m2m_wifi_init(tstrWifiInitParam * param)
 
 	ret = nm_get_firmware_full_info(&strtmp);
 
-	// M2M_INFO("Firmware ver   : %u.%u.%u Svnrev %u\n", strtmp.u8FirmwareMajor, strtmp.u8FirmwareMinor, strtmp.u8FirmwarePatch,strtmp.u16FirmwareSvnNum);
-	// M2M_INFO("Firmware Build %s Time %s\n",strtmp.BuildDate,strtmp.BuildTime);
-	// M2M_INFO("Firmware Min driver ver : %u.%u.%u\n", strtmp.u8DriverMajor, strtmp.u8DriverMinor, strtmp.u8DriverPatch);
-	// M2M_INFO("Driver ver: %u.%u.%u\n", M2M_RELEASE_VERSION_MAJOR_NO, M2M_RELEASE_VERSION_MINOR_NO, M2M_RELEASE_VERSION_PATCH_NO);
-	// M2M_INFO("Driver built at %s\t%s\n",__DATE__,__TIME__);
+	M2M_INFO("Firmware ver   : %u.%u.%u Svnrev %u\n", strtmp.u8FirmwareMajor, strtmp.u8FirmwareMinor, strtmp.u8FirmwarePatch,strtmp.u16FirmwareSvnNum);
+	M2M_INFO("Firmware Build %s Time %s\n",strtmp.BuildDate,strtmp.BuildTime);
+	M2M_INFO("Firmware Min driver ver : %u.%u.%u\n", strtmp.u8DriverMajor, strtmp.u8DriverMinor, strtmp.u8DriverPatch);
+	M2M_INFO("Driver ver: %u.%u.%u\n", M2M_RELEASE_VERSION_MAJOR_NO, M2M_RELEASE_VERSION_MINOR_NO, M2M_RELEASE_VERSION_PATCH_NO);
+	M2M_INFO("Driver built at %s\t%s\n",__DATE__,__TIME__);
 	if(M2M_ERR_FW_VER_MISMATCH == ret)
 	{
-		// M2M_ERR("Mismatch Firmawre Version\n");
+		M2M_ERR("Mismatch Firmawre Version\n");
 	}
 
 	goto _EXIT0;
@@ -506,11 +515,6 @@ sint8  m2m_wifi_deinit(void * arg)
 }
 
 
-void m2m_wifi_yield(void)
-{
-	hif_yield();
-}
-
 sint8 m2m_wifi_handle_events(void * arg)
 {
 	return hif_handle_isr();
@@ -525,6 +529,7 @@ sint8 m2m_wifi_connect(char *pcSsid, uint8 u8SsidLen, uint8 u8SecType, void *pvA
 {
 	return m2m_wifi_connect_sc(pcSsid, u8SsidLen, u8SecType, pvAuthInfo,  u16Ch,0);
 }
+
 sint8 m2m_wifi_connect_sc(char *pcSsid, uint8 u8SsidLen, uint8 u8SecType, void *pvAuthInfo, uint16 u16Ch, uint8 u8NoSaveCred)
 {
 	sint8				ret = M2M_SUCCESS;
@@ -555,6 +560,7 @@ sint8 m2m_wifi_connect_sc(char *pcSsid, uint8 u8SsidLen, uint8 u8SecType, void *
 			}
 		}
 	}
+	
 	if((u8SsidLen<=0)||(u8SsidLen>=M2M_MAX_SSID_LEN))
 	{
 		M2M_ERR("SSID LEN INVALID\n");
@@ -572,19 +578,19 @@ sint8 m2m_wifi_connect_sc(char *pcSsid, uint8 u8SsidLen, uint8 u8SecType, void *
 		}
 	}
 
-
 	m2m_memcpy(strConnect.au8SSID, (uint8*)pcSsid, u8SsidLen);
-	strConnect.au8SSID[u8SsidLen]	= 0;
-	strConnect.u16Ch				= NM_BSP_B_L_16(u16Ch);
+	strConnect.au8SSID[u8SsidLen] = 0;
+	strConnect.u16Ch = NM_BSP_B_L_16(u16Ch);
+	
 	/* Credentials will be Not be saved if u8NoSaveCred is set */ 
-	strConnect.u8NoSaveCred 			= u8NoSaveCred ? 1:0;
+	strConnect.u8NoSaveCred = u8NoSaveCred ? 1:0;
 	pstrAuthInfo = &strConnect.strSec;
-	pstrAuthInfo->u8SecType		= u8SecType;
+	pstrAuthInfo->u8SecType	= u8SecType;
 
 	if(u8SecType == M2M_WIFI_SEC_WEP)
 	{
-		tstrM2mWifiWepParams	* pstrWepParams = (tstrM2mWifiWepParams*)pvAuthInfo;
-		tstrM2mWifiWepParams	*pstrWep = &pstrAuthInfo->uniAuth.strWepInfo;
+		tstrM2mWifiWepParams *pstrWepParams = (tstrM2mWifiWepParams*)pvAuthInfo;
+		tstrM2mWifiWepParams *pstrWep = &pstrAuthInfo->uniAuth.strWepInfo;
 		pstrWep->u8KeyIndx =pstrWepParams->u8KeyIndx-1;
 
 		if(pstrWep->u8KeyIndx >= WEP_KEY_MAX_INDEX)
@@ -602,10 +608,7 @@ sint8 m2m_wifi_connect_sc(char *pcSsid, uint8 u8SsidLen, uint8 u8SecType, void *
 		}
 		m2m_memcpy((uint8*)pstrWep->au8WepKey,(uint8*)pstrWepParams->au8WepKey, pstrWepParams->u8KeySz);
 		pstrWep->au8WepKey[pstrWepParams->u8KeySz] = 0;
-
 	}
-
-
 	else if(u8SecType == M2M_WIFI_SEC_WPA_PSK)
 	{
 		uint16	u16KeyLen = m2m_strlen((uint8*)pvAuthInfo);
@@ -621,10 +624,7 @@ sint8 m2m_wifi_connect_sc(char *pcSsid, uint8 u8SsidLen, uint8 u8SecType, void *
 	{
 		m2m_memcpy((uint8*)&pstrAuthInfo->uniAuth.strCred1x, (uint8*)pvAuthInfo, sizeof(tstr1xAuthCredentials));
 	}
-	else if(u8SecType == M2M_WIFI_SEC_OPEN)
-	{
-
-	}
+	else if(u8SecType == M2M_WIFI_SEC_OPEN);
 	else
 	{
 		M2M_ERR("undefined sec type\n");
@@ -1359,33 +1359,6 @@ sint8 m2m_wifi_prng_get_random_bytes(uint8 * pu8PrngBuff,uint16 u16PrngSize)
 	}
 	return ret;
 }
-
-/*!
-@fn	\
-	 NMI_API sint8 m2m_wifi_conf_auto_rate(tstrConfAutoRate * pstrConfAutoRate)
-
-@brief
-	Allow the host MCU app to configure auto TX rate selection algorithm. The application can use this 
-	API to tweak the algorithm performance. Moreover, it allows the application to force a specific WLAN 
-	PHY rate for transmitted data packets to favor range vs. throughput needs.
-
-@param [in]	pstrConfAutoRate
-	The Auto rate configuration parameters as listed in tstrConfAutoRate.
-@sa
-	tstrConfAutoRate
-@return
-	The function SHALL return 0 for success and a negative value otherwise.
-*/
-
-NMI_API sint8 m2m_wifi_conf_auto_rate(tstrConfAutoRate * pstrConfAutoRate)
-{
-	sint8 s8ret = M2M_ERR_FAIL;
-	
-	s8ret = hif_send(M2M_REQ_GROUP_WIFI, M2M_WIFI_REQ_CONG_AUTO_RATE, (uint8 *)pstrConfAutoRate,sizeof(tstrConfAutoRate),NULL,0,0);
-
-	return s8ret;
-}
-
 #ifdef ETH_MODE
 /*!
 @fn	\

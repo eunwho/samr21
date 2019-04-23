@@ -4,29 +4,36 @@
  *
  * \brief WINC Application Interface Internal Types.
  *
- * Copyright (c) 2016-2018 Microchip Technology Inc. and its subsidiaries.
+ * Copyright (c) 2016-2017 Atmel Corporation. All rights reserved.
  *
  * \asf_license_start
  *
  * \page License
  *
- * Subject to your compliance with these terms, you may use Microchip
- * software and any derivatives exclusively with Microchip products.
- * It is your responsibility to comply with third party license terms applicable
- * to your use of third party software (including open source software) that
- * may accompany Microchip software.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS". NO WARRANTIES,
- * WHETHER EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE,
- * INCLUDING ANY IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY,
- * AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT WILL MICROCHIP BE
- * LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE, INCIDENTAL OR CONSEQUENTIAL
- * LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND WHATSOEVER RELATED TO THE
- * SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS BEEN ADVISED OF THE
- * POSSIBILITY OR THE DAMAGES ARE FORESEEABLE.  TO THE FULLEST EXTENT
- * ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN ANY WAY
- * RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
- * THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * 3. The name of Atmel may not be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY ATMEL "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT ARE
+ * EXPRESSLY AND SPECIFICALLY DISCLAIMED. IN NO EVENT SHALL ATMEL BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  *
  * \asf_license_stop
  *
@@ -39,15 +46,12 @@
 /*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 INCLUDES
 *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*/
+
 #ifndef	_BOOT_
 #ifndef _FIRMWARE_
 #include "common/include/nm_common.h"
 #else
-#ifndef LINT
 #include "m2m_common.h"
-#else
-#include "../../../firmware/wifi_v111/src/m2m/include/m2m_common.h"
-#endif
 #endif
 #endif
 
@@ -91,7 +95,6 @@ MACROS
 	( ((uint32)M2M_MAKE_VERSION((fw_major),  (fw_minor),  (fw_patch)))  << M2M_FW_VERSION_SHIFT) | \
 	( ((uint32)M2M_MAKE_VERSION((drv_major), (drv_minor), (drv_patch))) << M2M_DRV_VERSION_SHIFT))
 
-//#define REL_19_5_3_VER			M2M_MAKE_VERSION_INFO(19,5,3,19,3,0)
 #define REL_19_5_2_VER			M2M_MAKE_VERSION_INFO(19,5,2,19,3,0)
 #define REL_19_5_1_VER			M2M_MAKE_VERSION_INFO(19,5,1,19,3,0)
 #define REL_19_5_0_VER			M2M_MAKE_VERSION_INFO(19,5,0,19,3,0)
@@ -123,7 +126,6 @@ MACROS
 /*!< Firmware Minor release version number.
 */
 
-//#define M2M_RELEASE_VERSION_PATCH_NO						(4)
 #define M2M_RELEASE_VERSION_PATCH_NO						(2)
 /*!< Firmware patch release version number.
 */
@@ -725,9 +727,6 @@ typedef enum {
 	M2M_WIFI_REQ_PASSIVE_SCAN,
 	/*!< Request a passivr scan command.
 	*/
-	M2M_WIFI_REQ_CONG_AUTO_RATE,
-	/*!< Configure auto TX rate selection algorithm.
-	*/
 	M2M_WIFI_MAX_CONFIG_ALL
 }tenuM2mConfigCmd;
 
@@ -1122,7 +1121,7 @@ typedef enum {
 	Wi-Fi Operation Mode.
 */
 typedef enum {
-	M2M_WIFI_MODE_NORMAL = ((uint8_t) 1),
+	M2M_WIFI_MODE_NORMAL = ((uint8) 1),
 	/*!< Normal Mode means to run customer firmware version.
 	 */
 	M2M_WIFI_MODE_ATE_HIGH,
@@ -1863,29 +1862,26 @@ typedef struct {
  	tstrM2MIPConfig
 
 @brief
- 	IP configuration (static/DHCP). The same structure is used for DCHP callback as well as static IP configuration.
+ 	Static IP configuration.
 
 @note
  	All member IP addresses are expressed in Network Byte Order (eg. "192.168.10.1" will be expressed as 0x010AA8C0).
  */
 typedef struct {
 	uint32 	u32StaticIP;
-	/*!< If DHCP callback, this is the IP address obtained from the DHCP. In static IP config, this is the assigned to the device from the application.
+	/*!< The static IP assigned to the device.
 	*/
 	uint32 	u32Gateway;
-	/*!< IP of the default internet gateway.
+	/*!< IP of the Default internet gateway.
 	*/
 	uint32 	u32DNS;
 	/*!< IP for the DNS server.
-	*/
-	uint32 	u32AlternateDNS;
-	/*!< IP for the secondary DNS server (if any). Must set to zero if not provided in static IP configuration from the application.
 	*/
 	uint32 	u32SubnetMask;
 	/*!< Subnet mask for the local area network.
 	*/
 	uint32 u32DhcpLeaseTime;
-	/*!< DHCP Lease Time in sec. This field is is ignored in static IP configuration.
+	/*!< Dhcp Lease Time in sec
 	*/
 } tstrM2MIPConfig;
 
@@ -1978,9 +1974,7 @@ typedef struct{
 	/*!< MAC address of the peer Wi-Fi station */ 
 	sint8	s8RSSI;
 	/*!< Connection RSSI signal */
-	uint8	u8CurrChannel; 
-	/*!< Wi-Fi RF channel number  1,2,... 14.  */
-	uint8	__PAD16__[2];
+	uint8	__PAD24__[3];
 	/*!< Padding bytes for forcing 4-byte alignment */
 }tstrM2MConnInfo;
 
@@ -2383,162 +2377,6 @@ typedef struct{
 	uint32	u32CsBMP;
 }tstrSslSetActiveCsList;
 
-/*!
-@enum\
-	tenuWlanTxRate
-
-@brief	All possible supported 802.11 WLAN TX rates.
-*/
-typedef enum {
-	TX_RATE_AUTO  = 0xFF, /*!<  Automatic rate selection */
-	TX_RATE_LOWEST  = 0xFE, /*!< Force the lowest possible data rate for longest range. */		
-	TX_RATE_1	  = 0x00, /* 1 Mbps  */
-	TX_RATE_2	  = 0x01, /* 2 Mbps  */
-	TX_RATE_5_5   = 0x02, /* 5 Mbps  */
-	TX_RATE_11	  = 0x0B, /* 11 Mbps */
-	TX_RATE_6	  = 0x80, /* 6 Mbps  */
-	TX_RATE_9	  = 0x0F, /* 9 Mbps  */
-	TX_RATE_12	  = 0x03, /* 12 Mbps */
-	TX_RATE_18	  = 0x0A, /* 18 Mbps */
-	TX_RATE_24	  = 0x81, /* 24 Mbps */
-	TX_RATE_36	  = 0x0E, /* 36 Mbps */
-	TX_RATE_48	  = 0x82, /* 48 Mbps */
-	TX_RATE_54	  = 0x09, /* 54 Mbps */
-	TX_RATE_MCS_0 = 0x83, /* MCS-0: 6.5 Mbps */
-	TX_RATE_MCS_1 = 0x0D, /* MCS-1: 13 Mbps */
-	TX_RATE_MCS_2 = 0x84, /* MCS-2: 19.5 Mbps */
-	TX_RATE_MCS_3 = 0x08, /* MCS-3: 26 Mbps */
-	TX_RATE_MCS_4 = 0x85, /* MCS-4: 39 Mbps */
-	TX_RATE_MCS_5 = 0x0C, /* MCS-5: 52 Mbps */
-	TX_RATE_MCS_6 = 0x86, /* MCS-6: 58.5 Mbps */
-	TX_RATE_MCS_7 = 0x87, /* MCS-7: 65 Mbps */
-} tenuWlanTxRate;
-
-/* Commonly used initalizers for rate lists for B, G, N or mixed modes for iteration on rates. */
-#define WLAN_11B_RATES_INITIALIZER { \
-	TX_RATE_1, TX_RATE_2, TX_RATE_5_5, \
-	TX_RATE_11 \
-}
-
-#define WLAN_11G_RATES_INITIALIZER  { \
-	TX_RATE_6, TX_RATE_9, TX_RATE_12, \
-	TX_RATE_18, TX_RATE_24, TX_RATE_36, \
-	TX_RATE_48, TX_RATE_54 \
-}
-
-#define WLAN_11N_RATES_INITIALIZER { \
-	TX_RATE_MCS_0, TX_RATE_MCS_1, TX_RATE_MCS_2, \
-	TX_RATE_MCS_3, TX_RATE_MCS_4, TX_RATE_MCS_5, \
-	TX_RATE_MCS_6, TX_RATE_MCS_7 \
-}
-
-#define WLAN_11BGN_RATES_ASC_INITIALIZER { \
-	TX_RATE_1, TX_RATE_2, TX_RATE_5_5, \
-	TX_RATE_6, TX_RATE_MCS_0, TX_RATE_9, \
-	TX_RATE_11, TX_RATE_12, TX_RATE_MCS_1, \
-	TX_RATE_18, TX_RATE_MCS_2, TX_RATE_24, \
-	TX_RATE_MCS_3, TX_RATE_36, TX_RATE_MCS_4, \
-	TX_RATE_48, TX_RATE_MCS_5, TX_RATE_54, \
-	TX_RATE_MCS_6, TX_RATE_MCS_7, \
-}
-
-#define WLAN_11BG_RATES_ASC_INITIALIZER { \
-	 TX_RATE_1, TX_RATE_2, TX_RATE_5_5, \
-	 TX_RATE_6, TX_RATE_9, TX_RATE_11, \
-	 TX_RATE_12, TX_RATE_18, TX_RATE_24, \
-	 TX_RATE_36, TX_RATE_48, TX_RATE_54 \
-}
-
-/*!
-@struct	\
- 	tstrConfAutoRate
-
-@brief
- 	Auto TX rate selection parameters passed to m2m_wifi_conf_auto_rate.
-*/
-typedef struct {
-	uint16 u16ArMaxRecoveryFailThreshold;
-	/*!<
-		To stabilize the TX rate and avoid oscillation, the algorithm will not attempt to 
-		push the rate up again after a failed attempt to push the rate up.
-		An attempt to push the rate up is considered failed if the next rate suffers from 
-		very high retransmission. In this case, WINC will not attempt again until a 
-		duration of time is elased to keep the TX rate stable.
-		The min duration is (u16ArMinRecoveryFailThreshold) seconds and doubles 
-		on every failed attempt. The doubling continues until the duration is 
-		(u16ArMaxRecoveryFailThreshold) max.
-		
-		Increasing u16ArMaxRecoveryFailThreshold this will cause the TX rate to be 
-		stable over a long period of time with fewer attempts to increase the data rate. 
-		However, increasing this to a very large value will deter the algorithm from 
-		attempting to increase the rate if, for instance, the wireless conditions befores better.
-
-		Default is 5 seconds.
-	*/
-	uint16 u16ArMinRecoveryFailThreshold;
-	/*!<
-		To stabilize the TX rate and avoid oscillation, the algorithm will not attempt to 
-		push the rate up again after a failed attempt to push the rate up.
-		An attempt to push the rate up is considered failed if the next rate suffers from 
-		very high retransmission. In this case, WINC will not attempt again until a 
-		duration of time is elased to keep the TX rate stable.
-		The min duration is (u16ArMinRecoveryFailThreshold) seconds and doubles 
-		on every failed attempt. The doubling continues until the duration is 
-		(u16ArMaxRecoveryFailThreshold) max.
-
-		Default is 1 second.
-	*/
-
-	tenuWlanTxRate enuWlanTxRate;
-	/*!<
-		The TX data rate setlected as enumerated in tenuWlanTxRate
-		Default is TX_RATE_AUTO.
-		
-		WINC shall override the rate provided through this API if it not supported by the peer WLAN device (STA/AP). 
-		For instance, if the TX_RATE_MCS_0 is requested while the connection is to a BG only AP, WINC shall 
-		elect the nearest BG data rate to the requested rate. In this example, it will be TX_RATE_9.
-	*/
-	tenuWlanTxRate enuArInitialRateSel;
-	/*!<
-		Configures the initial WLAN TX rate used right after association. 
-		This is the starting point for auto rate algorithm.
-		The algorithm tunes the rate up or down based on the wireless 
-		medium condition if enuWlanTxRate is set to TX_RATE_AUTO. 
-		If enuWlanTxRate is set to any value other than TX_RATE_AUTO, then 
-		u8ArInitialRateSel is ignored.
-
-		By default WINC selects the best initial rate based on the recevie 
-		signal level from the WLAN peer. For applications that favor range 
-		right after association, TX_RATE_LOWEST can bs used.
-	*/
-	uint8 u8ArEnoughTxThreshold; 
-	/*!<
-		Configures the minimum number of transmitted packets per second for auto 
-		rate selection algorithm to start to make rate up or down decisions.
-		Default is 10. 
-	*/
-	uint8 u8ArSuccessTXThreshold;
-	/*!<
-		Configures the threshold for rate up. Rate goes up if number of 
-		WLAN TX retries is less than (1/u8ArSuccessTXThreshold) of the 
-		number of packet transmitted within one second. 
-		This can be tuned to speed up or slow down the rate at which the algorithm 
-		moves the WLAN TX rate up. Default value is 5.
-	*/
-	uint8 u8ArFailTxThreshold;
-	/*!<
-		Configures the threshold for rate down. Rate goes down if number of 
-		WLAN TX retries is greater than (1/u8ArFailTxThreshold) of the 
-		number of packet transmitted within one second. 
-		This can be tuned to speed up or slow down the rate at which the algorithm 
-		moves the WLAN TX rate down. Default value is 3.
-	*/
-	uint8 __PAD24__[3];	
-	/*!< Pad bytes for forcing 4-byte alignment
-	*/
-} tstrConfAutoRate;
-
-#define DEFAULT_CONF_AR_INITIALIZER { 5, 1, TX_RATE_AUTO, TX_RATE_AUTO, 10, 5, 3 }
 
  /**@}*/
 

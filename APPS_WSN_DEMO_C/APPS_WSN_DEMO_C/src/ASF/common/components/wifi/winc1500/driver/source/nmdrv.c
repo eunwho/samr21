@@ -4,29 +4,36 @@
  *
  * \brief This module contains NMC1000 M2M driver APIs implementation.
  *
- * Copyright (c) 2016-2018 Microchip Technology Inc. and its subsidiaries.
+ * Copyright (c) 2016-2017 Atmel Corporation. All rights reserved.
  *
  * \asf_license_start
  *
  * \page License
  *
- * Subject to your compliance with these terms, you may use Microchip
- * software and any derivatives exclusively with Microchip products.
- * It is your responsibility to comply with third party license terms applicable
- * to your use of third party software (including open source software) that
- * may accompany Microchip software.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS". NO WARRANTIES,
- * WHETHER EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE,
- * INCLUDING ANY IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY,
- * AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT WILL MICROCHIP BE
- * LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE, INCIDENTAL OR CONSEQUENTIAL
- * LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND WHATSOEVER RELATED TO THE
- * SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS BEEN ADVISED OF THE
- * POSSIBILITY OR THE DAMAGES ARE FORESEEABLE.  TO THE FULLEST EXTENT
- * ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN ANY WAY
- * RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
- * THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * 3. The name of Atmel may not be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY ATMEL "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT ARE
+ * EXPRESSLY AND SPECIFICALLY DISCLAIMED. IN NO EVENT SHALL ATMEL BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  *
  * \asf_license_stop
  *
@@ -274,18 +281,23 @@ sint8 nm_drv_init(void * arg)
 	sint8 ret = M2M_SUCCESS;
 	uint8 u8Mode;
 	
-	if(NULL != arg) {
+	if(NULL != arg) 
+	{
 		u8Mode = *((uint8 *)arg);
-		if((u8Mode < M2M_WIFI_MODE_NORMAL)||(u8Mode >= M2M_WIFI_MODE_MAX)) {
+		if((u8Mode < M2M_WIFI_MODE_NORMAL)||(u8Mode >= M2M_WIFI_MODE_MAX)) 
+		{
 			u8Mode = M2M_WIFI_MODE_NORMAL;
 		}
-	} else {
+	} 
+	else 
+	{
 		u8Mode = M2M_WIFI_MODE_NORMAL;
 	}
 	
 	ret = nm_bus_iface_init(NULL);
-	if (M2M_SUCCESS != ret) {
-		//M2M_ERR("[nmi start]: fail init bus\n");
+	if(M2M_SUCCESS != ret) 
+	{
+		M2M_ERR("[nmi start]: fail init bus\n");
 		goto ERR1;
 	}
 
@@ -296,41 +308,46 @@ sint8 nm_drv_init(void * arg)
 	
 #ifdef NO_HW_CHIP_EN
 	ret = chip_wake();
-	if (M2M_SUCCESS != ret) {
-		// M2M_ERR("[nmi start]: fail chip_wakeup\n");
+	if(M2M_SUCCESS != ret) 
+	{
+		M2M_ERR("[nmi start]: fail chip_wakeup\n");
 		goto ERR2;
 	}
 	/**
 	Go...
 	**/
 	ret = chip_reset();
-	if (M2M_SUCCESS != ret) {
+	if(M2M_SUCCESS != ret) 
+	{
 		goto ERR2;
 	}
 #endif
-	// M2M_INFO("Chip ID %lx\n", nmi_get_chipid());
+	M2M_INFO("Chip ID %lx\n", nmi_get_chipid());
 #ifdef CONF_WINC_USE_SPI
 	/* Must do this after global reset to set SPI data packet size. */
 	nm_spi_init();
 #endif
 	ret = wait_for_bootrom(u8Mode);
-	if (M2M_SUCCESS != ret) {
+	if(M2M_SUCCESS != ret) 
+	{
 		goto ERR2;
 	}
 		
 	ret = wait_for_firmware_start(u8Mode);
-	if (M2M_SUCCESS != ret) {
+	if(M2M_SUCCESS != ret) 
+	{
 		goto ERR2;
 	}
 	
-	if((M2M_WIFI_MODE_ATE_HIGH == u8Mode)||(M2M_WIFI_MODE_ATE_LOW == u8Mode)) {
+	if((M2M_WIFI_MODE_ATE_HIGH == u8Mode)||(M2M_WIFI_MODE_ATE_LOW == u8Mode)) 
+	{
 		goto ERR1;
-	} else {
-		/*continue running*/
-	}
+	} 
+	else;
 	
 	ret = enable_interrupts();
-	if (M2M_SUCCESS != ret) {
+	if(M2M_SUCCESS != ret) 
+	{
 		M2M_ERR("failed to enable interrupts..\n");
 		goto ERR2;
 	}
