@@ -133,7 +133,8 @@ void initGpio(void)
 {
 	PORT->Group[0].DIRSET.bit.DIRSET=PORT_PA27;	// RS3485 ENABLE PIN CONTROL PORT
 }
-
+uint8_t stTest[] = "Hellow World!\r\n";
+ 
 int main ( void )
 {	
 	tstrWifiInitParam param;
@@ -150,8 +151,9 @@ int main ( void )
 //	configure_tc_callbacks();
 
 	sio2host_init();
-//--- socket to PLC
 
+//--- socket to PLC
+	
 	nm_bsp_init();		// WINC1500 핀 설정 및 초기화
 
 	// Initialize socket address structure. 
@@ -177,7 +179,7 @@ int main ( void )
 
 	system_interrupt_enable_global();	//! [enable_global_interrupts]
 
-	sio2host_init();
+//	sio2host_init();
 	readMacAddress();
 	wsndemo_init();
 
@@ -185,7 +187,7 @@ int main ( void )
 	
 	while (true) {
 		wsndemo_task();
-/*
+
 		m2m_wifi_handle_events(NULL);	// Handle pending events from network controller. //
 		if(wifi_connected == M2M_WIFI_CONNECTED){
 			if(tcp_client_socket < 0){
@@ -205,7 +207,7 @@ int main ( void )
 			} else {
 			}
 		}
-*/	}
+	}
 	return 0;
 }
 
