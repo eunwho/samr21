@@ -124,7 +124,6 @@ void configure_usart_callbacks(void);
 void config_rs485_TX_EN(void);
 
 // for 485
-/*
 void configure_usart(void)
 {
 	struct usart_config config_usart;
@@ -139,38 +138,6 @@ void configure_usart(void)
 
 	usart_enable(&usart_instance);
 }
-*/
-
-// for gate way
-void configure_usart(void)
-{
-	//! [setup_config]
-	struct usart_config config_usart;
-	//! [setup_config]
-	//! [setup_config_defaults]
-	usart_get_config_defaults(&config_usart);
-	//! [setup_config_defaults]
-
-	//! [setup_change_config]
-	config_usart.baudrate    = 9600;
-	config_usart.mux_setting = EDBG_CDC_SERCOM_MUX_SETTING;
-	config_usart.pinmux_pad0 = EDBG_CDC_SERCOM_PINMUX_PAD0;
-	config_usart.pinmux_pad1 = EDBG_CDC_SERCOM_PINMUX_PAD1;
-	config_usart.pinmux_pad2 = EDBG_CDC_SERCOM_PINMUX_PAD2;
-	config_usart.pinmux_pad3 = EDBG_CDC_SERCOM_PINMUX_PAD3;
-	//! [setup_change_config]
-
-	//! [setup_set_config]
-	while (usart_init(&usart_instance,
-	EDBG_CDC_MODULE, &config_usart) != STATUS_OK) {
-	}
-	//! [setup_set_config]
-
-	//! [setup_enable]
-	usart_enable(&usart_instance);
-	//! [setup_enable]
-}
-
 
 void configure_usart_callbacks(void)
 {
@@ -185,6 +152,7 @@ void initGpio(void)
 {
 	PORT->Group[0].DIRSET.bit.DIRSET=PORT_PA27;	// RS3485 ENABLE PIN CONTROL PORT
 }
+
 uint8_t stTest[] = "Hellow World!\r\n";
 
 uint32_t getElapRtc( uint32_t rtc_tag);
@@ -250,6 +218,14 @@ int main ( void )
 	wsndemo_init();
 
 	configure_usart();
+/*
+	while(true){
+		txd_en;	usart_write_buffer_wait(&usart_instance, bufTest1, sizeof(bufTest1));	rxd_en;
+		delay_ms(500);
+		txd_en;	usart_write_buffer_wait(&usart_instance, bufTest2, sizeof(bufTest2));	rxd_en;
+		delay_ms(500);
+	}
+*/
 	
 	while (true) {
 		wsndemo_task();
@@ -358,6 +334,7 @@ void socket_cb(SOCKET sock, uint8_t u8Msg, void *pvMsg)
 			tstrSocketConnectMsg *pstrConnect = (tstrSocketConnectMsg *)pvMsg;
 			
 			if(pstrConnect && pstrConnect->s8Error >= 0){
+				// slaveDef[]
 				send(tcp_client_socket, &slaveDef, sizeof(slaveDef), 0);
 			} else {
 				close(tcp_client_socket);
@@ -378,11 +355,7 @@ void socket_cb(SOCKET sock, uint8_t u8Msg, void *pvMsg)
 				switch(pstrRecv->pu8Buffer[7]) { // read coil
 					case 1:	
 					delay_us(10);			
-					// pu8Buffer[9]번부터 8bit씩 순서대로 PLC 코일출력 상태 값을 저장한다.
-					// pu8Buffer[9]의 경우 하위비트부터 1번째~8번째의 코일출력 값을 가진다.
-					// 9번째로 넘어가면 pu8Buffer[10]에 할당된다
-					// process only 4 byte 0f 10byte 
-					
+
 					for( i = 0 ; i < 4 ; i++){	
 						bufDout[3+i*2] = (( pstrRecv->pu8Buffer[9+i] >> 4 ) & 0x0F );
 						(bufDout[3+i*2] > 9) ? ( bufDout[3+i*2] += 'A') : (bufDout[3+i*2] += '0');
@@ -395,19 +368,20 @@ void socket_cb(SOCKET sock, uint8_t u8Msg, void *pvMsg)
 					break;	
 				}
 				
-				if( getElapRtc(rtcCountTag)>100){
-					rtcCountTag = rtc_count_get_count( & rtc_instance);								
+				//if( getElapRtc(rtcCountTag)>1000){
+				//	rtcCountTag = rtc_count_get_count( & rtc_instance);								
 					if(test_flag){
-						// send(tcp_client_socket, &slaveDef, sizeof(slaveDef), 0);	// origin
-						send(tcp_client_socket, slaveDef, sizeof(slaveDef), 0);	// by jsk
+						send(tcp_client_socket, &slaveDef, sizeof(slaveDef), 0);	// origin
 						test_flag=false;
+						txd_en;	usart_write_buffer_wait(&usart_instance, bufTest1, sizeof(bufTest1));	rxd_en;
+
 					} else {
 						for( i = 0 ; i < 4 ; i++ )	write_plc[13 + i] = sensStateTable[i];
-						// send(tcp_client_socket, &write_plc, sizeof(write_plc), 0);
-						send(tcp_client_socket, write_plc, sizeof(write_plc), 0);
+						send(tcp_client_socket, &write_plc, sizeof(write_plc), 0);
 						test_flag=true;					
+						txd_en;	usart_write_buffer_wait(&usart_instance, bufTest2, sizeof(bufTest2));	rxd_en;
 					}
-				}				
+				//}				
 			} else {
 				close(tcp_client_socket);
 				tcp_client_socket = -1;

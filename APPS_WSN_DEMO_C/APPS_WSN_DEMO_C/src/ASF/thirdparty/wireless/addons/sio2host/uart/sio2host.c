@@ -95,13 +95,16 @@ void sio2host_init(void)
 
 	USART_HOST_RX_ISR_ENABLE();
 }
-#define  txd_en PORT->Group[0].OUTSET.reg=PORT_PA27
-#define  rxd_en PORT->Group[0].OUTCLR.reg=PORT_PA27
 
 uint8_t sio2host_tx(uint8_t *data, uint8_t length)
 {
+	status_code_genare_t status;
+	do {
+		status= usart_serial_write_packet(&host_uart_module, (const uint8_t *)data, length);
+	} while (status != STATUS_OK);
 	return length;
 }
+
 
 uint8_t sio2host_rx(uint8_t *data, uint8_t max_length)
 {

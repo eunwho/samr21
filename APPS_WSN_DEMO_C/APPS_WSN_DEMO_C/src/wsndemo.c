@@ -223,33 +223,9 @@ void appDataInd(RECEIVED_MESH_MESSAGE *ind)
 			sensStateTable[byteNo] += setValue;
 		}
 	}
-	
-/*
-	char *chTemp2;	
-	light  = ((*(chTemp+37)) * 256 + ( * (chTemp+38) ) ) * 256 ;
-	light += (*(chTemp+39)) * 256 + (*(chTemp+40)) ;
-*/	
-	//snprintf(chTemp2,50,"Sensor Value = %d", light);	
-	//usart_write_buffer_wait(&usart_instance, chTemp2+37, );	//"sens value"	
-	//usart_write_buffer_wait(&usart_instance, chTemp + 43, 14); //"SUN001 -0x0001"
 
-	// usart_write_buffer_wait(&usart_instance, chTemp + 29, 30); //"sun001 -0x0001"
-/*
-	txd_en;
-//	temp = (temp) ? 0 : 1;
-
-//	(temp ) ? printf("%s",bufTest1): printf("%s",bufTest2);
-
-	if(temp){
-		temp = 0 ;
-		usart_write_buffer_wait(&usart_instance, bufTest1, sizeof(bufTest1));
-	} else {
-		temp = 1 ;
-		usart_write_buffer_wait(&usart_instance, bufTest2, sizeof(bufTest2));		
-	}
-	rxd_en;	
-*/
 //	appUartSendMessage(ind->payload, ind->payloadSize); //jsk
+
 }
 
 /*****************************************************************************
@@ -343,7 +319,7 @@ static void appSendData(void)
         appMsg.panId = shortAddressPanId;
 #if defined(PAN_COORDINATOR)
 	sprintf(&(appMsg.caption.text[APP_CAPTION_SIZE - SHORT_ADDRESS_CAPTION_SIZE]), "-0x%04X", shortAddressLocal);
-	appUartSendMessage((uint8_t *)&appMsg, sizeof(appMsg));
+	// appUartSendMessage((uint8_t *)&appMsg, sizeof(appMsg));		// debug jsk
 	SYS_TimerStart(&appDataSendingTimer);
 	appState = APP_STATE_WAIT_SEND_TIMER;
 #else
