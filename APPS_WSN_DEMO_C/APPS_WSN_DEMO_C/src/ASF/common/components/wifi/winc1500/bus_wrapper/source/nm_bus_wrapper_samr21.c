@@ -172,31 +172,14 @@ sint8 nm_bus_init(void *pvinit)
 {
 	sint8 result = M2M_SUCCESS;
 
-#ifdef CONF_WINC_USE_I2C
-	/* Initialize config structure and software module. */
-	struct i2c_master_config config_i2c_master;
-	i2c_master_get_config_defaults(&config_i2c_master);
-
-	/* Change buffer timeout to something longer. */
-	config_i2c_master.buffer_timeout = 1000;
-
-	/* Initialize and enable device with config. */
-	i2c_master_init(&i2c_master_instance, SERCOM2, &config_i2c_master);
-
-	i2c_master_enable(&i2c_master_instance);
-
-#elif defined CONF_WINC_USE_SPI
 	/* Structure for SPI configuration. */
 	struct spi_config config;
 	struct spi_slave_inst_config slave_config;
 
-	/* Select SPI slave CS pin. */
-	/* This step will set the CS high */
 	spi_slave_inst_get_config_defaults(&slave_config);
 	slave_config.ss_pin = CONF_WINC_SPI_CS_PIN;
 	spi_attach_slave(&slave_inst, &slave_config);
 
-	/* Configure the SPI master. */
 	spi_get_config_defaults(&config);
 	config.mux_setting = CONF_WINC_SPI_SERCOM_MUX;
 	config.pinmux_pad0 = CONF_WINC_SPI_PINMUX_PAD0;
@@ -215,7 +198,7 @@ sint8 nm_bus_init(void *pvinit)
 
 	nm_bsp_reset();
 	nm_bsp_sleep(1);
-#endif
+
 	return result;
 }
 

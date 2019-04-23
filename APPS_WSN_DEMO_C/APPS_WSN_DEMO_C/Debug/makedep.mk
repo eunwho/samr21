@@ -50,6 +50,8 @@ src\ASF\sam0\drivers\extint\extint_sam_d_r_h\extint.c
 
 src\ASF\sam0\drivers\port\port.c
 
+src\ASF\sam0\drivers\rtc\rtc_sam_d_r_h\rtc_count.c
+
 src\ASF\sam0\drivers\sercom\i2c\i2c_sam0\i2c_master.c
 
 src\ASF\sam0\drivers\sercom\sercom.c

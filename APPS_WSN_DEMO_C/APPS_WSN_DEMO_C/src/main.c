@@ -13,6 +13,24 @@
 #include "define.h"
 #include "global.h"
 
+void configure_rtc_count(void);
+
+struct rtc_module rtc_instance;
+
+void configure_rtc_count(void)
+{
+	struct rtc_count_config config_rtc_count;
+	rtc_count_get_config_defaults(&config_rtc_count);
+	config_rtc_count.prescaler           = RTC_COUNT_PRESCALER_DIV_1;
+	config_rtc_count.mode                = RTC_COUNT_MODE_32BIT;
+	#ifdef FEATURE_RTC_CONTINUOUSLY_UPDATED
+	config_rtc_count.continuously_update = true;
+	#endif
+	rtc_count_init(&rtc_instance, RTC, &config_rtc_count);
+	rtc_count_enable(&rtc_instance);
+}
+
+
 volatile unsigned int clock_count_timer = 0;
 
 /* Receive buffer definition. */
@@ -134,7 +152,21 @@ void initGpio(void)
 	PORT->Group[0].DIRSET.bit.DIRSET=PORT_PA27;	// RS3485 ENABLE PIN CONTROL PORT
 }
 uint8_t stTest[] = "Hellow World!\r\n";
- 
+
+uint32_t getElapRtc( uint32_t rtc_tag);
+
+uint32_t getElapRtc( uint32_t rtc_tag){
+	uint32_t temp32,ret32;
+	temp32 = rtc_count_get_count( & rtc_instance);
+	if( temp32 < rtc_tag){
+		ret32 = (uint32_t)(0xFFFFFFFF) - rtc_tag + temp32;
+	} else {
+		ret32 = temp32 - rtc_tag;
+	}
+	return ret32;
+}
+
+uint32_t rtcCount, rtcCountTag, rtcTagSocket;
 int main ( void )
 {	
 	tstrWifiInitParam param;
@@ -149,7 +181,7 @@ int main ( void )
 	initGpio();
 	configure_tc();
 //	configure_tc_callbacks();
-
+	configure_rtc_count( );
 	sio2host_init();
 
 //--- socket to PLC
@@ -246,6 +278,7 @@ _Bool CoilCheckData(unsigned char arrPoint,int number)
 	
 void socket_cb(SOCKET sock, uint8_t u8Msg, void *pvMsg)
 {
+	int i;
 	switch(u8Msg) 
 	{
 		case SOCKET_MSG_BIND:
@@ -316,7 +349,7 @@ void socket_cb(SOCKET sock, uint8_t u8Msg, void *pvMsg)
 					// 9번째로 넘어가면 pu8Buffer[10]에 할당된다
 					// process only 4 byte 0f 10byte 
 					
-					for(int i = 0 ; i < 4 ; i++){	
+					for( i = 0 ; i < 4 ; i++){	
 						bufDout[3+i*2] = (( pstrRecv->pu8Buffer[9+i] >> 4 ) & 0x0F );
 						(bufDout[3+i*2] > 9) ? ( bufDout[3+i*2] += 'A') : (bufDout[3+i*2] += '0');
 
@@ -325,26 +358,22 @@ void socket_cb(SOCKET sock, uint8_t u8Msg, void *pvMsg)
 					}
 //--- digital out proc
 					txd_en;	usart_write_buffer_wait(&usart_instance, bufDout, sizeof(bufDout));	rxd_en;
-					break;
+					break;	
 				}
-								
-				if(test_flag){
-					// send(tcp_client_socket, &slaveDef, sizeof(slaveDef), 0);	// origin
-					send(tcp_client_socket, slaveDef, sizeof(slaveDef), 0);	// by jsk
-					test_flag=false;
-				} else {
-					write_plc[13] = sensStateTable[0];
-					write_plc[14] = sensStateTable[1];
-					write_plc[15] = sensStateTable[2];
-					write_plc[16] = sensStateTable[3];
-					
-					// send(tcp_client_socket, &write_plc, sizeof(write_plc), 0);
-					send(tcp_client_socket, write_plc, sizeof(write_plc), 0);
-					usart_write_buffer_wait(&usart_instance, write_plc + 13, 4); //
 				
-					test_flag=true;					
-					delay_ms(75);
-				}
+				if( getElapRtc(rtcCountTag)>100){
+					rtcCountTag = rtc_count_get_count( & rtc_instance);								
+					if(test_flag){
+						// send(tcp_client_socket, &slaveDef, sizeof(slaveDef), 0);	// origin
+						send(tcp_client_socket, slaveDef, sizeof(slaveDef), 0);	// by jsk
+						test_flag=false;
+					} else {
+						for( i = 0 ; i < 4 ; i++ )	write_plc[13 + i] = sensStateTable[i];
+						// send(tcp_client_socket, &write_plc, sizeof(write_plc), 0);
+						send(tcp_client_socket, write_plc, sizeof(write_plc), 0);
+						test_flag=true;					
+					}
+				}				
 			} else {
 				close(tcp_client_socket);
 				tcp_client_socket = -1;
