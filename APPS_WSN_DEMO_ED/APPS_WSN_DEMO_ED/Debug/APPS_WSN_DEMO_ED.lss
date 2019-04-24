@@ -29,9 +29,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
  12 .debug_line   000199ae  00000000  00000000  000a4aad  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_str    00089837  00000000  00000000  000be45b  2**0
+ 13 .debug_str    00089875  00000000  00000000  000be45b  2**0
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_frame  00001e44  00000000  00000000  00147c94  2**2
+ 14 .debug_frame  00001e44  00000000  00000000  00147cd0  2**2
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -1672,6 +1672,12 @@ void rtc_count_enable(struct rtc_module *const module)
 
 	Rtc *const rtc_module = module->hw;
      89c:	6806      	ldr	r6, [r0, #0]
+ * \param[in] vector Interrupt vector to enable
+ */
+static inline void system_interrupt_enable(
+		const enum system_interrupt_vector vector)
+{
+	NVIC->ISER[0] = (uint32_t)(1 << ((uint32_t)vector & 0x0000001f));
      89e:	2208      	movs	r2, #8
      8a0:	4b05      	ldr	r3, [pc, #20]	; (8b8 <rtc_count_enable+0x20>)
      8a2:	601a      	str	r2, [r3, #0]
@@ -1903,6 +1909,12 @@ enum status_code rtc_count_set_compare(
      97e:	0016      	movs	r6, r2
 	module->hw = hw;
      980:	6001      	str	r1, [r0, #0]
+		const enum system_clock_apb_bus bus,
+		const uint32_t mask)
+{
+	switch (bus) {
+		case SYSTEM_CLOCK_APB_APBA:
+			PM->APBAMASK.reg |= mask;
      982:	4a2e      	ldr	r2, [pc, #184]	; (a3c <rtc_count_init+0xc4>)
      984:	6993      	ldr	r3, [r2, #24]
      986:	2120      	movs	r1, #32
@@ -3234,11 +3246,19 @@ enum status_code spi_select_slave(
     10b6:	492e      	ldr	r1, [pc, #184]	; (1170 <spi_select_slave+0xf0>)
     10b8:	468c      	mov	ip, r1
     10ba:	4463      	add	r3, ip
+static inline void port_pin_set_output_level(
+		const uint8_t gpio_pin,
+		const bool level)
+{
+	PortGroup *const port_base = port_get_group_from_gpio_pin(gpio_pin);
 	uint32_t pin_mask  = (1UL << (gpio_pin % 32));
     10bc:	211f      	movs	r1, #31
     10be:	4011      	ands	r1, r2
     10c0:	2201      	movs	r2, #1
     10c2:	408a      	lsls	r2, r1
+
+	/* Set the pin to high or low atomically based on the requested level */
+	if (level) {
 		port_base->OUTSET.reg = pin_mask;
     10c4:	619a      	str	r2, [r3, #24]
 					return STATUS_BUSY;
@@ -7446,9 +7466,15 @@ static void phyTrxSetState(uint8_t state)
     25b4:	2280      	movs	r2, #128	; 0x80
     25b6:	0352      	lsls	r2, r2, #13
     25b8:	619a      	str	r2, [r3, #24]
+
+    No Operation does nothing. This instruction can be used for code alignment purposes.
+ */
+__attribute__( ( always_inline ) ) __STATIC_INLINE void __NOP(void)
+{
   __ASM volatile ("nop");
     25ba:	46c0      	nop			; (mov r8, r8)
     25bc:	46c0      	nop			; (mov r8, r8)
+	} else {
 		port_base->OUTCLR.reg = pin_mask;
     25be:	615a      	str	r2, [r3, #20]
 }
@@ -8815,7 +8841,6 @@ static miQueueBuffer_t *miQueueReadOrRemove(MiQueue_t *q,
     2ce6:	0015      	movs	r5, r2
   __ASM volatile ("cpsid i" : : : "memory");
     2ce8:	b672      	cpsid	i
-  __ASM volatile ("dmb");
     2cea:	f3bf 8f5f 	dmb	sy
 	miQueueBuffer_t *buffer_current = NULL;
 	miQueueBuffer_t *buffer_previous;
@@ -10027,6 +10052,11 @@ AT86RFX_ISR()
 
 {
     332c:	b510      	push	{r4, lr}
+		const uint8_t channel)
+{
+	Eic *const eic_module = _extint_get_eic_from_channel(channel);
+	uint32_t eic_mask   = (1UL << (channel % 32));
+
 	eic_module->INTFLAG.reg = eic_mask;
     332e:	2201      	movs	r2, #1
     3330:	4b03      	ldr	r3, [pc, #12]	; (3340 <AT86RFX_ISR+0x14>)
@@ -10053,6 +10083,11 @@ void trx_spi_init(void)
 {
     3348:	b530      	push	{r4, r5, lr}
     334a:	b085      	sub	sp, #20
+		struct spi_slave_inst_config *const config)
+{
+	Assert(config);
+
+	config->ss_pin          = 10;
 	config->address_enabled = false;
     334c:	4a34      	ldr	r2, [pc, #208]	; (3420 <trx_spi_init+0xd8>)
     334e:	2300      	movs	r3, #0
@@ -10065,6 +10100,11 @@ void trx_spi_init(void)
 	slave_dev_config.ss_pin = AT86RFX_SPI_CS;
     3354:	213f      	movs	r1, #63	; 0x3f
     3356:	7011      	strb	r1, [r2, #0]
+		const struct spi_slave_inst_config *const config)
+{
+	Assert(slave);
+	Assert(config);
+
 	slave->ss_pin          = config->ss_pin;
     3358:	4c32      	ldr	r4, [pc, #200]	; (3424 <trx_spi_init+0xdc>)
     335a:	7021      	strb	r1, [r4, #0]
@@ -10078,16 +10118,31 @@ void trx_spi_init(void)
     3364:	704a      	strb	r2, [r1, #1]
 	config->powersave  = false;
     3366:	708b      	strb	r3, [r1, #2]
+	/* Get default config for pin */
+	struct port_config pin_conf;
+	port_get_config_defaults(&pin_conf);
+
+	/* Edit config to set the pin as output */
 	pin_conf.direction = PORT_PIN_DIR_OUTPUT;
     3368:	700a      	strb	r2, [r1, #0]
+
+	/* Set config on Slave Select pin */
 	port_pin_set_config(slave->ss_pin, &pin_conf);
     336a:	203f      	movs	r0, #63	; 0x3f
     336c:	4b2e      	ldr	r3, [pc, #184]	; (3428 <trx_spi_init+0xe0>)
     336e:	4798      	blx	r3
 	port_pin_set_output_level(slave->ss_pin, true);
     3370:	7822      	ldrb	r2, [r4, #0]
+	uint8_t group_index = (gpio_pin / 32);
+
+	/* Array of available ports */
+	Port *const ports[PORT_INST_NUM] = PORT_INSTS;
+
 	if (port_index < PORT_INST_NUM) {
     3372:	09d1      	lsrs	r1, r2, #7
+		return &(ports[port_index]->Group[group_index]);
+	} else {
+		Assert(false);
 		return NULL;
     3374:	2300      	movs	r3, #0
 	if (port_index < PORT_INST_NUM) {
@@ -10164,13 +10219,27 @@ void trx_spi_init(void)
     33d6:	0028      	movs	r0, r5
     33d8:	4b1d      	ldr	r3, [pc, #116]	; (3450 <trx_spi_init+0x108>)
     33da:	4798      	blx	r3
+{
+	/* Sanity check arguments */
+	Assert(module);
+	Assert(module->hw);
+
 	SercomSpi *const spi_module = &(module->hw->SPI);
     33dc:	682a      	ldr	r2, [r5, #0]
 	return (spi_module->SYNCBUSY.reg);
     33de:	69d3      	ldr	r3, [r2, #28]
+
+#  if SPI_CALLBACK_MODE == true
+	system_interrupt_enable(_sercom_get_interrupt_vector(module->hw));
+#  endif
+
 	while (spi_is_syncing(module)) {
     33e0:	2b00      	cmp	r3, #0
     33e2:	d1fc      	bne.n	33de <trx_spi_init+0x96>
+		/* Wait until the synchronization is complete */
+	}
+
+	/* Enable SPI */
 	spi_module->CTRLA.reg |= SERCOM_SPI_CTRLA_ENABLE;
     33e4:	6813      	ldr	r3, [r2, #0]
     33e6:	2502      	movs	r5, #2
@@ -10288,14 +10357,30 @@ uint8_t trx_reg_read(uint8_t addr)
     3494:	b570      	push	{r4, r5, r6, lr}
     3496:	b082      	sub	sp, #8
     3498:	0005      	movs	r5, r0
+ */
+__attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_PRIMASK(void)
+{
+  uint32_t result;
+
   __ASM volatile ("MRS %0, primask" : "=r" (result) );
     349a:	f3ef 8310 	mrs	r3, PRIMASK
+static volatile uint32_t cpu_irq_critical_section_counter;
+static volatile bool     cpu_irq_prev_interrupt_state;
+
+static inline irqflags_t cpu_irq_save(void)
+{
 	volatile irqflags_t flags = cpu_irq_is_enabled();
     349e:	425a      	negs	r2, r3
     34a0:	4153      	adcs	r3, r2
     34a2:	9301      	str	r3, [sp, #4]
   __ASM volatile ("cpsid i" : : : "memory");
     34a4:	b672      	cpsid	i
+    This function ensures the apparent order of the explicit memory operations before
+    and after the instruction, without ensuring their completion.
+ */
+__attribute__( ( always_inline ) ) __STATIC_INLINE void __DMB(void)
+{
+  __ASM volatile ("dmb");
     34a6:	f3bf 8f5f 	dmb	sy
 	cpu_irq_disable();
     34aa:	2200      	movs	r2, #0
@@ -10315,20 +10400,37 @@ uint8_t trx_reg_read(uint8_t addr)
     34b8:	0030      	movs	r0, r6
     34ba:	4b33      	ldr	r3, [pc, #204]	; (3588 <trx_reg_read+0xf4>)
     34bc:	4798      	blx	r3
+{
+	/* Sanity check arguments */
+	Assert(module);
+	Assert(module->hw);
+
 	SercomSpi *const spi_module = &(module->hw->SPI);
     34be:	6833      	ldr	r3, [r6, #0]
 
 	/* Send the Read command byte */
 	while (!spi_is_ready_to_write(&master)) {
     34c0:	2101      	movs	r1, #1
+
+	/* Check interrupt flag */
 	return (spi_module->INTFLAG.reg & SERCOM_SPI_INTFLAG_DRE);
     34c2:	7e1a      	ldrb	r2, [r3, #24]
     34c4:	420a      	tst	r2, r1
     34c6:	d0fc      	beq.n	34c2 <trx_reg_read+0x2e>
     34c8:	7e1a      	ldrb	r2, [r3, #24]
+	Assert(module->hw);
+
+	SercomSpi *const spi_module = &(module->hw->SPI);
+
+	/* Check if the data register has been copied to the shift register */
 	if (!spi_is_ready_to_write(module)) {
     34ca:	07d2      	lsls	r2, r2, #31
     34cc:	d502      	bpl.n	34d4 <trx_reg_read+0x40>
+		/* Data register has not been copied to the shift register, return */
+		return STATUS_BUSY;
+	}
+
+	/* Write the character to the DATA register */
 	spi_module->DATA.reg = tx_data & SERCOM_SPI_DATA_MASK;
     34ce:	2280      	movs	r2, #128	; 0x80
     34d0:	4315      	orrs	r5, r2
@@ -10350,21 +10452,38 @@ uint8_t trx_reg_read(uint8_t addr)
     34e0:	420a      	tst	r2, r1
     34e2:	d0fc      	beq.n	34de <trx_reg_read+0x4a>
     34e4:	7e1a      	ldrb	r2, [r3, #24]
+	Assert(module->hw);
+
+	SercomSpi *const spi_module = &(module->hw->SPI);
+
+	/* Check if data is ready to be read */
 	if (!spi_is_ready_to_read(module)) {
     34e6:	0752      	lsls	r2, r2, #29
     34e8:	d50c      	bpl.n	3504 <trx_reg_read+0x70>
+
+	/* Return value */
+	enum status_code retval = STATUS_OK;
+
+	/* Check if data is overflown */
 	if (spi_module->STATUS.reg & SERCOM_SPI_STATUS_BUFOVF) {
     34ea:	8b5a      	ldrh	r2, [r3, #26]
     34ec:	0752      	lsls	r2, r2, #29
     34ee:	d501      	bpl.n	34f4 <trx_reg_read+0x60>
+		retval = STATUS_ERR_OVERFLOW;
+		/* Clear overflow flag */
 		spi_module->STATUS.reg = SERCOM_SPI_STATUS_BUFOVF;
     34f0:	2204      	movs	r2, #4
     34f2:	835a      	strh	r2, [r3, #26]
+	}
+
+	/* Read the character from the DATA register */
 	if (module->character_size == SPI_CHARACTER_SIZE_9BIT) {
     34f4:	4a22      	ldr	r2, [pc, #136]	; (3580 <trx_reg_read+0xec>)
     34f6:	7992      	ldrb	r2, [r2, #6]
     34f8:	2a01      	cmp	r2, #1
     34fa:	d034      	beq.n	3566 <trx_reg_read+0xd2>
+		*rx_data = (spi_module->DATA.reg & SERCOM_SPI_DATA_MASK);
+	} else {
 		*rx_data = (uint8_t)spi_module->DATA.reg;
     34fc:	6a9a      	ldr	r2, [r3, #40]	; 0x28
     34fe:	b2d2      	uxtb	r2, r2
@@ -10432,6 +10551,11 @@ uint8_t trx_reg_read(uint8_t addr)
     3548:	480d      	ldr	r0, [pc, #52]	; (3580 <trx_reg_read+0xec>)
     354a:	4b0f      	ldr	r3, [pc, #60]	; (3588 <trx_reg_read+0xf4>)
     354c:	4798      	blx	r3
+	return (flags);
+}
+
+static inline void cpu_irq_restore(irqflags_t flags)
+{
 	if (cpu_irq_is_enabled_flags(flags))
     354e:	23ff      	movs	r3, #255	; 0xff
     3550:	4223      	tst	r3, r4
@@ -12373,6 +12497,12 @@ void configure_adc(void)
 
 	Adc *const adc_module = module_inst->hw;
     3f3a:	6823      	ldr	r3, [r4, #0]
+	/* Sanity check arguments */
+	Assert(module_inst);
+
+	Adc *const adc_module = module_inst->hw;
+
+	if (adc_module->STATUS.reg & ADC_STATUS_SYNCBUSY) {
     3f3c:	7e5a      	ldrb	r2, [r3, #25]
 
 	while (adc_is_syncing(module_inst)) {
@@ -12522,7 +12652,7 @@ void readMacAddress(void){
     3ff6:	325b      	adds	r2, #91	; 0x5b
     3ff8:	719a      	strb	r2, [r3, #6]
 	myLongAddress[7] = MAC_ADDR;	
-    3ffa:	3a7f      	subs	r2, #127	; 0x7f
+    3ffa:	3a61      	subs	r2, #97	; 0x61
     3ffc:	71da      	strb	r2, [r3, #7]
 }
     3ffe:	4770      	bx	lr
@@ -13322,7 +13452,7 @@ void wsndemo_task(void)
     44b2:	4798      	blx	r3
 	sprintf(appMsg.caption.text, "SUN%03d -0x%04x", MAC_ADDR, shortAddressLocal);
     44b4:	882b      	ldrh	r3, [r5, #0]
-    44b6:	2201      	movs	r2, #1
+    44b6:	221f      	movs	r2, #31
     44b8:	4930      	ldr	r1, [pc, #192]	; (457c <wsndemo_task+0x378>)
     44ba:	0030      	movs	r0, r6
     44bc:	4d30      	ldr	r5, [pc, #192]	; (4580 <wsndemo_task+0x37c>)
