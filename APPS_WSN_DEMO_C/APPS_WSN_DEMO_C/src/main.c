@@ -171,6 +171,7 @@ uint32_t getElapRtc( uint32_t rtc_tag){
 uint32_t rtcCount, rtcCountTag, rtcTagSocket;
 int main ( void )
 {	
+	int i;
 	tstrWifiInitParam param;
 	int8_t ret;
 	struct sockaddr_in addr;
@@ -186,9 +187,7 @@ int main ( void )
 	configure_rtc_count( );
 	sio2host_init();
 	printf("sio2host_init Ok");
-
 //--- socket to PLC
-	
 	nm_bsp_init();		// WINC1500 핀 설정 및 초기화
 
 	// Initialize socket address structure. 
@@ -216,15 +215,7 @@ int main ( void )
 	readMacAddress();
 	wsndemo_init();
 	configure_usart();
-/*	while(true){
-//		txd_en;	usart_write_buffer_wait(&usart_instance, bufTest1, sizeof(bufTest1));	rxd_en;
-		printf("Hellow World1 \r\n");
-		delay_ms(500);
-		printf("Hellow World2 \r\n");
-		//txd_en;	usart_write_buffer_wait(&usart_instance, bufTest2, sizeof(bufTest2));	rxd_en;
-		delay_ms(500);
-	} */
-	
+
 	while (true) {
 		wsndemo_task();
 
@@ -238,13 +229,27 @@ int main ( void )
 				if(ret < 0) {
 					close(tcp_client_socket); tcp_client_socket = -1;
 				}
+			} else {
+				rtcCount = getElapRtc(rtcCountTag);
+				if( rtcCount > 100 ){
+					rtcCountTag = rtc_count_get_count( & rtc_instance);
+					if(test_flag){
+						send(tcp_client_socket, &slaveDef, sizeof(slaveDef), 0);	// origin
+						test_flag=false;
+					} else {
+						for( i = 0 ; i < 4 ; i++ )	write_plc[13 + i] = sensStateTable[i];
+						send(tcp_client_socket, &write_plc, sizeof(write_plc), 0);
+						txd_en;	usart_write_buffer_wait(&usart_instance, bufDout0, sizeof(bufDout));	rxd_en;
+						test_flag=true;
+					}
+					//delay_ms(500);
+				}
 			}			
 			if(tcp_server_socket < 0) {
 				if((tcp_server_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0){
 					continue;
 				}
 				bind(tcp_server_socket, (struct sockaddr *)&addr, sizeof(struct sockaddr_in));
-			} else {
 			}
 		}
 	}
@@ -283,7 +288,6 @@ _Bool CoilCheckData(unsigned char arrPoint,int number)
 	return state;
 }
 
-	
 void socket_cb(SOCKET sock, uint8_t u8Msg, void *pvMsg)
 {
 	int i;
@@ -352,34 +356,18 @@ void socket_cb(SOCKET sock, uint8_t u8Msg, void *pvMsg)
 			{
 				switch(pstrRecv->pu8Buffer[7]) { // read coil
 					case 1:	
-					delay_us(10);			
-
 					for( i = 0 ; i < 4 ; i++){	
-						bufDout[3+i*2] = (( pstrRecv->pu8Buffer[9+i] >> 4 ) & 0x0F );
-						(bufDout[3+i*2] > 9) ? ( bufDout[3+i*2] += 'A') : (bufDout[3+i*2] += '0');
-
-						bufDout[ 3+i*2+1 ] = pstrRecv->pu8Buffer[9+i] & 0x0F ;
-						(bufDout[3+i*2+1 ] > 9) ? ( bufDout[3+i*2 + 1 ] += 'A') : (bufDout[3+i*2 + 1] += '0');
+						bufDout[ 3+i*2 ] = pstrRecv->pu8Buffer[9+i] & 0x0F ;
+						(bufDout[3+i*2 ] > 9) ? ( bufDout[3+i*2 + 1 ] += 'A') : (bufDout[3+i*2] += '0');
+						bufDout[3+i*2+1] = (( pstrRecv->pu8Buffer[9+i] >> 4 ) & 0x0F );
+						(bufDout[3+i*2+1] > 9) ? ( bufDout[3+i*2] += 'A') : (bufDout[3+i*2+1] += '0');						
 					}
 //--- digital out proc
-					// txd_en;	usart_write_buffer_wait(&usart_instance, bufDout, sizeof(bufDout));	rxd_en;
+					rtcCount = getElapRtc(rtcCountTag);
+					//printf("rxd from Plc = %s,count=%lu \r\n",bufDout,rtcCount);
+					txd_en;	usart_write_buffer_wait(&usart_instance, bufDout, sizeof(bufDout));	rxd_en;
 					break;	
 				}
-				
-				//if( getElapRtc(rtcCountTag)>1000){
-				//	rtcCountTag = rtc_count_get_count( & rtc_instance);								
-					if(test_flag){
-						send(tcp_client_socket, &slaveDef, sizeof(slaveDef), 0);	// origin
-						test_flag=false;
-						txd_en;	usart_write_buffer_wait(&usart_instance, bufTest1, sizeof(bufTest1));	rxd_en;
-
-					} else {
-						for( i = 0 ; i < 4 ; i++ )	write_plc[13 + i] = sensStateTable[i];
-						send(tcp_client_socket, &write_plc, sizeof(write_plc), 0);
-						test_flag=true;					
-						txd_en;	usart_write_buffer_wait(&usart_instance, bufTest2, sizeof(bufTest2));	rxd_en;
-					}
-				//}				
 			} else {
 				close(tcp_client_socket);
 				tcp_client_socket = -1;

@@ -18,6 +18,7 @@ struct usart_module usart_instance;
 
 uint8_t bufTest1[]={0x02,0x52,'A','1','2','3','4','5','6','7','8',0x03,0x00};
 uint8_t bufTest2[]={0x02,0x52,'A','0','0','0','0','0','0','0','0',0x03,0x00};
+uint8_t bufDout0[]={0x02,0x52,'A','0','0','0','0','0','0','0','0',0x03,0x00};
 
 uint8_t sensStateTable[10] = {0};
 	

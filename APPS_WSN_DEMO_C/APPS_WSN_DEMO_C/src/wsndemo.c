@@ -220,7 +220,7 @@ void appDataInd(RECEIVED_MESH_MESSAGE *ind)
 			// setValue = (((msg->sensors).light) > 1200 ) ? bitFlag[bitNo] : 0x00;
 			setValue = bitFlag[bitNo];
 			// write_plc[13+ byteNo] += setValue;
-			sensStateTable[byteNo] += setValue;
+			sensStateTable[byteNo] = (sensStateTable[byteNo] || setValue);
 		}
 	}
 
