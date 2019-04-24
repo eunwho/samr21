@@ -53,7 +53,7 @@
 #define SHORT_ADDRESS_CAPTION_SIZE     7
 
 //#define APP_CAPTION     "End Device"
-#define MAC_ADDR		31
+#define MAC_ADDR		11
 #define APP_CAPTION     "SUN"
 #define APP_NODE_TYPE   2
 #define APP_COORDINATOR 0

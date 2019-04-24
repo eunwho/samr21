@@ -12497,12 +12497,6 @@ void configure_adc(void)
 
 	Adc *const adc_module = module_inst->hw;
     3f3a:	6823      	ldr	r3, [r4, #0]
-	/* Sanity check arguments */
-	Assert(module_inst);
-
-	Adc *const adc_module = module_inst->hw;
-
-	if (adc_module->STATUS.reg & ADC_STATUS_SYNCBUSY) {
     3f3c:	7e5a      	ldrb	r2, [r3, #25]
 
 	while (adc_is_syncing(module_inst)) {
@@ -12652,7 +12646,7 @@ void readMacAddress(void){
     3ff6:	325b      	adds	r2, #91	; 0x5b
     3ff8:	719a      	strb	r2, [r3, #6]
 	myLongAddress[7] = MAC_ADDR;	
-    3ffa:	3a61      	subs	r2, #97	; 0x61
+    3ffa:	3a75      	subs	r2, #117	; 0x75
     3ffc:	71da      	strb	r2, [r3, #7]
 }
     3ffe:	4770      	bx	lr
@@ -13452,7 +13446,7 @@ void wsndemo_task(void)
     44b2:	4798      	blx	r3
 	sprintf(appMsg.caption.text, "SUN%03d -0x%04x", MAC_ADDR, shortAddressLocal);
     44b4:	882b      	ldrh	r3, [r5, #0]
-    44b6:	221f      	movs	r2, #31
+    44b6:	220b      	movs	r2, #11
     44b8:	4930      	ldr	r1, [pc, #192]	; (457c <wsndemo_task+0x378>)
     44ba:	0030      	movs	r0, r6
     44bc:	4d30      	ldr	r5, [pc, #192]	; (4580 <wsndemo_task+0x37c>)
