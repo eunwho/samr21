@@ -185,6 +185,7 @@ int main ( void )
 //	configure_tc_callbacks();
 	configure_rtc_count( );
 	sio2host_init();
+	printf("sio2host_init Ok");
 
 //--- socket to PLC
 	
@@ -212,20 +213,17 @@ int main ( void )
 		MAIN_WLAN_AUTH,(char *)MAIN_WLAN_PSK, M2M_WIFI_CH_ALL);	
 
 	system_interrupt_enable_global();	//! [enable_global_interrupts]
-
-//	sio2host_init();
 	readMacAddress();
 	wsndemo_init();
-
 	configure_usart();
-/*
-	while(true){
-		txd_en;	usart_write_buffer_wait(&usart_instance, bufTest1, sizeof(bufTest1));	rxd_en;
+/*	while(true){
+//		txd_en;	usart_write_buffer_wait(&usart_instance, bufTest1, sizeof(bufTest1));	rxd_en;
+		printf("Hellow World1 \r\n");
 		delay_ms(500);
-		txd_en;	usart_write_buffer_wait(&usart_instance, bufTest2, sizeof(bufTest2));	rxd_en;
+		printf("Hellow World2 \r\n");
+		//txd_en;	usart_write_buffer_wait(&usart_instance, bufTest2, sizeof(bufTest2));	rxd_en;
 		delay_ms(500);
-	}
-*/
+	} */
 	
 	while (true) {
 		wsndemo_task();
@@ -364,7 +362,7 @@ void socket_cb(SOCKET sock, uint8_t u8Msg, void *pvMsg)
 						(bufDout[3+i*2+1 ] > 9) ? ( bufDout[3+i*2 + 1 ] += 'A') : (bufDout[3+i*2 + 1] += '0');
 					}
 //--- digital out proc
-					txd_en;	usart_write_buffer_wait(&usart_instance, bufDout, sizeof(bufDout));	rxd_en;
+					// txd_en;	usart_write_buffer_wait(&usart_instance, bufDout, sizeof(bufDout));	rxd_en;
 					break;	
 				}
 				
