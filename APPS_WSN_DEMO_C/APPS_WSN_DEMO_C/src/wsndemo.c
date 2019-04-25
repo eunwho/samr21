@@ -216,16 +216,13 @@ void appDataInd(RECEIVED_MESH_MESSAGE *ind)
 		addrId = (*(chTemp+47)-'0') * 10 + (*(chTemp+48)-'0');
 		if( (addrId > 0) && (addrId < 81)){ 
 			byteNo = (addrId-1) / 8;
-			bitNo = addrId % 8;
+			bitNo = (addrId-1) % 8;
 			// setValue = (((msg->sensors).light) > 1200 ) ? bitFlag[bitNo] : 0x00;
 			setValue = bitFlag[bitNo];
-			// write_plc[13+ byteNo] += setValue;
-			sensStateTable[byteNo] = (sensStateTable[byteNo] || setValue);
+			sensStateTable[byteNo] = (sensStateTable[byteNo] | setValue);			
 		}
 	}
-
 //	appUartSendMessage(ind->payload, ind->payloadSize); //jsk
-
 }
 
 /*****************************************************************************
