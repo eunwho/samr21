@@ -188,7 +188,7 @@ uint8_t bitFlag[] = {0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80};
 
 void appDataInd(RECEIVED_MESH_MESSAGE *ind)
 {	
-	int addrId, byteNo, bitNo, setValue;
+	int addrId, byteNo, bitNo, setValue,tmp;
 	char * zbeeId;
 	char * chTemp;
 	
@@ -219,7 +219,12 @@ void appDataInd(RECEIVED_MESH_MESSAGE *ind)
 			bitNo = (addrId-1) % 8;
 			// setValue = (((msg->sensors).light) > 1200 ) ? bitFlag[bitNo] : 0x00;
 			setValue = bitFlag[bitNo];
-			sensStateTable[byteNo] = (sensStateTable[byteNo] | setValue);			
+		
+			if( sensStateTable[byteNo] & setValue){
+				sensStateTable[byteNo] = (sensStateTable[byteNo] & (~setValue));
+			} else {
+				sensStateTable[byteNo] = (sensStateTable[byteNo] | setValue);				
+			}				
 		}
 	}
 //	appUartSendMessage(ind->payload, ind->payloadSize); //jsk

@@ -239,7 +239,7 @@ int main ( void )
 					} else {
 						for( i = 0 ; i < 4 ; i++ )	write_plc[13 + i] = sensStateTable[i];
 						send(tcp_client_socket, &write_plc, sizeof(write_plc), 0);
-						txd_en;	usart_write_buffer_wait(&usart_instance, bufDout0, sizeof(bufDout));	rxd_en;
+						// txd_en;	usart_write_buffer_wait(&usart_instance, bufDout0, sizeof(bufDout));	rxd_en;
 						test_flag=true;
 					}
 					//delay_ms(500);

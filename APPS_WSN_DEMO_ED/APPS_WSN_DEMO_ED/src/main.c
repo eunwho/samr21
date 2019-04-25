@@ -14,8 +14,10 @@ void configure_rtc_count(void);
 void configure_rtc_callbacks(void);
 
 void rtc_overflow_callback(void){	
+	//port_pin_set_output_level(PIN_PA28,true);
+	//delay_us(20);
 	port_pin_toggle_output_level(PIN_PA28);
-	// if( appState == APP_STATE_SENDING_DONE) appState = APP_STATE_SEND ;
+	//port_pin_set_output_level(PIN_PA28,false);
 }
 
 void config_led(void);
@@ -99,7 +101,7 @@ int main ( void )
 	configure_adc();
 	configure_rtc_count();
 	configure_rtc_callbacks();
-	rtc_count_set_period(&rtc_instance, 2000);
+	rtc_count_set_period(&rtc_instance, 800);
 	system_set_sleepmode(SYSTEM_SLEEPMODE_STANDBY);
 	cpu_irq_enable();	
     while(1)

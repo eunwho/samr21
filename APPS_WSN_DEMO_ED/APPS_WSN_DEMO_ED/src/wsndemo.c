@@ -258,8 +258,8 @@ static void APP_TaskHandler(void)
 			break;
 		case APP_STATE_SENDING_DONE:
 			appState = APP_STATE_WAIT_SEND_TIMER;
+			//system_sleep();
 			SYS_TimerStart(&appDataSendingTimer);
-			system_sleep();
 			break;		
 		default:
 			break;
