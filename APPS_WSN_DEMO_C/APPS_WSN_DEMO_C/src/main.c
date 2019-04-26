@@ -231,7 +231,7 @@ int main ( void )
 				}
 			} else {
 				rtcCount = getElapRtc(rtcCountTag);
-				if( rtcCount > 100 ){
+				if( rtcCount > 500 ){
 					rtcCountTag = rtc_count_get_count( & rtc_instance);
 					if(test_flag){
 						send(tcp_client_socket, &slaveDef, sizeof(slaveDef), 0);	// origin
@@ -264,7 +264,7 @@ void readMacAddress(void){
 	myLongAddress[4] = 89;
 	myLongAddress[5] = 37;
 	myLongAddress[6] = 128;
-	myLongAddress[7] = 127;
+	myLongAddress[7] = 255;
 }
 
 _Bool CoilCheckData(unsigned char arrPoint,int number)

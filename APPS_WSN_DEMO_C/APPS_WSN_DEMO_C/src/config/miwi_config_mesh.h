@@ -68,7 +68,8 @@
     #define NETWORK_KEY_DEFAULT {0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF}
 
 	/* Interval between keep alive message transmission in seconds for coordinator */
-	#define KEEP_ALIVE_COORDINATOR_SEND_INTERVAL    5
+	//#define KEEP_ALIVE_COORDINATOR_SEND_INTERVAL    5
+	#define KEEP_ALIVE_COORDINATOR_SEND_INTERVAL    20
 
 	/* Keep alive coordinator timeout in seconds */
     #define KEEP_ALIVE_COORDINATOR_TIMEOUT_IN_SEC    KEEP_ALIVE_COORDINATOR_SEND_INTERVAL * 10
@@ -86,7 +87,7 @@
     #define RXOFF_DEVICE_TIMEOUT_IN_SEC      DATA_REQUEST_SEND_INTERVAL * 5
 
 
-	#define MAX_NUMBER_OF_DEVICES_IN_NETWORK     150
+	#define MAX_NUMBER_OF_DEVICES_IN_NETWORK     125
 
     /* Capability of Device Types - Macros - Don't Change */
     #define CAPABILITY_INFO_COORD       0x05
@@ -117,7 +118,7 @@
     /* Maximum number of Non Sleep End devices in the network - Configurable  */
     #define NUM_OF_NONSLEEPING_ENDDEVICES        0
     /* Maximum number of Sleeping End devices in the network - Configurable  */
-    #define NUM_OF_SLEEPING_ENDDEVICES           150
+    #define NUM_OF_SLEEPING_ENDDEVICES           125
     /* The Periodic Route Update Initiation interval - Configurable  */
 	#define ROUTE_UPDATE_INTERVAL       60
     /* The wait time for receiving route reply after initiating route request - Configurable*/
@@ -136,13 +137,15 @@
     #define FRAME_RETRY                 3
 
     /* Number of Rebroadcast Table Entries  - Configurable  */
-    #define REBROADCAST_TABLE_SIZE      10
+    //#define REBROADCAST_TABLE_SIZE      10
+    #define REBROADCAST_TABLE_SIZE      20
 
     /* The time to hold the rebroadcasted entry in the table  - Configurable  */
     #define REBROADCAST_TIMEOUT         5
 
     /* The number of maximum beacon results to store during scan procedure - Configurable*/
-    #define MAX_BEACON_RESULTS          5
+    //#define MAX_BEACON_RESULTS          5
+    #define MAX_BEACON_RESULTS          120
   #endif
 #endif
 

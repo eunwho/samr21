@@ -47,7 +47,8 @@
 
 #define APP_NWKSTATUS_INTERVAL  1000
 
-#define APP_RX_BUF_SIZE         20
+//#define APP_RX_BUF_SIZE         20
+#define APP_RX_BUF_SIZE         200
 
 #define PAN_COORDINATOR_SHORT_ADDRESS   0x0000
 

@@ -227,7 +227,7 @@ void appDataInd(RECEIVED_MESH_MESSAGE *ind)
 			}				
 		}
 	}
-//	appUartSendMessage(ind->payload, ind->payloadSize); //jsk
+	appUartSendMessage(ind->payload, ind->payloadSize); //jsk
 }
 
 /*****************************************************************************
@@ -321,7 +321,7 @@ static void appSendData(void)
         appMsg.panId = shortAddressPanId;
 #if defined(PAN_COORDINATOR)
 	sprintf(&(appMsg.caption.text[APP_CAPTION_SIZE - SHORT_ADDRESS_CAPTION_SIZE]), "-0x%04X", shortAddressLocal);
-	// appUartSendMessage((uint8_t *)&appMsg, sizeof(appMsg));		// debug jsk
+	appUartSendMessage((uint8_t *)&appMsg, sizeof(appMsg));		// debug jsk
 	SYS_TimerStart(&appDataSendingTimer);
 	appState = APP_STATE_WAIT_SEND_TIMER;
 #else
