@@ -118,6 +118,8 @@ src\ASF\thirdparty\wireless\services\trx_access\trx_access.c
 
 src\commands.c
 
+src\i2cModule.c
+
 src\main.c
 
 src\wsndemo.c

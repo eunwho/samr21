@@ -1,6 +1,12 @@
 /**
 * \file  main.c
 */
+
+#include "header.h"
+#include "extern.h"
+#include "global.h"
+
+/*
 #include "asf.h"
 #include "main.h"
 #include "sio2host.h"
@@ -12,6 +18,7 @@
 #include "socket/include/socket.h"
 #include "define.h"
 #include "global.h"
+*/
 
 void configure_rtc_count(void);
 
@@ -102,8 +109,6 @@ void configure_tc_callbacks(void);
 static void wifi_cb(uint8_t u8MsgType, void *pvMsg);
 static void socket_cb(SOCKET sock, uint8_t u8Msg, void *pvMsg);
 
-void usart_read_callback(struct usart_module *const usart_module);
-void usart_write_callback(struct usart_module *const usart_module);
 void initGpio(void);
 void tc_isr(struct tc_module *const module_inst);
 
@@ -182,12 +187,24 @@ int main ( void )
 	cpu_irq_enable();	
 
 	initGpio();
-	configure_tc();
+//	configure_tc();
 //	configure_tc_callbacks();
-	configure_rtc_count( );
+//	configure_rtc_count( );
+
+	config_i2c_GLCD_Select();
+	configure_i2c_master();
+	port_pin_set_output_level(PIN_PA23, false); // GLCD /EN high
+	gLcdInit();
+
+	gLcdShow2(gLcdRunPic);
+	delay_ms(1000);
+	gLcdShow2(gLcdStopPic);
+	delay_ms(1000);
+
 	sio2host_init();
 	printf("sio2host_init Ok");
-//--- socket to PLC
+
+//--- socket to PLC	
 	nm_bsp_init();		// WINC1500 핀 설정 및 초기화
 
 	// Initialize socket address structure. 

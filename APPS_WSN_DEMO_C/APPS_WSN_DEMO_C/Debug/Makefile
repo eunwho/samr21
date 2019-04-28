@@ -223,6 +223,7 @@ C_SRCS +=  \
 ../src/ASF/thirdparty/wireless/services/sal/at86rf2xx/src/sal.c \
 ../src/ASF/thirdparty/wireless/services/trx_access/trx_access.c \
 ../src/commands.c \
+../src/i2cModule.c \
 ../src/main.c \
 ../src/wsndemo.c
 
@@ -292,6 +293,7 @@ src/ASF/thirdparty/wireless/services/edbg_eui/edbg-eui.o \
 src/ASF/thirdparty/wireless/services/sal/at86rf2xx/src/sal.o \
 src/ASF/thirdparty/wireless/services/trx_access/trx_access.o \
 src/commands.o \
+src/i2cModule.o \
 src/main.o \
 src/wsndemo.o
 
@@ -354,6 +356,7 @@ src/ASF/thirdparty/wireless/services/edbg_eui/edbg-eui.o \
 src/ASF/thirdparty/wireless/services/sal/at86rf2xx/src/sal.o \
 src/ASF/thirdparty/wireless/services/trx_access/trx_access.o \
 src/commands.o \
+src/i2cModule.o \
 src/main.o \
 src/wsndemo.o
 
@@ -416,6 +419,7 @@ src/ASF/thirdparty/wireless/services/edbg_eui/edbg-eui.d \
 src/ASF/thirdparty/wireless/services/sal/at86rf2xx/src/sal.d \
 src/ASF/thirdparty/wireless/services/trx_access/trx_access.d \
 src/commands.d \
+src/i2cModule.d \
 src/main.d \
 src/wsndemo.d
 
@@ -478,6 +482,7 @@ src/ASF/thirdparty/wireless/services/edbg_eui/edbg-eui.d \
 src/ASF/thirdparty/wireless/services/sal/at86rf2xx/src/sal.d \
 src/ASF/thirdparty/wireless/services/trx_access/trx_access.d \
 src/commands.d \
+src/i2cModule.d \
 src/main.d \
 src/wsndemo.d
 
@@ -896,6 +901,13 @@ src/ASF/thirdparty/wireless/services/trx_access/trx_access.o: ../src/ASF/thirdpa
 	
 
 src/commands.o: ../src/commands.c
+	@echo Building file: $<
+	@echo Invoking: ARM/GNU C Compiler : 6.3.1
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-gcc.exe$(QUOTE)  -x c -mthumb -D__SAMR21G18A__ -DDEBUG -DMESH_SECURITY -DSTB_ON_SAL -DARM_MATH_CM0PLUS=true -D__SAMR21G18A__ -DPROTOCOL_MESH -DSYSTICK_MODE -DI2C_MASTER_CALLBACK_MODE=false -DSAL_TYPE=AT86RF2xx -DPAN_COORDINATOR -DBOARD=SAMR21_XPLAINED_PRO -DMIWI_MESH_TOPOLOGY_SIMULATION_MODE -DTC_ASYNC=true -DEXTINT_CALLBACK_MODE=true -DPHY_AT86RF233 -DSPI_CALLBACK_MODE=false -DUSART_CALLBACK_MODE=true -DRTC_COUNT_ASYNC=false  -I"../src/ASF/sam0/drivers/sercom/i2c" -I"../src/ASF/sam0/utils" -I"../src/ASF/sam0/utils/header_files" -I"../src/ASF/sam0/utils/preprocessor" -I"../src/ASF/thirdparty/CMSIS/Include" -I"../src/ASF/thirdparty/CMSIS/Lib/GCC" -I"../src/ASF/common/utils" -I"../src/ASF/sam0/utils/cmsis/samr21/include" -I"../src/ASF/sam0/utils/cmsis/samr21/source" -I"../src/ASF/sam0/drivers/sercom" -I"../src/ASF/sam0/drivers/system" -I"../src/ASF/sam0/drivers/system/clock/clock_samd21_r21_da_ha1" -I"../src/ASF/sam0/drivers/system/clock" -I"../src/ASF/sam0/drivers/system/interrupt" -I"../src/ASF/sam0/drivers/system/interrupt/system_interrupt_samr21" -I"../src/ASF/sam0/drivers/system/pinmux" -I"../src/ASF/sam0/drivers/system/power" -I"../src/ASF/sam0/drivers/system/power/power_sam_d_r_h" -I"../src/ASF/sam0/drivers/system/reset" -I"../src/ASF/sam0/drivers/system/reset/reset_sam_d_r_h" -I"../src/ASF/thirdparty/wireless/services/edbg_eui" -I"../src/ASF/sam0/boards" -I"../src/ASF/sam0/boards/samr21_xplained_pro" -I"../src/ASF/common/boards" -I"../src/ASF/sam0/drivers/port" -I"../src" -I"../src/ASF/thirdparty/wireless/addons/sio2host/uart" -I"../src/ASF/sam0/utils/stdio/stdio_serial" -I"../src/ASF/common/services/serial" -I"../src/ASF/sam0/drivers/sercom/usart" -I"../src/ASF/thirdparty/wireless/miwi/source/miwi_mesh" -I"../src/ASF/thirdparty/wireless/miwi/include" -I"../src/ASF/thirdparty/wireless/miwi/source/stb/inc" -I"../src/ASF/thirdparty/wireless/miwi/source/mimac" -I"../src/ASF/thirdparty/wireless/miwi/source/mimac/phy" -I"../src/ASF/thirdparty/wireless/miwi/source/sys" -I"../src/ASF/thirdparty/wireless/services/trx_access" -I"../src/ASF/common2/services/delay" -I"../src/ASF/common2/services/delay/sam0" -I"../src/ASF/sam0/drivers/sercom/spi" -I"../src/ASF/sam0/drivers/extint" -I"../src/ASF/sam0/drivers/tc" -I"../src/ASF/thirdparty/wireless/services/common_hw_timer" -I"../src/ASF/thirdparty/wireless/services/common_hw_timer/sam0" -I"../src/ASF/thirdparty/wireless/services/sal/inc" -I"../src/ASF/thirdparty/wireless/miwi/apps/wsn_demo/panc_sec/samr21_xplained_pro" -I"../src/config" -I"../src/ASF/common/components/wifi/winc1500" -I"../src/ASF/sam0/drivers/rtc" -I"../src/ASF/sam0/drivers/rtc/rtc_sam_d_r_h"  -O1 -fdata-sections -ffunction-sections -mlong-calls -g3 -Wall -mcpu=cortex-m0plus -c -pipe -fno-strict-aliasing -Wall -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -std=gnu99 -ffunction-sections -fdata-sections -Wchar-subscripts -Wcomment -Wformat=2 -Wimplicit-int -Wmain -Wparentheses -Wsequence-point -Wreturn-type -Wswitch -Wtrigraphs -Wunused -Wuninitialized -Wunknown-pragmas -Wfloat-equal -Wundef -Wshadow -Wbad-function-cast -Wwrite-strings -Wsign-compare -Waggregate-return  -Wmissing-declarations -Wformat -Wmissing-format-attribute -Wno-deprecated-declarations -Wpacked -Wredundant-decls -Wnested-externs -Wlong-long -Wunreachable-code -Wcast-align --param max-inline-insns-single=500 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+src/i2cModule.o: ../src/i2cModule.c
 	@echo Building file: $<
 	@echo Invoking: ARM/GNU C Compiler : 6.3.1
 	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-gcc.exe$(QUOTE)  -x c -mthumb -D__SAMR21G18A__ -DDEBUG -DMESH_SECURITY -DSTB_ON_SAL -DARM_MATH_CM0PLUS=true -D__SAMR21G18A__ -DPROTOCOL_MESH -DSYSTICK_MODE -DI2C_MASTER_CALLBACK_MODE=false -DSAL_TYPE=AT86RF2xx -DPAN_COORDINATOR -DBOARD=SAMR21_XPLAINED_PRO -DMIWI_MESH_TOPOLOGY_SIMULATION_MODE -DTC_ASYNC=true -DEXTINT_CALLBACK_MODE=true -DPHY_AT86RF233 -DSPI_CALLBACK_MODE=false -DUSART_CALLBACK_MODE=true -DRTC_COUNT_ASYNC=false  -I"../src/ASF/sam0/drivers/sercom/i2c" -I"../src/ASF/sam0/utils" -I"../src/ASF/sam0/utils/header_files" -I"../src/ASF/sam0/utils/preprocessor" -I"../src/ASF/thirdparty/CMSIS/Include" -I"../src/ASF/thirdparty/CMSIS/Lib/GCC" -I"../src/ASF/common/utils" -I"../src/ASF/sam0/utils/cmsis/samr21/include" -I"../src/ASF/sam0/utils/cmsis/samr21/source" -I"../src/ASF/sam0/drivers/sercom" -I"../src/ASF/sam0/drivers/system" -I"../src/ASF/sam0/drivers/system/clock/clock_samd21_r21_da_ha1" -I"../src/ASF/sam0/drivers/system/clock" -I"../src/ASF/sam0/drivers/system/interrupt" -I"../src/ASF/sam0/drivers/system/interrupt/system_interrupt_samr21" -I"../src/ASF/sam0/drivers/system/pinmux" -I"../src/ASF/sam0/drivers/system/power" -I"../src/ASF/sam0/drivers/system/power/power_sam_d_r_h" -I"../src/ASF/sam0/drivers/system/reset" -I"../src/ASF/sam0/drivers/system/reset/reset_sam_d_r_h" -I"../src/ASF/thirdparty/wireless/services/edbg_eui" -I"../src/ASF/sam0/boards" -I"../src/ASF/sam0/boards/samr21_xplained_pro" -I"../src/ASF/common/boards" -I"../src/ASF/sam0/drivers/port" -I"../src" -I"../src/ASF/thirdparty/wireless/addons/sio2host/uart" -I"../src/ASF/sam0/utils/stdio/stdio_serial" -I"../src/ASF/common/services/serial" -I"../src/ASF/sam0/drivers/sercom/usart" -I"../src/ASF/thirdparty/wireless/miwi/source/miwi_mesh" -I"../src/ASF/thirdparty/wireless/miwi/include" -I"../src/ASF/thirdparty/wireless/miwi/source/stb/inc" -I"../src/ASF/thirdparty/wireless/miwi/source/mimac" -I"../src/ASF/thirdparty/wireless/miwi/source/mimac/phy" -I"../src/ASF/thirdparty/wireless/miwi/source/sys" -I"../src/ASF/thirdparty/wireless/services/trx_access" -I"../src/ASF/common2/services/delay" -I"../src/ASF/common2/services/delay/sam0" -I"../src/ASF/sam0/drivers/sercom/spi" -I"../src/ASF/sam0/drivers/extint" -I"../src/ASF/sam0/drivers/tc" -I"../src/ASF/thirdparty/wireless/services/common_hw_timer" -I"../src/ASF/thirdparty/wireless/services/common_hw_timer/sam0" -I"../src/ASF/thirdparty/wireless/services/sal/inc" -I"../src/ASF/thirdparty/wireless/miwi/apps/wsn_demo/panc_sec/samr21_xplained_pro" -I"../src/config" -I"../src/ASF/common/components/wifi/winc1500" -I"../src/ASF/sam0/drivers/rtc" -I"../src/ASF/sam0/drivers/rtc/rtc_sam_d_r_h"  -O1 -fdata-sections -ffunction-sections -mlong-calls -g3 -Wall -mcpu=cortex-m0plus -c -pipe -fno-strict-aliasing -Wall -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -std=gnu99 -ffunction-sections -fdata-sections -Wchar-subscripts -Wcomment -Wformat=2 -Wimplicit-int -Wmain -Wparentheses -Wsequence-point -Wreturn-type -Wswitch -Wtrigraphs -Wunused -Wuninitialized -Wunknown-pragmas -Wfloat-equal -Wundef -Wshadow -Wbad-function-cast -Wwrite-strings -Wsign-compare -Waggregate-return  -Wmissing-declarations -Wformat -Wmissing-format-attribute -Wno-deprecated-declarations -Wpacked -Wredundant-decls -Wnested-externs -Wlong-long -Wunreachable-code -Wcast-align --param max-inline-insns-single=500 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 

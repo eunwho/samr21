@@ -332,7 +332,7 @@
       </framework-data>
     </AsfFrameworkConfig>
     <avrtool>com.atmel.avrdbg.tool.atmelice</avrtool>
-    <avrtoolserialnumber>J41800099173</avrtoolserialnumber>
+    <avrtoolserialnumber>J41800099370</avrtoolserialnumber>
     <avrdeviceexpectedsignature>0x10010319</avrdeviceexpectedsignature>
     <avrtoolinterface>SWD</avrtoolinterface>
     <com_atmel_avrdbg_tool_edbg>
@@ -355,7 +355,7 @@
         <InterfaceName>SWD</InterfaceName>
       </ToolOptions>
       <ToolType>com.atmel.avrdbg.tool.atmelice</ToolType>
-      <ToolNumber>J41800099173</ToolNumber>
+      <ToolNumber>J41800099370</ToolNumber>
       <ToolName>Atmel-ICE</ToolName>
     </com_atmel_avrdbg_tool_atmelice>
   </PropertyGroup>
@@ -1720,10 +1720,16 @@
     <Compile Include="src\global.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\i2cModule.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\main.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\main.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\module.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\wsndemo.c">
