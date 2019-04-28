@@ -194,6 +194,7 @@ int main ( void )
 	config_i2c_GLCD_Select();
 	configure_i2c_master();
 	port_pin_set_output_level(PIN_PA23, false); // GLCD /EN high
+	delay_us(10);
 	gLcdInit();
 
 	gLcdShow2(gLcdRunPic);

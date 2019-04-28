@@ -18,6 +18,5 @@
 //#0define ADDR_AT24C02D		0xA0
 //#define ADDR_AT24C02D		0x50
 #define ADDR_GLCD			0x3F
-#define MAX_RX_BUFFER_LENGTH   14
-#define GLCD_COMMAND	0x00
+#define GLCD_COMMAND		0x00
 #endif /* DEFINE_H_ */

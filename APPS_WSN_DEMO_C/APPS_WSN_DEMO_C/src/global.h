@@ -21,5 +21,8 @@ uint8_t bufTest2[]={0x02,0x52,'A','0','0','0','0','0','0','0','0',0x03,0x00};
 uint8_t bufDout0[]={0x02,0x52,'A','0','0','0','0','0','0','0','0',0x03,0x00};
 
 uint8_t sensStateTable[10] = {0};
+
+struct i2c_master_module i2c_master_instance;
+struct i2c_master_packet i2c_packet;
 	
 #endif /* GLOBAL_H_ */

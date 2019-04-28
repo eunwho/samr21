@@ -1720,6 +1720,9 @@
     <Compile Include="src\global.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\header.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\i2cModule.c">
       <SubType>compile</SubType>
     </Compile>

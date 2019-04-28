@@ -55,7 +55,6 @@ tstrNmBusCapabilities egstrNmBusCapabilities =
 
 #ifdef CONF_WINC_USE_I2C
 
-struct i2c_master_module i2c_master_instance;
 #define SLAVE_ADDRESS 0x60
 
 /** Number of times to try to send packet if failed. */

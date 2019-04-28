@@ -20,6 +20,7 @@ extern uint8_t sensStateTable[10];
 //---i2cModule.c
 extern struct i2c_master_module i2c_master_instance;
 extern struct i2c_master_packet i2c_packet;
+
 extern uint8_t	write_buffer[DATA_LENGTH];
 extern volatile uint8_t read_buffer[DATA_LENGTH];
 extern volatile enum status_code gLcdStatus;
