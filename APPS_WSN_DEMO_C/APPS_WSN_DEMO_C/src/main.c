@@ -75,6 +75,9 @@ unsigned char slaveDef[12] = {0x00,0x00,0x00,0x00,0x00,0x06,0x01,0x01,0x00,0x00,
 unsigned char slaveDef2[14];
 unsigned char CoilDataArray[32];
 
+// for test AT24C02D
+unsigned char gAt24C02DTest[10] = {0x00,0x1,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09};
+
 //int set_485 = -1 ;
 
 unsigned int senser_arrive_count[128];
@@ -174,12 +177,16 @@ uint32_t getElapRtc( uint32_t rtc_tag){
 }
 
 uint32_t rtcCount, rtcCountTag, rtcTagSocket;
+volatile uint8_t retAt24C02D[20]={0x00};
+	
 int main ( void )
 {	
 	int i;
+	
 	tstrWifiInitParam param;
 	int8_t ret;
 	struct sockaddr_in addr;
+	struct i2c_master_packet i2cMastPack;
 
 	irq_initialize_vectors();
 	system_init();
@@ -193,9 +200,48 @@ int main ( void )
 
 	config_i2c_GLCD_Select();
 	configure_i2c_master();
-	port_pin_set_output_level(PIN_PA23, false); // GLCD /EN high
+//	port_pin_set_output_level(PIN_PA23, false); // GLCD /EN high
+	port_pin_set_output_level(PIN_PA23, true); // GLCD /EN high
 	delay_us(10);
-	gLcdInit();
+/*
+	i2c_packet.hs_master_code	= 0x0;
+	i2c_packet.address			= 0x50 ;	// at 1010 >> 1
+//	i2c_packet.data_length		= 13;
+//	i2c_packet.data				= gAt24C02DTest;
+	i2c_packet.data_length		= 13;
+	i2c_packet.data				= stTest;
+*/
+
+	i2cMastPack.hs_master_code	= 0x00;
+	i2cMastPack.address			= 0x50 ;	// at 1010 >> 1
+	i2cMastPack.data_length		= 9;
+	i2cMastPack.data			= gAt24C02DTest;
+
+	i2c_master_write_packet_wait(&i2c_master_instance,&i2cMastPack);
+	delay_ms(2);
+
+	i2cMastPack.hs_master_code	= 0x00;
+	i2cMastPack.address			= 0x50 ;	// at 1010 >> 1
+	i2cMastPack.data_length		= 9;
+	i2cMastPack.data			= retAt24C02D;
+
+	i2c_master_read_packet_wait(&i2c_master_instance,&i2cMastPack);
+
+	sio2host_init();
+
+	while(1){
+		i2cMastPack.hs_master_code	= 0x00;
+		i2cMastPack.address			= 0x50 ;	// at 1010 >> 1
+		i2cMastPack.data_length		= 9;
+		i2cMastPack.data			= retAt24C02D;
+
+		i2c_master_read_packet_wait(&i2c_master_instance,&i2cMastPack);
+		printf("read At24C02D= %s",retAt24C02D);
+		delay_ms(1000);
+	}
+		
+
+	// gLcdInit();
 
 	gLcdShow2(gLcdRunPic);
 	delay_ms(1000);
