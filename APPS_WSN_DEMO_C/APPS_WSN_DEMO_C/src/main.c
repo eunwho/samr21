@@ -191,58 +191,23 @@ int main ( void )
 	irq_initialize_vectors();
 	system_init();
 	delay_init();
-	cpu_irq_enable();	
+//	cpu_irq_enable();	
 
 	initGpio();
-//	configure_tc();
+	configure_tc();
 //	configure_tc_callbacks();
-//	configure_rtc_count( );
+	configure_rtc_count( );
 
 	config_i2c_GLCD_Select();
 	configure_i2c_master();
-//	port_pin_set_output_level(PIN_PA23, false); // GLCD /EN high
-	port_pin_set_output_level(PIN_PA23, true); // GLCD /EN high
-	delay_us(10);
-/*
-	i2c_packet.hs_master_code	= 0x0;
-	i2c_packet.address			= 0x50 ;	// at 1010 >> 1
-//	i2c_packet.data_length		= 13;
-//	i2c_packet.data				= gAt24C02DTest;
-	i2c_packet.data_length		= 13;
-	i2c_packet.data				= stTest;
-*/
-
-	i2cMastPack.hs_master_code	= 0x00;
-	i2cMastPack.address			= 0x50 ;	// at 1010 >> 1
-	i2cMastPack.data_length		= 9;
-	i2cMastPack.data			= gAt24C02DTest;
-
-	i2c_master_write_packet_wait(&i2c_master_instance,&i2cMastPack);
-	delay_ms(2);
-
-	i2cMastPack.hs_master_code	= 0x00;
-	i2cMastPack.address			= 0x50 ;	// at 1010 >> 1
-	i2cMastPack.data_length		= 9;
-	i2cMastPack.data			= retAt24C02D;
-
-	i2c_master_read_packet_wait(&i2c_master_instance,&i2cMastPack);
-
 	sio2host_init();
+	port_pin_set_output_level(PIN_PA23, false); // GLCD /EN high
+//	port_pin_set_output_level(PIN_PA23, true); // GLCD /EN high
+	delay_us(10);
 
-	while(1){
-		i2cMastPack.hs_master_code	= 0x00;
-		i2cMastPack.address			= 0x50 ;	// at 1010 >> 1
-		i2cMastPack.data_length		= 9;
-		i2cMastPack.data			= retAt24C02D;
-
-		i2c_master_read_packet_wait(&i2c_master_instance,&i2cMastPack);
-		printf("read At24C02D= %s",retAt24C02D);
-		delay_ms(1000);
-	}
-		
-
-	// gLcdInit();
-
+	gLcdInit();
+	
+	
 	gLcdShow2(gLcdRunPic);
 	delay_ms(1000);
 	gLcdShow2(gLcdStopPic);
@@ -503,5 +468,35 @@ void configure_tc_callbacks(void)
 	tc_enable_callback(&tc_instance, TC_CALLBACK_CC_CHANNEL0);
 	//! [setup_enable_callback]
 }
+
+/*
+	i2cMastPack.hs_master_code	= 0x00;
+	i2cMastPack.address			= 0x50 ;	// at 1010 >> 1
+	i2cMastPack.data_length		= 9;
+	i2cMastPack.data			= gAt24C02DTest;
+
+	i2c_master_write_packet_wait(&i2c_master_instance,&i2cMastPack);
+	delay_ms(2);
+
+	i2cMastPack.hs_master_code	= 0x00;
+	i2cMastPack.address			= 0x50 ;	// at 1010 >> 1
+	i2cMastPack.data_length		= 9;
+	i2cMastPack.data			= retAt24C02D;
+
+	i2c_master_read_packet_wait(&i2c_master_instance,&i2cMastPack);
+
+
+	while(1){
+		i2cMastPack.hs_master_code	= 0x00;
+		i2cMastPack.address			= 0x50 ;	// at 1010 >> 1
+		i2cMastPack.data_length		= 9;
+		i2cMastPack.data			= retAt24C02D;
+
+		i2c_master_read_packet_wait(&i2c_master_instance,&i2cMastPack);
+		printf("read At24C02D= %s",retAt24C02D);
+		delay_ms(1000);
+	}
+		
+*/
 
 // end of main.c
